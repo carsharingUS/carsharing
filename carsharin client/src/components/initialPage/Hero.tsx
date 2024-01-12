@@ -1,7 +1,7 @@
-import Image from 'next/image'
+/*import Image from 'next/image'*/
 import Button from './Button'
-
-
+import '../initialPage/InitialPage.css'
+import React from 'react';
 const Hero = () => {
   return (
     <section className='max-container padding-container flex flex-col 
@@ -14,7 +14,7 @@ const Hero = () => {
       <div className='my-11 flex flex-wrap gap-5'>
         <div className='flex items-center gap-2'>
           {Array(5).fill(1).map((_, index) => (
-            <Image src="/star.svg" key={index} alt='star' width={24} height={24} />
+            <img src="/star.svg" key={index} alt='star' width={24} height={24} />
           ))}
         </div>
         <p className='bold-16 lg:bold-20 text-blue-70'>
@@ -24,7 +24,8 @@ const Hero = () => {
       </div>
 
       <div className='flex flex-col w-full gap-3 sm:flex-row'>
-        <Button type='button' title='Dowload App' variant='btn_green'/>
+        <Button type='button' title='Dowload App' variant='btn_green2'/>
+        <button type="button" className="flexCenter gap-3 rounded-full border border-green-50 bg-green-50 text-white px-8 py-5 hover:bg-green-700 focus:outline-none focus:ring focus:border-blue-100">Dowload App</button>
         <Button type='button' title='How we work?' icon="/play.svg" variant='btn_white_text'/>
       </div>
       </div>
@@ -35,12 +36,12 @@ const Hero = () => {
           <div className='flex flex-col'>
             <div className='flexBetween'>
               <p className='regular-16 text-gray-20'>Starting point</p>
-              <Image src="/close.svg" alt='close' width={24} height={24}/>
+              <img src="/close.svg" alt='close' width={24} height={24}/>
             </div>
             <p className='bold-20 text-white'>Seville</p>
             <div className='flexBetween'>
               <p className='regular-16 text-gray-20'>Destination</p>
-              <Image src="/close.svg" alt='close' width={24} height={24}/>
+              <img src="/close.svg" alt='close' width={24} height={24}/>
             </div>
             <p className='bold-20 text-white'>Madrid</p>
             </div>
