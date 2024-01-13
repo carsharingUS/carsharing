@@ -35,7 +35,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.CharField(max_length=100, unique=True)
     name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    avatar = models.ImageField(upload_to='profile_pictures/%Y/%m/%d', null=True, blank=True)
+    avatar = models.ImageField(upload_to='profile_pictures/%Y/%m/%d', null=True, blank=True, default='avatar.png')
     date_joined = models.DateTimeField(default=timezone.now)
     is_staff = models.BooleanField(default=False)
     birthDate = models.DateField(null=True, blank=True)
@@ -43,8 +43,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     sex = models.CharField(max_length=10, choices=[('M', 'Man'), ('W', 'Women'), ('O', 'Other')], null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     objects = CustomUserManager()
-    USERNAME_FIELD = "username"
-    REQUIRED_FIELDS = ["email", "is_staff", "is_superuser"] #Solo habria que dejar el campo de email, ya que si es staff o superuser deberia ponerme manualmente
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["username", "is_staff", "is_superuser"] #Solo habria que dejar el campo de email, ya que si es staff o superuser deberia ponerme manualmente
 
     class Meta:
         ordering = ["-date_joined"]
