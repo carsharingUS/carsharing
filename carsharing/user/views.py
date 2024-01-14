@@ -21,6 +21,7 @@ def register(request):
     serializer = RegisterUserSerializer(user, many=False)
     return Response(serializer.data)
 
+
 class LoginView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 

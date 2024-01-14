@@ -1,6 +1,7 @@
 import axios, { AxiosRequestHeaders } from 'axios'
 import { useAuthStore } from '../store/auth';
 import * as jwt_decode from 'jwt-decode';
+import { Token } from '../../Interfaces';
 
 
 function logout() {
@@ -25,10 +26,6 @@ authAxios.interceptors.request.use(async (config) => {
     config.headers = {
         Authorization: `Bearer ${token}`,
     } as AxiosRequestHeaders;
-
-    type Token = {
-        exp: number
-    };
 
     const tokenDecoded: Token = jwt_decode.jwtDecode(token);
 

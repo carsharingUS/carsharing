@@ -123,7 +123,7 @@ const Login = () => {
 
     /* if (registerMutation.isPending) return <p>Pending...</p> */
     /* if (loginMutation.isPending) return <p>Pending...</p> */
-    if (isAuth) return (<Navigate to="/" />)
+    if (isAuth) return (<Navigate to="/home" />)
 
 
     return (
