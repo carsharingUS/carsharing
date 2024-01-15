@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import HomePage from './pages/HomePage';
-import HomePage2 from './pages/HomePage2';
 import LoginComponent from './pages/login/LoginComponent'
 import './App.css'
 import InitialPage from './pages/InitialPage'
@@ -18,7 +17,11 @@ function App() {
           <Route path='home' element={<HomePage />} />
           <Route path='' element={<HomePage />} />
           <Route path='initial' element={<InitialPage />} />
+          
+          {/* RUTAS PARA VIAJES */}
           <Route path='login' element={<LoginComponent />}/>
+
+          {/* RUTAS PARA VIAJES */}
           <Route path='travels' element={<Travels />} />
         </Route>
       </Routes>

@@ -16,7 +16,6 @@ export const NAV_HOME_LINKS = [
   { href: "/chat", key: 'chat', label: 'Chat'},
   { href: "/notificaciones", key: 'notificaciones', label: 'Notificaciones'},
   { href: "/mis_viajes", key: 'mis_viajes', label: 'Mis viajes'}
-
 ]
 
 export const NAV_HOME_LINKS_NO_LOGIN = [
