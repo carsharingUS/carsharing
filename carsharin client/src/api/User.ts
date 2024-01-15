@@ -1,7 +1,7 @@
 import axios, { AxiosRequestHeaders } from 'axios'
 import { useAuthStore } from '../store/auth';
 import * as jwt_decode from 'jwt-decode';
-import { Token } from '../../Interfaces';
+import { baseURL } from '../constants';
 
 
 function logout() {
@@ -9,23 +9,25 @@ function logout() {
     window.location.href = "/login"
 }
 
-export const baseURL = 'http://localhost:8000/user/'
-
-export const userApi = axios.create({
-    baseURL
+export const userAPI = axios.create({
+    baseURL: `${baseURL}user/`
 });
 
 //Utilizar este en cada request que se necesite autenticacion
-const authAxios = axios.create({
-    baseURL,
+const authUserAPI = axios.create({
+    baseURL: `${baseURL}user/`,
     withCredentials: true
 });
 
-authAxios.interceptors.request.use(async (config) => {
+authUserAPI.interceptors.request.use(async (config) => {
     const token: string = useAuthStore.getState().access;
     config.headers = {
         Authorization: `Bearer ${token}`,
     } as AxiosRequestHeaders;
+
+    type Token = {
+        exp: number
+    };
 
     const tokenDecoded: Token = jwt_decode.jwtDecode(token);
 
@@ -35,7 +37,7 @@ authAxios.interceptors.request.use(async (config) => {
 
     if (expiration.getTime() - now.getTime() < fiveMin)
         try {
-            const response = await userApi.post('/refresh/', { refresh: useAuthStore.getState().refresh })
+            const response = await userAPI.post('/refresh/', { refresh: useAuthStore.getState().refresh })
             useAuthStore.getState().setToken(response.data.access, response.data.refresh)
         } catch (err) {
             logout()
@@ -45,22 +47,21 @@ authAxios.interceptors.request.use(async (config) => {
 
 
 export const getAllUser = () => { //Se puede hacer de esta manera 
-    return userApi.get("/");
-
+    return userAPI.get("/");
 }
-export const createUser = (user) => userApi.post("/", user); //O de esta otra manera
-export const deleteUser = (id) => userApi.delete(`/${id}`);
-export const updateuser = (id, user) => userApi.put(`/${id}/`, user);
-export const getUser = (id) => userApi.get(`/${id}/`);
-export const loginUser = (usuario) => userApi.get(`/api/login`, usuario)
-export const getUsuarioObjeto = (username, password) => userApi.get(`/user/api/getUsuario/`)
+
+export const createUser = (user) => userAPI.post("/", user); //O de esta otra manera
+export const deleteUser = (id) => userAPI.delete(`/${id}`);
+export const updateuser = (id, user) => userAPI.put(`/${id}/`, user);
+export const getUser = (id) => userAPI.get(`/${id}/`);
+export const loginUser = (usuario) => userAPI.get(`/api/login`, usuario)
+export const getUsuarioObjeto = (username, password) => userAPI.get(`/user/api/getUsuario/`)
 
 export const registerRequest = async (username: string, email: string, name: string, last_name: string, password: string) => {
-    await userApi.post("/register/", { username, email, name, last_name, password })
+    await userAPI.post("/register/", { username, email, name, last_name, password })
 };
 
 export const loginRequest = async (email: string, password: string) => {
-    const response = await userApi.post("/login/", { email: email, password: password })
+    const response = await userAPI.post("/login/", { email: email, password: password })
     return response;
 };
-

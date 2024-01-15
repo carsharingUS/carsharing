@@ -1,3 +1,6 @@
+//URL
+export const baseURL = 'http://localhost:8000/';
+
 // NAVIGATION
 export const NAV_LINKS = [
   { href: '/', key: 'home', label: 'Home' },
