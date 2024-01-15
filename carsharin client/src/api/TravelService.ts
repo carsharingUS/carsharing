@@ -10,7 +10,7 @@ export const authTravelAPI = axios.create({
     withCredentials: true
 })
 
-export const getAllTravels = async  () => { //Se puede hacer de esta manera 
+export const getAllTravels = async  () => {
     const response = await travelAPI.get("/");
     return response.data;
 }

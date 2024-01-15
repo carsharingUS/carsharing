@@ -1,5 +1,5 @@
 import React, { FormEvent, useEffect, useState } from 'react'
-import { registerRequest, loginRequest } from '../../api/User'
+import { registerRequest, loginRequest } from '../../api/UserService'
 import { toast  } from 'react-hot-toast';
 import { useAuthStore } from '../../store/auth';
 import { useMutation } from '@tanstack/react-query';

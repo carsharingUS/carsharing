@@ -5,6 +5,7 @@ import HomePage2 from './pages/HomePage2';
 import LoginComponent from './pages/login/LoginComponent'
 import './App.css'
 import InitialPage from './pages/InitialPage'
+import Travels from './pages/travels/Travels';
 
 
 function App() {
@@ -13,15 +14,15 @@ function App() {
     <BrowserRouter >
     <Toaster />
       <Routes>
-        <Route path='/'> 
-          <Route path='' element={<HomePage2 />} />
+        <Route path='/'>
+          <Route path='home' element={<HomePage />} />
+          <Route path='' element={<HomePage />} />
           <Route path='initial' element={<InitialPage />} />
           <Route path='login' element={<LoginComponent />}/>
-          <Route path='home' element={<HomePage />} />
+          <Route path='travels' element={<Travels />} />
         </Route>
       </Routes>
     </BrowserRouter>
-
   );
 }
 
