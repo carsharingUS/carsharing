@@ -1,0 +1,64 @@
+.awesome-component {
+  position: relative;
+  overflow: hidden;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  text-align: center;
+  transition: transform 0.5s ease-in-out;
+}
+
+.background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(rgba(74, 241, 141, 0.8), rgba(52, 73, 94, 0.8)), url('http://localhost:8000/media/FondoPrueba.jpg');
+  background-size: cover;
+  background-position: center;
+  /*filter: blur(5px); /* Efecto de desenfoque */
+  /*transition: filter 0.5s ease-in-out;*/
+}
+
+.content {
+  position: relative;
+  z-index: 1; /* Asegurar que el contenido esté sobre el fondo */
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+
+.awesome-component:hover .content,
+.awesome-component.visible .content {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.content h2 {
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+.content p {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.awesome-button {
+  background-color: #2ecc71;
+  color: #ffffff;
+  padding: 15px 30px;
+  font-size: 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.awesome-button:hover {
+  background-color: #27ae60;
+  transform: scale(1.05);
+}
