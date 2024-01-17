@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+    margin: 0;
+    padding: 0;
+  }
+  
+  #root {
+    height: 100%;
+  }
+  
+  body {
+    background-image: url('http://localhost:8000/media/coleccion-hojas-papel-tonos-azules-espacio-copia.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+  }

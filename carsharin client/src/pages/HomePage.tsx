@@ -1,14 +1,14 @@
-import React from 'react'
-import Navbar from '../components/home/Navbar'
-import SearchComponent from '../components/home/Search'
+import React from "react";
+import Navbar from "../components/home/Navbar";
+import SearchComponent from "../components/home/Search";
 
 const HomePage = () => {
   return (
     <div>
-        <Navbar />
-        <SearchComponent />
+      <Navbar />
+      <SearchComponent />
     </div>
-  )
-}
+  );
+};
 
-export default HomePage
+export default HomePage;

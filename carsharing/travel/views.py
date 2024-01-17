@@ -13,9 +13,9 @@ def get_travels(request):
     return Response(seriaizer.data)
 
 @api_view(['GET'])
-def get_travel(request, origin, destination):
-    travels = Travel.objects.get(origin=origin, destination=destination)
-    seriaizer = TravelSerializer(travels, many=False)
+def get_travel(request, id):
+    travel = Travel.objects.get(id=id)
+    seriaizer = TravelSerializer(travel, many=False)
     return Response(seriaizer.data)
 
 @api_view(['POST'])
@@ -29,9 +29,9 @@ def create_travel(request):
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
-def edit_travel(request, pk):
-    travel = Travel.objects.get(pk=pk)
-    if request.user == travel.host | request.user.is_staff:
+def edit_travel(request, id):
+    travel = Travel.objects.get(id=id)
+    if request.user == travel.host or request.user.is_staff:
         serializer = TravelSerializer(travel, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -42,8 +42,8 @@ def edit_travel(request, pk):
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
-def delete_travel(request, pk):
-    travel = Travel.objects.get(pk=pk)
+def delete_travel(request, id):
+    travel = Travel.objects.get(id=id)
     if request.user == travel.host:
         travel.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

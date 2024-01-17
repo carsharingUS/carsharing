@@ -3,10 +3,14 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth.hashers import make_password
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .serializer import RegisterUserSerializer, MyTokenObtainPairSerializer
+from .serializer import RegisterUserSerializer, MyTokenObtainPairSerializer, UserSerializer
 # Create your views here.
 
-
+@api_view(['GET'])
+def get_user_by_id(request, id):
+    user = User.objects.get(id=id)
+    seriaizer = UserSerializer(user, many=False)
+    return Response(seriaizer.data)
 
 @api_view(['POST'])
 def register(request):

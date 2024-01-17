@@ -10,6 +10,5 @@ urlpatterns = [
     path('register/', views.register),
     path('login/', views.LoginView.as_view()),
     path('refresh/', TokenRefreshView.as_view()),
-
-
+    path('<int:id>', views.get_user_by_id),
 ]

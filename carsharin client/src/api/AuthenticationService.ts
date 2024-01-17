@@ -13,7 +13,7 @@ export const API = axios.create({
 });
 
 //Utilizar este en cada request que se necesite autenticacion
-const authAPI = axios.create({
+export const authAPI = axios.create({
     baseURL: baseURL,
     withCredentials: true
 });

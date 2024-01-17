@@ -5,8 +5,8 @@ import { NAV_HOME_LINKS, NAV_HOME_LINKS_NO_LOGIN } from "../../constants"
 import '../initialPage/InitialPage.css'
 import React, { useState } from 'react';
 import { useAuthStore } from "../../store/auth";
-import { Token } from "../../../Interfaces";
 import * as jwt_decode from 'jwt-decode';
+import { Token } from "../../Interfaces";
 
 
 const Navbar = () => {

@@ -5,6 +5,7 @@ import LoginComponent from './pages/login/LoginComponent'
 import './App.css'
 import InitialPage from './pages/InitialPage'
 import Travels from './pages/travels/Travels';
+import TravelCreationPage from './pages/travels/TravelCreationPage';
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
 
           {/* RUTAS PARA VIAJES */}
           <Route path='travels' element={<Travels />} />
+          <Route path='createTravel' element={<TravelCreationPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

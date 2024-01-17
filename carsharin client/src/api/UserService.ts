@@ -8,3 +8,11 @@ export const loginRequest = async (email: string, password: string) => {
     const response = await API.post("/user/login/", { email: email, password: password })
     return response;
 };
+
+export const getUser = async (id: number | undefined) => {
+    if(!id){
+        throw new Error('Compruebe el id')
+    }
+    const response = await API.get(`/user/${id}`)
+    return response.data;
+}
