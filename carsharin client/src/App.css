@@ -1,6 +1,9 @@
+@import url('https://fonts.googleapis.com/css?family=Muli&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 
 body {
     margin: 0;
@@ -13,6 +16,17 @@ body {
   
   body {
     background-image: url('http://localhost:8000/media/coleccion-hojas-papel-tonos-azules-espacio-copia.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  body {
+    background-image: linear-gradient(45deg, #3f44d2, #aba5f4);
+    font-family: 'Muli', sans-serif;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

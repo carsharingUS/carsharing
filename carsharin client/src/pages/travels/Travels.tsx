@@ -24,11 +24,21 @@ const Travels = () => {
     <div>
       <Navbar />
       <h1>Lista de Viajes</h1>
-      <ul>
-        {travels.map((travel: Travel) => (
-          <TravelCard key={travel.id} travel={travel} />
-        ))}
-      </ul>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          margin: "16px",
+        }}
+      >
+        <ul>
+          {travels.map((travel: Travel) => (
+            <TravelCard key={travel.id} travel={travel} />
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };
