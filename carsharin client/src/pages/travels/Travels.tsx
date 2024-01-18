@@ -1,12 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { getAllTravels } from '../../api/TravelService';
-
-interface Travel {
-    id: number;
-    origin: string;
-    destination: string;
-    start_date: string;
-  }
+import React, { useEffect, useState } from "react";
+import { getAllTravels } from "../../api/TravelService";
+import { Travel } from "../../Interfaces";
+import TravelCard from "../../components/travels/TravelCard";
+import Navbar from "../../components/home/Navbar";
 
 const Travels = () => {
   const [travels, setTravels] = useState<Travel[]>([]);
@@ -17,8 +13,7 @@ const Travels = () => {
         const allTravels: Travel[] = await getAllTravels();
         setTravels(allTravels);
       } catch (error) {
-        console.error('Error fetching travels:', error);
-        // Puedes manejar el error de la manera que prefieras (mostrar un mensaje de error, etc.)
+        console.error("Error fetching travels:", error);
       }
     };
 
@@ -27,16 +22,23 @@ const Travels = () => {
 
   return (
     <div>
+      <Navbar />
       <h1>Lista de Viajes</h1>
-      <ul>
-        {travels.map((travel) => (
-          <li key={travel.id}>
-            <p>Origen: {travel.origin}</p>
-            <p>Destino: {travel.destination}</p>
-            <p>Fecha de inicio: {travel.start_date}</p>
-          </li>
-        ))}
-      </ul>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          margin: "16px",
+        }}
+      >
+        <ul>
+          {travels.map((travel: Travel) => (
+            <TravelCard key={travel.id} travel={travel} />
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };

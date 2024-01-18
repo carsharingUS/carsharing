@@ -5,10 +5,10 @@ import { NAV_HOME_LINKS, NAV_HOME_LINKS_NO_LOGIN } from "../../constants"
 import '../initialPage/InitialPage.css'
 import React, { useState } from 'react';
 import { useAuthStore } from "../../store/auth";
-import { Token } from "../../../Interfaces";
 import * as jwt_decode from 'jwt-decode';
 import { useQuery } from "@tanstack/react-query";
 import { get_solo_user } from "../../api/UserService";
+import { Token } from "../../Interfaces";
 
 
 const Navbar = () => {

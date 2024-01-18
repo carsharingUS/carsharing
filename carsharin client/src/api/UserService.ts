@@ -34,5 +34,13 @@ export const edit_user = async (data: User) => {
 export const get_solo_user = async (id: number) => {
     const response = await authAPI.get(`/user/get/solo/${id}/`)
     return response.data
-    
+
+}
+
+export const getUser = async (id: number | undefined) => {
+    if(!id){
+        throw new Error('Compruebe el id')
+    }
+    const response = await API.get(`/user/${id}`)
+    return response.data;
 }

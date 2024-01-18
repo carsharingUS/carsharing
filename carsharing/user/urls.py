@@ -13,4 +13,5 @@ urlpatterns = [
     path('edit/<str:username>/', views.edit_profile),
     path('get/solo/<int:pk>/', views.get_solo_user),
 
+    path('<int:id>', views.get_user_by_id),
 ]

@@ -10,7 +10,11 @@ from rest_framework import status
 
 # Create your views here.
 
-
+@api_view(['GET'])
+def get_user_by_id(request, id):
+    user = User.objects.get(id=id)
+    seriaizer = UserSerializer(user, many=False)
+    return Response(seriaizer.data)
 
 @api_view(['PUT'])
 def edit_profile(request, username):

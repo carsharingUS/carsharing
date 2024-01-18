@@ -1,16 +1,16 @@
-import React from 'react'
-import Navbar from '../components/home/Navbar'
-import SearchComponent from '../components/home/Search'
-import Card from '../components/home/CardInfo'
-import AwesomeComponent from '../components/home/NuevoViajeBoton'
-import Footer from '../components/initialPage/Footer'
+import React from "react";
+import Navbar from "../components/home/Navbar";
+import SearchComponent from "../components/home/Search";
+import Card from "../components/home/CardInfo";
+import AwesomeComponent from "../components/home/NuevoViajeBoton";
+import Footer from "../components/initialPage/Footer";
 
 const HomePage = () => {
   return (
     <div>
       <Navbar />
       <SearchComponent />
-      <div className='containerCartaHome'>
+      <div className="containerCartaHome">
         <Card
           title="Ahorra dinero y reduce tu huella de carbono"
           content="Compartir coches es una excelente manera de ahorrar dinero en combustible y contribuir a un ambiente más limpio. Únete a nosotros para un viaje más sostenible."
@@ -40,7 +40,7 @@ const HomePage = () => {
       <br />
       <Footer />
     </div>
-  )
-}
+  );
+};
 
-export default HomePage
+export default HomePage;
