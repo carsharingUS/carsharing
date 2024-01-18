@@ -7,9 +7,14 @@ import React, { useState } from 'react';
 import { useAuthStore } from "../../store/auth";
 import { Token } from "../../../Interfaces";
 import * as jwt_decode from 'jwt-decode';
+import { useQuery } from "@tanstack/react-query";
+import { get_solo_user } from "../../api/UserService";
 
 
 const Navbar = () => {
+
+
+    
 
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -18,17 +23,25 @@ const Navbar = () => {
 
     
     let is_admin: boolean = false;
-    let user_id: number = 0;
     let username: string = "";
     let avatar: string = "";
+    let id: number = 0;
 
     if (isAuth) {
         const tokenDecoded: Token = jwt_decode.jwtDecode(token)
         is_admin = tokenDecoded.is_staff;
-        user_id = tokenDecoded.user_id;
         avatar = String(tokenDecoded.avatar)
         username = String(tokenDecoded.username)
+        id = tokenDecoded.user_id
+        
     }
+
+    const { data: user } = useQuery({
+        queryKey: ['user'],
+        queryFn: () => get_solo_user(id),
+      })
+
+    
 
     function logOutFun() {
         useAuthStore.getState().logout()
@@ -71,12 +84,12 @@ const Navbar = () => {
                             onClick={toggleDropdown}
                             className="cursor-pointer"
                         >
-                            {avatar && <img src={`http://localhost:8000${avatar}`} alt={username} width={100} height={50} />}
+                            {user && user.avatar !== undefined && <img src={`http://localhost:8000${user.avatar}`} alt={user.username} width={100} height={50} />}
                         </div>
                         {isDropdownOpen && (
                             <div className="absolute top-full right-0 mt-1 bg-white border rounded-md shadow-lg">
                                 <Link
-                                    to={`/mi_perfil/`}
+                                    to={`/updateUser/`}
                                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                 >
                                     Mi Perfil

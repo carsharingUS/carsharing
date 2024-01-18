@@ -1,4 +1,4 @@
-import { API } from "./AuthenticationService";
+import { API, authAPI } from "./AuthenticationService";
 
 export const getAllTravels = async  () => {
     const response = await API.get("/travels");
@@ -11,4 +11,10 @@ export const getTravel = async (origin: string | undefined, destination: string 
     }
     const response = await API.get(`travels/${origin}-${destination}`)
     return response.data;
+}
+
+export const getUserTravels =async () => {
+    const response = await authAPI.get("travels/my/travels/")
+    return response.data
+    
 }

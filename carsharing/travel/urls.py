@@ -10,5 +10,6 @@ urlpatterns = [
     path('<str:origin>-<str:destination>/', views.get_travel),
     path('edit/<int:pk>/', views.edit_travel),
     path('delete/<int:pk>/', views.delete_travel),
+    path("my/travels/", views.get_travels_by_user),
     
 ]

@@ -49,3 +49,11 @@ def delete_travel(request, pk):
         return Response(status=status.HTTP_204_NO_CONTENT)
     else:
         return Response({"detail": "No tienes permisos para borrar este viaje."},status=status.HTTP_401_UNAUTHORIZED)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_travels_by_user(request):
+    user = request.user
+    travels = Travel.objects.filter(host=user)
+    serializer = TravelSerializer(travels, many=True)
+    return Response(serializer.data)

@@ -20,7 +20,9 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.49.2",
     "react-hot-toast": "^2.4.1",
+    "react-icons": "^5.0.1",
     "react-router-dom": "^6.21.1",
+    "styled-components": "^6.1.8",
     "wouter": "^2.12.1",
     "zustand": "^4.4.7"
   },
