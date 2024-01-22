@@ -90,7 +90,7 @@ const SearchComponent = () => {
                         className="search-input"
                     />
                     {/* Fin del nuevo campo de fecha */}
-
+                
                     <motion.button
                         onClick={handleSearch}
                         whileHover={{ scale: 1.1 }}

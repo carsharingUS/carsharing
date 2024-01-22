@@ -4,6 +4,7 @@ import SearchComponent from "../components/home/Search";
 import Card from "../components/home/CardInfo";
 import AwesomeComponent from "../components/home/NuevoViajeBoton";
 import Footer from "../components/initialPage/Footer";
+import '../components/home/Card.css'
 
 const HomePage = () => {
   return (
