@@ -1,5 +1,5 @@
 
-
+/*
 export interface Travel {
     id?: number;
     host: string;
@@ -12,8 +12,8 @@ export interface Travel {
     stops: string;
     status: string;
 }
-
-/* export interface Travel {
+*/
+export interface Travel {
     id?: number;
     host: number;
     passengers?: number[];
@@ -24,19 +24,19 @@ export interface Travel {
     price: number;
     stops: string | null;
     status: 'programado' | 'en_curso' | 'completado';
-  } */
+}
 
 
 export interface User {
-        id?: number;
-        avatar: File | null;
-        username: string,
-        email: string;
-        name: string;
-        last_name: string;
-        phone: string;
-        sex: string;
-        description: string;
+    id?: number;
+    avatar: File | null;
+    username: string,
+    email: string;
+    name: string;
+    last_name: string;
+    phone: string;
+    sex: string;
+    description: string;
 };
 
 export interface Token {

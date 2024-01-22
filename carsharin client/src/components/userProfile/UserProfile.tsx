@@ -1,6 +1,6 @@
 import React, { ChangeEvent, HtmlHTMLAttributes, useEffect, useState } from 'react'
 import { useAuthStore } from "../../store/auth";
-import { Token, Travel } from "../../../Interfaces";
+import { Token, Travel } from "../../interfaces";
 import * as jwt_decode from 'jwt-decode';
 import { Link } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -33,7 +33,7 @@ const UserProfileComponent = () => {
     queryKey: ['user', id],
     queryFn: () => get_solo_user(id),
   })
-  
+
   useEffect(() => {
     if (user) {
       setStateName(user.name);
@@ -70,17 +70,35 @@ const UserProfileComponent = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    editProfileMut.mutate({
-      name: stateName,
-      last_name: stateLast,
-      avatar: image,
-      description: stateDescription,
-      phone: statePhone,
-      sex: stateSex,
-      username: user.username,
-      email: user.email
 
-    });
+    if (image !== null && image !== user.avatar){
+
+      editProfileMut.mutate({
+        name: stateName,
+        last_name: stateLast,
+        avatar: image,
+        description: stateDescription,
+        phone: statePhone,
+        sex: stateSex,
+        username: user.username,
+        email: user.email
+  
+      });
+      
+    }else{
+
+      editProfileMut.mutate({
+        name: stateName,
+        last_name: stateLast,
+        avatar: null,
+        description: stateDescription,
+        phone: statePhone,
+        sex: stateSex,
+        username: user.username,
+        email: user.email
+      });
+
+    }
   };
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -115,6 +133,9 @@ const UserProfileComponent = () => {
   if (isError) return toast.error("Error!")
   if (isLoading) return <Loader />
 
+  console.log(image)
+
+
   return (
 
     <div className='flex justify-center pt-[50px]'>
@@ -136,7 +157,6 @@ const UserProfileComponent = () => {
               </span>
               <div className="flex mt-4 md:mt-6">
                 <button onClick={() => setShow(false)} className="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Edit profile</button>
-
               </div>
             </div>
 
@@ -161,7 +181,7 @@ const UserProfileComponent = () => {
                         {travel.destination}
                       </th>
                       <th scope='row' className='px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white'>
-                        {travel.start_date}
+                        {travel.start_date.split("T")[0]}
                       </th>
                       <td className='px-4 py-3'>
                         <Link to={"/home"} className='p-2 cursor-pointer rounded-lg bg-gray-900 hover:bg-gray-700'>
@@ -196,21 +216,35 @@ const UserProfileComponent = () => {
                 <label className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'>
                   Sex
                 </label>
-                <input value={stateSex} onChange={(e) => setStateSex(e.target.value)} type="text" className='bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' placeholder='Sex' />
+                <select
+                  value={stateSex}
+                  onChange={(e) => setStateSex(e.target.value)}
+                  className='bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                >
+                  <option value="" disabled hidden>Select your sex</option>
+                  <option value="M">Male</option>
+                  <option value="W">Female</option>
+                  <option value="O">Other</option>
+                </select>
               </div>
 
               <div className='p-3'>
                 <label className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'>
                   Phone
                 </label>
-                <input value={statePhone} onChange={(e) => setStatePhone(e.target.value)} type="text" className='bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' placeholder='Phone' />
+                <input value={statePhone} onChange={(e) => setStatePhone(e.target.value)} type="text" className='bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' placeholder='+34 123345678' />
               </div>
 
               <div className='p-3'>
                 <label className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'>
                   Description
                 </label>
-                <input value={stateDescription} onChange={(e) => setStateDescription(e.target.value)} type="text" className='bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' placeholder='Description' />
+                <textarea
+                  value={stateDescription}
+                  onChange={(e) => setStateDescription(e.target.value)}
+                  className='bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                  placeholder='Description'
+                ></textarea>
               </div>
 
               <div className="sm:col-span-2 p-2">
@@ -233,9 +267,9 @@ const UserProfileComponent = () => {
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
                           d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                         ></path>
                       </svg>
