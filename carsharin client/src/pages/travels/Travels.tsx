@@ -3,7 +3,7 @@ import { getAllTravels } from "../../api/TravelService";
 import { Travel } from "../../Interfaces";
 import TravelCard from "../../components/travels/TravelCard";
 import Navbar from "../../components/home/Navbar";
-
+import "../../components/travels/TravelCard.css";
 const Travels = () => {
   const [travels, setTravels] = useState<Travel[]>([]);
 
@@ -23,7 +23,6 @@ const Travels = () => {
   return (
     <div>
       <Navbar />
-      <h1>Lista de Viajes</h1>
       <div
         style={{
           display: "flex",
@@ -33,11 +32,12 @@ const Travels = () => {
           margin: "16px",
         }}
       >
-        <ul>
+        <div className="text-title">Lista de Viajes</div>
+        <div className="container-card">
           {travels.map((travel: Travel) => (
             <TravelCard key={travel.id} travel={travel} />
           ))}
-        </ul>
+        </div>
       </div>
     </div>
   );

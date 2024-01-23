@@ -1,8 +1,18 @@
 import React, { ChangeEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createTravel } from "../../api/TravelService";
 import { toast } from "react-hot-toast";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import * as jwt_decode from "jwt-decode";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
+import "dayjs/locale/es";
+import { useAuthStore } from "../../store/auth";
+import { Token } from "../../Interfaces";
+import { get_solo_user } from "../../api/UserService";
+dayjs.locale("es");
 
 const TravelCreationPage = () => {
   const [origin, setOrigin] = useState<string>("");
@@ -16,11 +26,20 @@ const TravelCreationPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
+  const token: string = useAuthStore.getState().access;
+  const tokenDecoded: Token = jwt_decode.jwtDecode(token);
+  const id = tokenDecoded.user_id;
+
+  const { data: user } = useQuery({
+    queryKey: ["user", id],
+    queryFn: () => get_solo_user(id),
+  });
+
   const createTravelMutation = useMutation({
     mutationFn: createTravel,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
-      toast.success("Product created!");
+      queryClient.invalidateQueries({ queryKey: ["travels"] });
+      toast.success("Travel created!");
       navigate("/");
     },
     onError: () => {
@@ -31,7 +50,9 @@ const TravelCreationPage = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
     createTravelMutation.mutate({
+      host: id,
       origin: origin,
       destination: destination,
       start_date: start_date,
@@ -52,6 +73,10 @@ const TravelCreationPage = () => {
   const handlePriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newNumber = parseFloat(event.target.value);
     setPrice(isNaN(newNumber) ? 0 : newNumber);
+  };
+
+  const handleDateChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setStartDate(event.target.value);
   };
 
   return (
@@ -96,8 +121,8 @@ const TravelCreationPage = () => {
                   value={origin}
                   type="text"
                   onChange={handleOriginChange}
-                  name="name"
-                  id="name"
+                  name="origin"
+                  id="origin"
                   className="bg-gray-50 mb-4 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   placeholder="Calle Ejemplo, Ciudad Ejemplo, Provincia Ejemplo"
                 />
@@ -108,11 +133,11 @@ const TravelCreationPage = () => {
                   Destino
                 </label>
                 <input
-                  value={origin}
+                  value={destination}
                   type="text"
                   onChange={handleDestinationChange}
-                  name="name"
-                  id="name"
+                  name="destination"
+                  id="destination"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   placeholder="Calle Ejemplo, Ciudad Ejemplo, Provincia Ejemplo"
                 />
@@ -130,9 +155,21 @@ const TravelCreationPage = () => {
                   type="number"
                   name="price"
                   id="price"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  className="mb-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   placeholder="1,50€"
                 />
+                <label
+                  htmlFor="price"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Fecha
+                </label>
+                <input
+                  type="datetime-local"
+                  value={start_date}
+                  onChange={handleDateChange}
+                  className="search-input"
+                ></input>
               </div>
             </div>
             <button
@@ -151,7 +188,7 @@ const TravelCreationPage = () => {
                   clipRule="evenodd"
                 ></path>
               </svg>
-              Add new product
+              Crear viaje
             </button>
           </form>
         </div>

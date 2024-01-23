@@ -1,5 +1,5 @@
 import { API, authAPI } from "./AuthenticationService";
-import { Travel } from "../interfaces";
+import { Travel } from "../Interfaces"; 
 
 export const getAllTravels = async  () => {
     const response = await API.get("/travels");
