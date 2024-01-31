@@ -12,7 +12,7 @@ export const NAV_LINKS = [
 
 export const NAV_HOME_LINKS = [
   { href: "/", key: 'buscar', label: 'Buscar'},
-  { href: "/compartir_viaje", key: 'compartir', label: 'Crear viaje'},
+  { href: "/createTravel", key: 'compartir', label: 'Crear viaje'},
   { href: "/chat", key: 'chat', label: 'Chat'},
   { href: "/notificaciones", key: 'notificaciones', label: 'Notificaciones'},
   { href: "/mis_viajes", key: 'mis_viajes', label: 'Mis viajes'}

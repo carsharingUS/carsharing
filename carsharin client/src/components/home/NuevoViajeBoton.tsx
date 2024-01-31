@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import './NuevoViajeBoton.css';
+import React, { useState, useEffect } from "react";
+import "./NuevoViajeBoton.css";
+import { Link } from "react-router-dom";
 
 const AwesomeComponent = () => {
   const [scaleValue, setScaleValue] = useState(1);
@@ -7,30 +8,38 @@ const AwesomeComponent = () => {
   useEffect(() => {
     const handleScroll = () => {
       const windowHeight = window.innerHeight;
-      const component = document.querySelector('.awesome-component');
+      const component = document.querySelector(".awesome-component");
 
       if (component) {
         const componentTop = component.getBoundingClientRect().top;
-        const newScaleValue = Math.min(1.1, Math.max(1, 1 + (windowHeight - componentTop) / (windowHeight * 2)));
+        const newScaleValue = Math.min(
+          1.1,
+          Math.max(1, 1 + (windowHeight - componentTop) / (windowHeight * 2))
+        );
         setScaleValue(newScaleValue);
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
     handleScroll(); // Verificar visibilidad inicial
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
   return (
-    <div className={`awesome-component`} style={{ transform: `scale(${scaleValue})` }}>
+    <div
+      className={`awesome-component`}
+      style={{ transform: `scale(${scaleValue})` }}
+    >
       <div className="background" />
       <div className="content">
         <h2>¡Descubre la Aventura con Nosotros!</h2>
         <p>Explora nuevas rutas y conecta con personas increíbles.</p>
-        <button className="awesome-button">Crear Viaje</button>
+        <Link to="/createTravel">
+          <button className="awesome-button">Crear Viaje</button>
+        </Link>
       </div>
     </div>
   );

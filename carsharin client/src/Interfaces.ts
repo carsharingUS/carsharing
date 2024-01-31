@@ -15,7 +15,7 @@ export interface Travel {
 */
 export interface Travel {
     id?: number;
-    host?: number;
+    host?: User;
     passengers?: number[];
     origin: string;
     destination: string;
@@ -25,7 +25,6 @@ export interface Travel {
     stops: string | null;
     status: 'programado' | 'en_curso' | 'completado';
 }
-
 
 export interface User {
     id?: number;

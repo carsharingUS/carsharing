@@ -3,10 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createTravel } from "../../api/TravelService";
 import { toast } from "react-hot-toast";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import * as jwt_decode from "jwt-decode";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
 import { useAuthStore } from "../../store/auth";
@@ -34,6 +31,7 @@ const TravelCreationPage = () => {
     queryKey: ["user", id],
     queryFn: () => get_solo_user(id),
   });
+  console.log(user);
 
   const createTravelMutation = useMutation({
     mutationFn: createTravel,
@@ -52,7 +50,7 @@ const TravelCreationPage = () => {
     event.preventDefault();
 
     createTravelMutation.mutate({
-      host: id,
+      host: user,
       origin: origin,
       destination: destination,
       start_date: start_date,
@@ -147,13 +145,14 @@ const TravelCreationPage = () => {
                   htmlFor="price"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
-                  Price
+                  Precio
                 </label>
                 <input
                   value={price}
                   onChange={handlePriceChange}
                   type="number"
                   name="price"
+                  step="0.01"
                   id="price"
                   className="mb-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   placeholder="1,50€"

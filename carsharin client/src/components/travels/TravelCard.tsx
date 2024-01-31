@@ -7,7 +7,6 @@ import "./TravelCard.css";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
 import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone";
 dayjs.locale("es");
 dayjs.extend(utc);
 
@@ -16,24 +15,7 @@ interface Props {
 }
 
 const TravelCard: FC<Props> = ({ travel }) => {
-  const [host, setHost] = useState<User>();
-  const avatarUrl = `${baseURL}${host?.avatar}`;
-  const locatedDate = dayjs(travel.start_date)
-    .utc() // Convierte a UTC
-    .format("DD/MM/YYYY HH:mm");
-
-  useEffect(() => {
-    const fetchHost = async () => {
-      try {
-        const hostData = await getUser(travel.host);
-        setHost(hostData);
-      } catch (error) {
-        console.error("Error al obtener información del host:", error);
-      }
-    };
-
-    fetchHost();
-  }, [travel.host]);
+  const avatarUrl = `${baseURL}${travel.host?.avatar}`;
 
   return (
     <div className="courses-container">
@@ -62,7 +44,7 @@ const TravelCard: FC<Props> = ({ travel }) => {
               height: "40%",
             }}
           >
-            <i className="fas fa-chevron-right"></i> {host?.username}
+            <i className="fas fa-chevron-right"></i> {travel.host?.username}
           </a>
         </div>
         <div className="course-info">
@@ -73,7 +55,7 @@ const TravelCard: FC<Props> = ({ travel }) => {
           <h6>{travel.destination}</h6>
           <h2>Salida: {travel.origin}</h2>
           <h2>Duración estimada: {travel.estimated_duration}</h2>
-          <h2>Precio: {travel.price}</h2>
+          <h2>Precio: {travel.price} €</h2>
           <h2>Fecha: {dayjs(travel.start_date).format("DD/MM/YYYY HH:mm")}</h2>
           <div className="progress-text">
             <Typography sx={{ textTransform: "capitalize" }}>
