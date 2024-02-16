@@ -14,7 +14,7 @@ export interface Travel {
 }
 */
 export interface Travel {
-    id?: number;
+    id: number;
     host?: User;
     passengers?: number[];
     origin: string;

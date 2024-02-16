@@ -1,14 +1,11 @@
 import React, { ChangeEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createTravel } from "../../api/TravelService";
 import { toast } from "react-hot-toast";
-import * as jwt_decode from "jwt-decode";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
-import { useAuthStore } from "../../store/auth";
-import { Token } from "../../Interfaces";
-import { get_solo_user } from "../../api/UserService";
+import { getCurrentUser } from "../../utils";
 dayjs.locale("es");
 
 const TravelCreationPage = () => {
@@ -18,20 +15,11 @@ const TravelCreationPage = () => {
   const [estimated_duration, setEstimatedDuration] = useState<string>("");
   const [price, setPrice] = useState<number>(0);
   const [stops, setStops] = useState<string>("");
-  const [status, setStatus] = useState<string>("");
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const token: string = useAuthStore.getState().access;
-  const tokenDecoded: Token = jwt_decode.jwtDecode(token);
-  const id = tokenDecoded.user_id;
-
-  const { data: user } = useQuery({
-    queryKey: ["user", id],
-    queryFn: () => get_solo_user(id),
-  });
-  console.log(user);
+  const { data: user } = getCurrentUser();
 
   const createTravelMutation = useMutation({
     mutationFn: createTravel,

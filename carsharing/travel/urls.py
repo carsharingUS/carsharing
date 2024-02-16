@@ -10,6 +10,6 @@ urlpatterns = [
     path('<int:id>/', views.get_travel),
     path('edit/<int:id>/', views.edit_travel),
     path('delete/<int:id>/', views.delete_travel),
-    path("my/travels/", views.get_travels_by_user),
+    path("my_travels/", views.get_travels_by_user),
     
 ]

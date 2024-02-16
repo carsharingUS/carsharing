@@ -11,11 +11,11 @@ export const NAV_LINKS = [
 ];
 
 export const NAV_HOME_LINKS = [
-  { href: "/", key: 'buscar', label: 'Buscar'},
+  { href: "/travels", key: 'buscar', label: 'Buscar'},
   { href: "/createTravel", key: 'compartir', label: 'Crear viaje'},
   { href: "/chat", key: 'chat', label: 'Chat'},
   { href: "/notificaciones", key: 'notificaciones', label: 'Notificaciones'},
-  { href: "/mis_viajes", key: 'mis_viajes', label: 'Mis viajes'}
+  { href: "/my_travels", key: 'my_travels', label: 'Mis viajes'}
 ]
 
 export const NAV_HOME_LINKS_NO_LOGIN = [

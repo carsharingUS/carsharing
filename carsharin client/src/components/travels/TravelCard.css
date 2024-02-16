@@ -15,7 +15,7 @@
     width: 60%;
 }
 
-.courses-container {
+.travels-container {
     align-items: center;
     display: flex;
     width: 100%;
@@ -30,7 +30,7 @@
     align-items: flex-end;
 }
 
-.course {
+.travel {
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 10px 10px rgba(0, 0, 0, 0.2);
@@ -41,27 +41,27 @@
     overflow: hidden;
     width: 100%;
 }
-.course h6 {
+.travel h6 {
 	margin: 0;
 	letter-spacing: 1px;
 	text-transform: uppercase;
 }
 
-.course h2 {
+.travel h2 {
 	letter-spacing: 1px;
 	margin: 10px 0;
 	opacity: 0.9;
 }
 
-.course-preview {
+.travel-preview {
 	background-color: #2A265F;
 	color: #fff;
 	padding: 30px;
     min-width: 150px;
 }
 
-.course-preview a {
-	color: #fff;
+.travel-host {
+	color: #ececec;
 	display: inline-block;
 	font-size: 14px;
 	opacity: 0.6;
@@ -69,7 +69,7 @@
 	text-decoration: none;
 }
 
-.course-info {
+.travel-info {
 	padding: 30px;
 	position: relative;
 	width: 100%;
