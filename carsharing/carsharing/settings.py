@@ -37,6 +37,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "channels",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -51,6 +52,7 @@ INSTALLED_APPS = [
     "travel",
     "chat",
     "rating",
+    
 ]
 
 MIDDLEWARE = [
@@ -82,8 +84,15 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "carsharing.wsgi.application"
+#WSGI_APPLICATION = "carsharing.wsgi.application"
+ASGI_APPLICATION = "carsharing.asgi.application"
 
+# Esto es en pre-produccion con channels, cuando se lance cambiar a produccion, mirar guia
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -194,3 +203,5 @@ SIMPLE_JWT = {
 
     'JTI_CLAIM': 'jti',
 }
+
+

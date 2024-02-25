@@ -8,7 +8,7 @@ import { useAuthStore } from "../../store/auth";
 import * as jwt_decode from 'jwt-decode';
 import { useQuery } from "@tanstack/react-query";
 import { get_solo_user } from "../../api/UserService";
-import { Token } from "../../Interfaces";
+import { Token } from "../../interfaces";
 
 
 const Navbar = () => {
