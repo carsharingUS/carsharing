@@ -8,6 +8,8 @@ import Travels from './pages/travels/Travels';
 import UserProfile from './pages/UserProfile';
 import TravelCreationPage from './pages/travels/TravelCreationPage';
 import MessagePage from './pages/MessagePage';
+import MyTravels from './pages/travels/MyTravels';
+import TravelDetails from './pages/travels/TravelDetails';
 
 
 function App() {
@@ -26,6 +28,8 @@ function App() {
 
           {/* RUTAS PARA VIAJES */}
           <Route path='travels' element={<Travels />} />
+          <Route path='travels/:travelId' element={<TravelDetails />} />
+          <Route path='my_travels' element={<MyTravels />} />
 
           {/* RUTAS PARA USUARIO */}
           <Route path='updateUser' element={<UserProfile />} />

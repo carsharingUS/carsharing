@@ -3,6 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createTravel } from "../../api/TravelService";
 import { toast } from "react-hot-toast";
+import dayjs from "dayjs";
+import "dayjs/locale/es";
+import { getCurrentUser } from "../../utils";
+dayjs.locale("es");
 
 const TravelCreationPage = () => {
   const [origin, setOrigin] = useState<string>("");
@@ -11,16 +15,17 @@ const TravelCreationPage = () => {
   const [estimated_duration, setEstimatedDuration] = useState<string>("");
   const [price, setPrice] = useState<number>(0);
   const [stops, setStops] = useState<string>("");
-  const [status, setStatus] = useState<string>("");
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
+  const { data: user } = getCurrentUser();
+
   const createTravelMutation = useMutation({
     mutationFn: createTravel,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
-      toast.success("Product created!");
+      queryClient.invalidateQueries({ queryKey: ["travels"] });
+      toast.success("Travel created!");
       navigate("/");
     },
     onError: () => {
@@ -31,7 +36,9 @@ const TravelCreationPage = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
     createTravelMutation.mutate({
+      host: user,
       origin: origin,
       destination: destination,
       start_date: start_date,
@@ -52,6 +59,10 @@ const TravelCreationPage = () => {
   const handlePriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newNumber = parseFloat(event.target.value);
     setPrice(isNaN(newNumber) ? 0 : newNumber);
+  };
+
+  const handleDateChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setStartDate(event.target.value);
   };
 
   return (
@@ -96,8 +107,8 @@ const TravelCreationPage = () => {
                   value={origin}
                   type="text"
                   onChange={handleOriginChange}
-                  name="name"
-                  id="name"
+                  name="origin"
+                  id="origin"
                   className="bg-gray-50 mb-4 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   placeholder="Calle Ejemplo, Ciudad Ejemplo, Provincia Ejemplo"
                 />
@@ -108,11 +119,11 @@ const TravelCreationPage = () => {
                   Destino
                 </label>
                 <input
-                  value={origin}
+                  value={destination}
                   type="text"
                   onChange={handleDestinationChange}
-                  name="name"
-                  id="name"
+                  name="destination"
+                  id="destination"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   placeholder="Calle Ejemplo, Ciudad Ejemplo, Provincia Ejemplo"
                 />
@@ -122,17 +133,30 @@ const TravelCreationPage = () => {
                   htmlFor="price"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
-                  Price
+                  Precio
                 </label>
                 <input
                   value={price}
                   onChange={handlePriceChange}
                   type="number"
                   name="price"
+                  step="0.01"
                   id="price"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  className="mb-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   placeholder="1,50€"
                 />
+                <label
+                  htmlFor="price"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Fecha
+                </label>
+                <input
+                  type="datetime-local"
+                  value={start_date}
+                  onChange={handleDateChange}
+                  className="search-input"
+                ></input>
               </div>
             </div>
             <button
@@ -151,7 +175,7 @@ const TravelCreationPage = () => {
                   clipRule="evenodd"
                 ></path>
               </svg>
-              Add new product
+              Crear viaje
             </button>
           </form>
         </div>

@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { getAllTravels } from "../../api/TravelService";
+import React from "react";
+import { getUserTravels } from "../../api/TravelService";
 import { Travel } from "../../Interfaces";
 import TravelCard from "../../components/travels/TravelCard";
 import Navbar from "../../components/home/Navbar";
 import "../../components/travels/TravelCard.css";
-import Loader from "../../components/Loader";
-import toast from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import Loader from "../../components/Loader";
 
-const Travels = () => {
+const MyTravels = () => {
   const { data, isError, isLoading } = useQuery({
     queryKey: ["travels"],
-    queryFn: getAllTravels,
+    queryFn: getUserTravels,
   });
 
   if (isError) return toast.error("Error!");
@@ -40,4 +40,4 @@ const Travels = () => {
   );
 };
 
-export default Travels;
+export default MyTravels;

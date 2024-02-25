@@ -1,122 +1,82 @@
-import React, { FC, useEffect, useState } from "react";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
+import React, { FC } from "react";
+import { Travel } from "../../Interfaces";
 import Typography from "@mui/material/Typography";
-import { Button, CardActionArea, CardActions } from "@mui/material";
-import { Travel, User } from "../../Interfaces";
-import { getUser } from "../../api/UserService";
 import { baseURL } from "../../constants";
-import "./TravelCard.css";
+import dayjs from "dayjs";
+import "dayjs/locale/es";
+import utc from "dayjs/plugin/utc";
+import { CardActionArea } from "@mui/material";
+dayjs.locale("es");
+dayjs.extend(utc);
+
 interface Props {
   travel: Travel;
 }
 
 const TravelCard: FC<Props> = ({ travel }) => {
-  const [host, setHost] = useState<User>();
-  const avatarUrl = `${baseURL}${host?.avatar}`;
+  const avatarUrl = `${baseURL}${travel.host?.avatar}`;
 
-  useEffect(() => {
-    const fetchHost = async () => {
-      try {
-        const hostData = await getUser(travel.host);
-        console.log("correcto");
-        setHost(hostData);
-      } catch (error) {
-        console.error("Error al obtener información del host:", error);
-      }
-    };
-
-    fetchHost();
-  }, [travel.host]);
+  // const handleDeleteTravel = async (id: number) => {
+  //   try {
+  //     await deleteTravel(id);
+  //   } catch (error) {
+  //     console.error("Error al eliminar el viaje:", error);
+  //   }
+  // };
 
   return (
-    <div className="couses-container">
-      <div className="course">
-        <div className="course-preview">
-          <h6>Course</h6>
-          <h2>JavaScript Fundamentals</h2>
-          <a href="#">
-            View all chapters <i className="fas fa-chevron-right"></i>
-          </a>
-        </div>
-        <div className="course-info">
-          <div className="progress-container">
-            <div className="progress"></div>
-            <span className="progress-text">6/9 Challenges</span>
+    <div className="travels-container">
+      <CardActionArea href={`/travels/${travel.id}`}>
+        <div className="travel">
+          <div className="travel-preview">
+            <div className="rounded-image">
+              <img
+                src={avatarUrl}
+                alt="Foto de perfil"
+                style={{
+                  width: "80px",
+                  height: "80px",
+                  borderRadius: "50%",
+                  margin: "auto",
+                  display: "block",
+                }}
+              />
+            </div>
+            <div
+              className="travel-host"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "flex-end",
+                height: "40%",
+              }}
+            >
+              <div className="fas fa-chevron-right"></div>
+              {travel.host?.username}
+            </div>
           </div>
-          <h6>Chapter 4</h6>
-          <h2>Callbacks & Closures</h2>
-          <button className="btn">Continue</button>
+          <div className="travel-info">
+            <div className="progress-container">
+              <div className="progress"></div>
+              <span className="progress-text">6/9 Plazas libres</span>
+            </div>
+            <h6>{travel.destination}</h6>
+            <h2>Salida: {travel.origin}</h2>
+            <h2>Duración estimada: {travel.estimated_duration}</h2>
+            <h2>Precio: {travel.price} €</h2>
+            <h2>
+              Fecha: {dayjs(travel.start_date).format("DD/MM/YYYY HH:mm")}
+            </h2>
+            <div className="progress-text">
+              <Typography sx={{ textTransform: "capitalize" }}>
+                {travel.status}
+              </Typography>
+            </div>
+          </div>
         </div>
-      </div>
+      </CardActionArea>
     </div>
-    // <Card
-    //   sx={{
-    //     maxHeight: 400,
-    //     maxWidth: 800,
-    //     margin: "16px auto",
-    //     display: "flex",
-    //     borderRadius: "15px",
-    //     backgroundColor: "rgba(115, 173, 179, 0.8)",
-    //   }}
-    // >
-    //   <div
-    //     style={{
-    //       display: "flex",
-    //       flexDirection: "column",
-    //       alignItems: "center",
-    //       justifyContent: "center",
-    //       margin: "16px",
-    //       width: "100px", // Ajusta el ancho deseado
-    //     }}
-    //   >
-    //     <CardMedia
-    //       component="img"
-    //       height="60" // Establece la altura deseada
-    //       image={avatarUrl}
-    //       alt="Foto de perfil"
-    //       sx={{
-    //         width: "60px",
-    //         borderRadius: "50%",
-    //         marginBottom: "8px",
-    //       }}
-    //     />
-    //     <Typography variant="body2" color="text.secondary">
-    //       {host?.username}
-    //     </Typography>
-    //   </div>
-    //   <CardActionArea>
-    //     <CardContent>
-    //       <Typography gutterBottom variant="h5" component="div">
-    //         Origen: {travel.origin}
-    //       </Typography>
-    //       <Typography variant="body2" color="text.secondary">
-    //         Destino: {travel.destination}
-    //       </Typography>
-    //       <Typography variant="body2" color="text.secondary">
-    //         Fecha del viaje: {travel.start_date}
-    //       </Typography>
-    //       <Typography variant="body2" color="text.secondary">
-    //         Duración estimada: {travel.estimated_duration}
-    //       </Typography>
-    //       <Typography variant="body2" color="text.secondary">
-    //         Precio por plaza: {travel.price}
-    //       </Typography>
-    //       <Typography variant="body2" color="text.secondary">
-    //         Paradas: {travel.stops}
-    //       </Typography>
-    //       <Typography variant="body2" color="text.secondary">
-    //         Estado: {travel.status}
-    //       </Typography>
-    //     </CardContent>
-    //   </CardActionArea>
-    //   <CardActions>
-    //     <Button classNameName="" size="small" color="primary">
-    //       Reservar plaza
-    //     </Button>
-    //   </CardActions>
-    // </Card>
   );
 };
 

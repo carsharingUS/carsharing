@@ -1,4 +1,4 @@
-import { User } from '../interfaces';
+import { User } from '../Interfaces';
 import { API, authAPI } from './AuthenticationService';
 
 export const registerRequest = async (username: string, email: string, name: string, last_name: string, password: string) => {
