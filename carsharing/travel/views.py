@@ -6,48 +6,74 @@ from .models import Travel
 from .filters import TravelFilter
 from .serializers import TravelSerializer
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
 from geopy.geocoders import Nominatim
 from django.http import JsonResponse
 
+import requests
+import polyline
 import folium
-from django.shortcuts import render,redirect
-from . import getRoute
+from django.shortcuts import render
 
 
 def showmap(request):
     return render(request,'showmap.html')
 
-def showroute(request,lat1,long1,lat2,long2):
-    figure = folium.Figure()
-    lat1,long1,lat2,long2=float(lat1),float(long1),float(lat2),float(long2)
-    route=getRoute.get_route(long1,lat1,long2,lat2)
-    m = folium.Map(location=[(route['start_point'][0]),
-                                 (route['start_point'][1])], 
-                       zoom_start=10)
-    m.add_to(figure)
-    folium.PolyLine(route['route'],weight=8,color='blue',opacity=0.6).add_to(m)
-    folium.Marker(location=route['start_point'],icon=folium.Icon(icon='play', color='green')).add_to(m)
-    folium.Marker(location=route['end_point'],icon=folium.Icon(icon='stop', color='red')).add_to(m)
-    figure.render()
-    context={'map':figure}
+def get_route(locations):
+    loc = ";".join([f"{lon},{lat}" for lon, lat in locations])
+    url = "http://router.project-osrm.org/route/v1/driving/"
+    r = requests.get(url + loc) 
+    if r.status_code != 200:
+        return {}
+    res = r.json()   
+    routes = polyline.decode(res['routes'][0]['geometry'])
+    start_point = [res['waypoints'][0]['location'][1], res['waypoints'][0]['location'][0]]
+    end_point = [res['waypoints'][-1]['location'][1], res['waypoints'][-1]['location'][0]]
+    distance = res['routes'][0]['distance']
+    duration = res['routes'][0]['duration']
     
-    return render(request,'showroute.html',context)
+    out = {
+        'route': routes,
+        'start_point': start_point,
+        'end_point': end_point,
+        'distance': distance,
+        'duration': duration,
+    }
+    
+    return out
+
+def show_route(request, coords):
+    coords_list = coords.replace(';',',').split(',')
+    locations = [(float(coords_list[i+1]), float(coords_list[i])) for i in range(0, len(coords_list), 2)]
+    route = get_route(locations)
+    
+    figure = folium.Figure()
+    m = folium.Map(location=route['start_point'], zoom_start=10)
+    m.add_to(figure)
+    print(route['start_point'])
+    for i, location in enumerate(locations[1:-1]):
+        lat, lon = location
+        folium.Marker(location=(lon, lat), icon=folium.Icon(icon='circle', color='blue')).add_to(m)
+        folium.Marker(location=(lon, lat), icon=folium.DivIcon(html=f'<div style="font-size: 12; color: blue;">{i+1}</div>')).add_to(m)
+    
+    folium.PolyLine(route['route'], weight=8, color='blue', opacity=0.6).add_to(m)
+    folium.Marker(location=route['start_point'], icon=folium.Icon(icon='play', color='green')).add_to(m)
+    folium.Marker(location=route['end_point'], icon=folium.Icon(icon='stop', color='red')).add_to(m)
+    figure.render()
+    
+    context = {'map': figure}
+    return render(request, 'showroute.html', context)
+
+
+
 
 def obtener_latitud_longitud(request):
-    # Obtener el parámetro de la solicitud GET
     lugar = request.GET.get('lugar', None)
 
-    # Verificar si se proporcionó un lugar
     if lugar:
-        # Inicializar el geocodificador de Nominatim
         geolocalizador = Nominatim(user_agent="geoapi")
-
-        # Obtener la ubicación (latitud y longitud) del lugar proporcionado
         try:
             location = geolocalizador.geocode(lugar)
             if location:
-                # Devolver la latitud y longitud como respuesta JSON
                 return JsonResponse({'latitud': location.latitude, 'longitud': location.longitude})
             else:
                 return JsonResponse({'error': 'No se pudo encontrar la ubicación proporcionada'}, status=400)

@@ -12,7 +12,6 @@ urlpatterns = [
     path('edit/<int:id>/', views.edit_travel),
     path('delete/<int:id>/', views.delete_travel),
     path("my_travels/", views.get_travels_by_user),
-    path('<str:lat1>,<str:long1>,<str:lat2>,<str:long2>',views.showroute,name='showroute'),
-    path('',views.showmap,name='showmap'),
+    path('showroute/<str:coords>/', views.show_route, name='showroute'),
     path('obtener_latitud_longitud/', views.obtener_latitud_longitud, name='obtener_latitud_longitud'),
 ]

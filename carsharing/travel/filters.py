@@ -6,12 +6,9 @@ class TravelFilter(django_filters.FilterSet):
     start_date = django_filters.DateFilter(field_name='start_date', method='filter_start_date')
     origin = django_filters.CharFilter(field_name='origin', lookup_expr='icontains')
     destination = django_filters.CharFilter(field_name='destination', lookup_expr='icontains')
-    
-    def filter_start_date(self, queryset, name, value):
-        # Convertir el valor de la fecha a una cadena en formato 'YYYY-MM-DD'
-        date_str = value.strftime('%Y-%m-%d')
 
-        # Filtrar por la parte de fecha de start_date
+    def filter_start_date(self, queryset, name, value):
+        date_str = value.strftime('%Y-%m-%d')
         return queryset.filter(**{'{}__date'.format(name): date_str})
 
     class Meta:
