@@ -13,6 +13,13 @@ export interface Travel {
     status: string;
 }
 */
+export interface Message {
+    conversation: number;
+    sender: number;
+    sender_username: string;
+    content: string;
+  }
+
 export interface Travel {
     id: number;
     host?: User;

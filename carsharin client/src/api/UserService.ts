@@ -37,6 +37,11 @@ export const get_solo_user = async (id: number) => {
 
 }
 
+export const getUserByUsername = async (username: string) => {
+    const response = await authAPI.get(`/user/get/${username}/`)
+    return response.data
+}
+
 export const getUser = async (id: number | undefined) => {
     if(!id){
         throw new Error('Compruebe el id')
@@ -44,3 +49,15 @@ export const getUser = async (id: number | undefined) => {
     const response = await API.get(`/user/${id}`)
     return response.data;
 }
+
+export const createChatRoom = async (user1Id: number, user2Id: number) => {
+    try {
+        const response = await API.post('/chat/create_chat_room/', {
+            user1_id: user1Id,
+            user2_id: user2Id
+        });
+        return response.data;
+    } catch (error) {
+        throw new Error('Error al crear la sala de chat: ' + error.message);
+    }
+};

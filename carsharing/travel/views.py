@@ -7,6 +7,54 @@ from .filters import TravelFilter
 from .serializers import TravelSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
+from geopy.geocoders import Nominatim
+from django.http import JsonResponse
+
+import folium
+from django.shortcuts import render,redirect
+from . import getRoute
+
+
+def showmap(request):
+    return render(request,'showmap.html')
+
+def showroute(request,lat1,long1,lat2,long2):
+    figure = folium.Figure()
+    lat1,long1,lat2,long2=float(lat1),float(long1),float(lat2),float(long2)
+    route=getRoute.get_route(long1,lat1,long2,lat2)
+    m = folium.Map(location=[(route['start_point'][0]),
+                                 (route['start_point'][1])], 
+                       zoom_start=10)
+    m.add_to(figure)
+    folium.PolyLine(route['route'],weight=8,color='blue',opacity=0.6).add_to(m)
+    folium.Marker(location=route['start_point'],icon=folium.Icon(icon='play', color='green')).add_to(m)
+    folium.Marker(location=route['end_point'],icon=folium.Icon(icon='stop', color='red')).add_to(m)
+    figure.render()
+    context={'map':figure}
+    
+    return render(request,'showroute.html',context)
+
+def obtener_latitud_longitud(request):
+    # Obtener el parámetro de la solicitud GET
+    lugar = request.GET.get('lugar', None)
+
+    # Verificar si se proporcionó un lugar
+    if lugar:
+        # Inicializar el geocodificador de Nominatim
+        geolocalizador = Nominatim(user_agent="geoapi")
+
+        # Obtener la ubicación (latitud y longitud) del lugar proporcionado
+        try:
+            location = geolocalizador.geocode(lugar)
+            if location:
+                # Devolver la latitud y longitud como respuesta JSON
+                return JsonResponse({'latitud': location.latitude, 'longitud': location.longitude})
+            else:
+                return JsonResponse({'error': 'No se pudo encontrar la ubicación proporcionada'}, status=400)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Por favor, proporcione un lugar'}, status=400)
 
 class TravelsFiltered(generics.ListAPIView):
     serializer_class = TravelSerializer

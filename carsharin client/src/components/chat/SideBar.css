@@ -1,0 +1,38 @@
+.sidebar {
+  width: 250px;
+  background-color: #ededed;
+  border-right: 1px solid #ccc;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.search-bar {
+  padding: 15px;
+}
+
+.recent-users {
+  padding: 15px;
+}
+
+.recent-users h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.recent-users ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.recent-users li {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.recent-users li:hover {
+  background-color: #f5f5f5;
+}

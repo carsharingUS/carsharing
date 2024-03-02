@@ -16,6 +16,12 @@ def get_user_by_id(request, id):
     seriaizer = UserSerializer(user, many=False)
     return Response(seriaizer.data)
 
+@api_view(['GET'])
+def get_user_by_username(request, username):
+    user = User.objects.get(username=username)
+    serializer = UserSerializer(user, many=False)
+    return Response(serializer.data)
+
 @api_view(['PUT'])
 def edit_profile(request, username):
 
