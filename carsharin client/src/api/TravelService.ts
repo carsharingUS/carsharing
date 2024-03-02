@@ -5,9 +5,13 @@ import { Travel } from "../Interfaces";
 /**
  * TODO: Hacer el getTravels aplicando filtros. Por ejemplo: origen, destino, fecha...
  */
-export const getAllTravels = async  () => {
-    const response = await API.get("/travels");
-    return response.data;
+export const getTravels = async (params) => {
+    try {
+        const response = await API.get("/travels", { params });
+        return response.data;
+    } catch (error) {
+        throw new Error("Error al obtener los viajes filtrados.");
+    }
 };
 
 export const getTravel = async (id: string) => {

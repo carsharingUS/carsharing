@@ -1,16 +1,27 @@
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from .models import Travel
+from .filters import TravelFilter
 from .serializers import TravelSerializer
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 
-# Create your views here.
-@api_view(['GET'])
-def get_travels(request):
-    travels = Travel.objects.all()
-    seriaizer = TravelSerializer(travels, many=True)
-    return Response(seriaizer.data)
+class TravelsFiltered(generics.ListAPIView):
+    serializer_class = TravelSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = TravelFilter
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Travel.objects.all()
+        
+        if user.is_authenticated:
+            if 'host' in self.request.query_params and str(self.request.query_params['host']) == str(user.id):
+                queryset = queryset.filter(host=user)
+        
+        return queryset
 
 @api_view(['GET'])
 def get_travel(request, id):

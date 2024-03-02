@@ -1,7 +1,6 @@
 import React, { FC } from "react";
 import { Travel } from "../../Interfaces";
 import Typography from "@mui/material/Typography";
-import { baseURL } from "../../constants";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
 import utc from "dayjs/plugin/utc";
@@ -14,7 +13,7 @@ interface Props {
 }
 
 const TravelCard: FC<Props> = ({ travel }) => {
-  const avatarUrl = `${baseURL}${travel.host?.avatar}`;
+  const avatarUrl = "travel.host?.avatar";
 
   // const handleDeleteTravel = async (id: number) => {
   //   try {

@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "travel",
     "chat",
     "rating",
+    "django_filters",
 ]
 
 MIDDLEWARE = [
