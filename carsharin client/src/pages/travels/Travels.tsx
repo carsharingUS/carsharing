@@ -6,6 +6,7 @@ import Navbar from "../../components/home/Navbar";
 import "../../components/travels/TravelCard.css";
 import Loader from "../../components/Loader";
 import toast from "react-hot-toast";
+import NoTravelFound from "../../components/travels/NoTravelFound";
 
 const Travels = () => {
   const [travels, setTravels] = useState([]);
@@ -52,9 +53,13 @@ const Travels = () => {
       >
         <div className="text-title">Lista de Viajes</div>
         <div className="container-card">
-          {travels.map((travel: Travel) => (
-            <TravelCard key={travel.id} travel={travel} />
-          ))}
+          {travels.length === 0 ? (
+            <NoTravelFound />
+          ) : (
+            travels.map((travel: Travel) => (
+              <TravelCard key={travel.id} travel={travel} />
+            ))
+          )}
         </div>
       </div>
     </div>
