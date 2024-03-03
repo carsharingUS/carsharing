@@ -68,7 +68,7 @@ const TravelCreationPage = () => {
   return (
     <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center">
       <div className="relative p-4 w-full max-w-2xl h-full md:h-auto">
-        <div className="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
+        <div className="relative p-4 bg-grey rounded-lg shadow dark:bg-gray-800 sm:p-5">
           <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
               Create Travel
@@ -155,7 +155,7 @@ const TravelCreationPage = () => {
                   type="datetime-local"
                   value={start_date}
                   onChange={handleDateChange}
-                  className="search-input"
+                  className="bg-gray-50 border border-gray-300 text-gray-400 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 ></input>
               </div>
             </div>

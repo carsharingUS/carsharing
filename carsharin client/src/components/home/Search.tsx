@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import "./SearchComponent.css";
-import { baseURL } from "../../constants";
 import { useNavigate } from "react-router-dom";
 
 const SearchComponent = () => {
