@@ -1,4 +1,4 @@
-import { Message, User } from "../interfaces";
+import { Message, User } from "../Interfaces";
 import { API, authAPI } from "./AuthenticationService";
 
 // Send a get request to the api endpoint to get the message of the logged in user

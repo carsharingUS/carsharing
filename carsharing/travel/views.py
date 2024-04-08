@@ -38,6 +38,7 @@ def get_route(locations):
         'distance': distance,
         'duration': duration,
     }
+    print(out)
     
     return out
 
@@ -45,7 +46,7 @@ def show_route(request, coords):
     coords_list = coords.replace(';',',').split(',')
     locations = [(float(coords_list[i+1]), float(coords_list[i])) for i in range(0, len(coords_list), 2)]
     route = get_route(locations)
-    
+    print(route)
     figure = folium.Figure()
     m = folium.Map(location=route['start_point'], zoom_start=10)
     m.add_to(figure)
@@ -59,28 +60,20 @@ def show_route(request, coords):
     folium.Marker(location=route['start_point'], icon=folium.Icon(icon='play', color='green')).add_to(m)
     folium.Marker(location=route['end_point'], icon=folium.Icon(icon='stop', color='red')).add_to(m)
     figure.render()
-    
+    mapa_html = m._repr_html_()
     context = {'map': figure}
     return render(request, 'showroute.html', context)
 
-
-
-
-def obtener_latitud_longitud(request):
-    lugar = request.GET.get('lugar', None)
-
-    if lugar:
-        geolocalizador = Nominatim(user_agent="geoapi")
-        try:
-            location = geolocalizador.geocode(lugar)
-            if location:
-                return JsonResponse({'latitud': location.latitude, 'longitud': location.longitude})
-            else:
-                return JsonResponse({'error': 'No se pudo encontrar la ubicación proporcionada'}, status=400)
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
-    else:
-        return JsonResponse({'error': 'Por favor, proporcione un lugar'}, status=400)
+def obtener_latitud_longitud(request, place):
+    geolocalizador = Nominatim(user_agent="geoapi")
+    try:
+        location = geolocalizador.geocode(place)
+        if location:
+            return JsonResponse({'latitude': location.latitude, 'longitude': location.longitude})
+        else:
+            return JsonResponse({'error': 'No se pudo encontrar la ubicación proporcionada'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 class TravelsFiltered(generics.ListAPIView):
     serializer_class = TravelSerializer

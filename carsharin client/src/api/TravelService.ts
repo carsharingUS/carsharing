@@ -19,7 +19,6 @@ export const getTravel = async (id: string) => {
         throw new Error('Compruebe el origen y destino')
     }
     const response = await API.get(`travels/${id}`)
-    console.log(response.data)
     return response.data
 }
 
@@ -42,4 +41,12 @@ export const createTravel = async (data: Partial<Travel>) => {
 
 export const deleteTravel = async (id: number) => {
     return authAPI.delete(`travels/delete/${id}`)
+}
+
+export const getCoordinates = async (location: string) => {
+    if(!location){
+        throw new Error('Compruebe la localización')
+    }
+    const response = await API.get(`travels/obtener_latitud_longitud/${location}`)
+    return response.data
 }
