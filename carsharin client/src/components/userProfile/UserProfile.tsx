@@ -127,7 +127,7 @@ const UserProfileComponent = () => {
   if (isError) return toast.error("Error!");
   if (isLoading) return <Loader />;
 
-  console.log(image);
+
 
   return (
     <div className="flex justify-center pt-[50px]">

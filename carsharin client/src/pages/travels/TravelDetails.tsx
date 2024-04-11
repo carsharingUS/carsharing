@@ -1,15 +1,22 @@
 import React, { useState, useEffect } from "react";
 import Loader from "../../components/Loader";
 import { getCoordinates, getTravel } from "../../api/TravelService";
-import MapComponent from "../../components/map/MapComponent";
 import { useParams } from "react-router-dom";
 import { Travel } from "../../Interfaces";
+import L from "leaflet";
+import "leaflet-routing-machine";
+import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
+import "../travels/TravelMap.css";
+import "leaflet/dist/leaflet.css";
 
 const TravelDetails = () => {
   const { travelId } = useParams();
   const [travel, setTravel] = useState<Travel>();
   const [isLoading, setIsLoading] = useState(true);
-  const [route, setRoute] = useState(null);
+  const [isMapLoading, setIsMapLoading] = useState(false); // Nuevo estado para controlar la carga del mapa
+  const [isActive, setIsActive] = useState<boolean>(false);
+  const [origin, setOrigin] = useState<{ geocode: [number, number]; popUp: string } | null>(null);
+  const [destination, setDestination] = useState<{ geocode: [number, number]; popUp: string } | null>(null);
 
   const fetchTravel = async () => {
     try {
@@ -26,6 +33,7 @@ const TravelDetails = () => {
   useEffect(() => {
     fetchTravel();
   }, [travelId]);
+  
 
   const showMap = async () => {
     const travelData = await fetchTravel();
@@ -33,22 +41,43 @@ const TravelDetails = () => {
 
     const originCoords = await getCoordinates(travelData.origin);
     const destinationCoords = await getCoordinates(travelData.destination);
+
     if (!originCoords || !destinationCoords) return;
 
-    try {
-      const response = await fetch(
-        `http://localhost:8000/travels/route/${originCoords.latitude},${originCoords.longitude};${destinationCoords.latitude},${destinationCoords.longitude}`
-      );
-      if (response.ok) {
-        const routeData = await response.json();
-        setRoute(routeData);
-      } else {
-        console.error("Error al mostrar el mapa:", response.statusText);
-      }
-    } catch (error) {
-      console.error("Error al mostrar el mapa:", error);
-    }
+    setOrigin({ geocode: [originCoords.latitude, originCoords.longitude], popUp: "Inicio" });
+    setDestination({ geocode: [destinationCoords.latitude, destinationCoords.longitude], popUp: "Destino" });
+
+    setIsMapLoading(true); // Cambiar el estado para indicar que el mapa está cargando
+
+    setTimeout(() => {
+      setIsActive(true); // Cambiar el estado para mostrar el mapa después de 1 segundo (simulando carga)
+      setIsMapLoading(false); // Cambiar el estado para indicar que el mapa ha terminado de cargar
+    }, 1000); // Simular carga durante 1 segundo
   };
+
+  useEffect(() => {
+    if (!isActive) return;
+
+    const map = L.map("map");
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "&copy; <a href='https://openstreetmaps.org/copyright'>OpenStreetMap</a>",
+    }).addTo(map);
+
+    const waypoints = [
+      L.latLng(origin?.geocode[0], origin?.geocode[1]),
+      L.latLng(destination?.geocode[0], destination?.geocode[1]),
+    ];
+
+    L.Routing.control({
+      waypoints,
+      routeWhileDragging: true,
+      language: "es",
+    }).addTo(map);
+
+    return () => {
+      map.remove();
+    };
+  }, [isActive, origin, destination]);
 
   if (isLoading) return <Loader />;
   if (!travel) return <div>No se encontró el viaje.</div>;
@@ -59,7 +88,8 @@ const TravelDetails = () => {
       <p>Origen: {travel.origin}</p>
       <p>Destino: {travel.destination}</p>
       <button onClick={showMap}>Mostrar mapa en caja</button>
-      {route && <MapComponent route={route} />}
+      {isMapLoading && <Loader />} {/* Mostrar loader mientras se carga el mapa */}
+      {isActive && <div id="map"></div>} {/* Mostrar el mapa una vez cargado */}
     </div>
   );
 };

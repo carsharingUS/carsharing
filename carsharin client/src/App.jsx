@@ -10,7 +10,7 @@ import TravelCreationPage from './pages/travels/TravelCreationPage';
 import MessagePage from './pages/MessagePage';
 import MyTravels from './pages/travels/MyTravels';
 import TravelDetails from './pages/travels/TravelDetails';
-import MapView from './components/map/MapView';
+
 
 function App() {
   return (
@@ -30,11 +30,10 @@ function App() {
           <Route path='travels' element={<Travels />} />
           <Route path='travels/:travelId' element={<TravelDetails />} />
           <Route path='my_travels' element={<MyTravels />} />
-          <Route path='createTravel' element={<TravelCreationPage />} />
-          <Route path='map' element={<MapView />} />
 
           {/* RUTAS PARA USUARIO */}
           <Route path='updateUser' element={<UserProfile />} />
+          <Route path='createTravel' element={<TravelCreationPage />} />
 
           {/* RUTA PARA CHAT */}
 
