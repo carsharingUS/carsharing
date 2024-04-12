@@ -1,12 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import "./SearchComponent.css";
 import { useNavigate } from "react-router-dom";
+import { OpenStreetMapProvider } from 'leaflet-geosearch';
 
 const SearchComponent = () => {
   const [origin, setOrigin] = useState("");
+  const [originSuggestions, setOriginSuggestions] = useState<Array<{ label: string }>>([]);
   const [destination, setDestination] = useState("");
-  const [start_date, setstart_date] = useState("");
+  const [destinationSuggestions, setDestinationSuggestions] = useState<Array<{ label: string }>>([]);
+  const [start_date, setStartDate] = useState("");
+  const [typingTimeout, setTypingTimeout] = useState(0); // Nuevo estado para rastrear el tiempo de espera
   const navigate = useNavigate();
 
   const handleSearch = () => {
@@ -18,6 +22,40 @@ const SearchComponent = () => {
 
     navigate(`/travels?${queryParams.toString()}`);
   };
+
+  // Función para buscar sugerencias de direcciones
+  const searchAddresses = async (query, setSuggestions) => {
+    const provider = new OpenStreetMapProvider({
+      params: {
+        'accept-language': 'es',
+        countrycodes: 'es',
+      },
+    });
+    const results = await provider.search({ query });
+    console.log(results)
+    setSuggestions(results);
+  };
+
+  // Función para manejar la selección de una sugerencia
+  const handleSuggestionClick = (suggestion, setField, setSuggestions) => {
+    setField(suggestion.label);
+    setSuggestions([]);
+  };
+
+  // Función para manejar el cambio en el campo de búsqueda
+  const handleInputChange = (value, setField, setSuggestions) => {
+    setField(value);
+    // Reiniciar el tiempo de espera
+    clearTimeout(typingTimeout);
+    // Establecer un nuevo tiempo de espera antes de realizar la búsqueda
+    setTypingTimeout(setTimeout(() => searchAddresses(value, setSuggestions), 200));
+  };
+
+  // Limpiar las sugerencias cuando el campo de búsqueda está vacío
+  useEffect(() => {
+    if (origin === "") setOriginSuggestions([]);
+    if (destination === "") setDestinationSuggestions([]);
+  }, [origin, destination]);
 
   return (
     <div className="search-section">
@@ -51,16 +89,30 @@ const SearchComponent = () => {
           >
             Desde:
           </motion.label>
-          <motion.input
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            type="text"
-            placeholder="Origen"
-            value={origin}
-            onChange={(e) => setOrigin(e.target.value)}
-            className="search-input"
-          />
+          <div className="search-input-container">
+            <input
+              type="text"
+              placeholder="Origen"
+              value={origin}
+              onChange={(e) => handleInputChange(e.target.value, setOrigin, setOriginSuggestions)}
+              className="search-input"
+            />
+            {originSuggestions.length > 0 && (
+              <div className={`suggestions`}>
+                {originSuggestions.slice(0, 5).map((suggestion, index) => (
+                  <div
+                    key={index}
+                    className="suggestion"
+                    onClick={() =>
+                      handleSuggestionClick(suggestion, setOrigin, setOriginSuggestions)
+                    }
+                  >
+                    {suggestion?.label}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
           <motion.label
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -69,18 +121,30 @@ const SearchComponent = () => {
           >
             Hasta:
           </motion.label>
-          <motion.input
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.8 }}
-            type="text"
-            placeholder="Destino"
-            value={destination}
-            onChange={(e) => setDestination(e.target.value)}
-            className="search-input"
-          />
-
-          {/* Nuevo campo para la fecha */}
+          <div className="search-input-container">
+            <input
+              type="text"
+              placeholder="Destino"
+              value={destination}
+              onChange={(e) => handleInputChange(e.target.value, setDestination, setDestinationSuggestions)}
+              className="search-input"
+            />
+            {destinationSuggestions.length > 0 && (
+              <div className={`suggestions`}>
+                {destinationSuggestions.slice(0, 5).map((suggestion, index) => (
+                  <div
+                    key={index}
+                    className="suggestion"
+                    onClick={() =>
+                      handleSuggestionClick(suggestion, setDestination, setDestinationSuggestions)
+                    }
+                  >
+                    {suggestion?.label}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
           <motion.label
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -89,17 +153,12 @@ const SearchComponent = () => {
           >
             Fecha del Viaje:
           </motion.label>
-          <motion.input
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 1.2 }}
+          <input
             type="date"
             value={start_date}
-            onChange={(e) => setstart_date(e.target.value)}
+            onChange={(e) => setStartDate(e.target.value)}
             className="search-input"
           />
-          {/* Fin del nuevo campo de fecha */}
-
           <motion.button
             onClick={handleSearch}
             whileHover={{ scale: 1.1 }}
