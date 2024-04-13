@@ -6,15 +6,20 @@ import { toast } from "react-hot-toast";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
 import { getCurrentUser } from "../../utils";
+import "./TravelCreationPage.css"
+import { OpenStreetMapProvider } from 'leaflet-geosearch';
 dayjs.locale("es");
 
 const TravelCreationPage = () => {
   const [origin, setOrigin] = useState<string>("");
+  const [originSuggestions, setOriginSuggestions] = useState<Array<{ label: string }>>([]);
   const [destination, setDestination] = useState<string>("");
+  const [destinationSuggestions, setDestinationSuggestions] = useState<Array<{ label: string }>>([]);
   const [start_date, setStartDate] = useState<string>("");
   const [estimated_duration, setEstimatedDuration] = useState<string>("");
   const [price, setPrice] = useState<number>(0);
   const [stops, setStops] = useState<string>("");
+  const [typingTimeout, setTypingTimeout] = useState<number>(0); // Nuevo estado para rastrear el tiempo de espera
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -30,6 +35,7 @@ const TravelCreationPage = () => {
     },
     onError: () => {
       toast.error("Error!");
+      console.log(onerror)
       navigate("/");
     },
   });
@@ -50,10 +56,18 @@ const TravelCreationPage = () => {
 
   const handleOriginChange = (event: ChangeEvent<HTMLInputElement>) => {
     setOrigin(event.target.value);
+    // Reiniciar el tiempo de espera
+    clearTimeout(typingTimeout);
+    // Establecer un nuevo tiempo de espera antes de realizar la búsqueda
+    setTypingTimeout(setTimeout(() => searchAddresses(event.target.value, setOriginSuggestions), 200));
   };
 
   const handleDestinationChange = (event: ChangeEvent<HTMLInputElement>) => {
     setDestination(event.target.value);
+    // Reiniciar el tiempo de espera
+    clearTimeout(typingTimeout);
+    // Establecer un nuevo tiempo de espera antes de realizar la búsqueda
+    setTypingTimeout(setTimeout(() => searchAddresses(event.target.value, setDestinationSuggestions), 200));
   };
 
   const handlePriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,123 +79,159 @@ const TravelCreationPage = () => {
     setStartDate(event.target.value);
   };
 
+  // Función para buscar sugerencias de direcciones
+  const searchAddresses = async (query, setSuggestions) => {
+    const provider = new OpenStreetMapProvider({
+      params: {
+        'accept-language': 'es',
+        countrycodes: 'es',
+      },
+    });
+    const results = await provider.search({ query });
+    setSuggestions(results);
+  };
+
+
+  const handleOriginSuggestionClick = (suggestion) => {
+    setOrigin(suggestion.label);
+    setOriginSuggestions([]);
+  };
+
+  const handleDestinationSuggestionClick = (suggestion) => {
+    setDestination(suggestion.label);
+    setDestinationSuggestions([]);
+  };
+
   return (
-    <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="relative p-4 w-full max-w-2xl h-full md:h-auto">
-        <div className="relative p-4 bg-grey rounded-lg shadow dark:bg-gray-800 sm:p-5">
-          <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Create Travel
-            </h3>
-            <Link
-              to="/"
-              className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
-              data-modal-toggle="defaultModal"
+    <div className="crear-viaje-overlay">
+      <div className="crear-viaje-modal">
+        <div className="crear-viaje-header">
+          <h3 className="crear-viaje-title">Create Travel</h3>
+          <Link
+            to="/"
+            className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+            data-modal-toggle="defaultModal"
+          >
+            <svg
+              aria-hidden="true"
+              className="w-5 h-5"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <svg
-                aria-hidden="true"
-                className="w-5 h-5"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                  clipRule="evenodd"
-                ></path>
-              </svg>
-              <span className="sr-only">Close modal</span>
-            </Link>
-          </div>
-          <form onSubmit={handleSubmit}>
-            <div className="grid gap-4 mb-4 sm:grid-cols-2">
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Origen
-                </label>
-                <input
-                  value={origin}
-                  type="text"
-                  onChange={handleOriginChange}
-                  name="origin"
-                  id="origin"
-                  className="bg-gray-50 mb-4 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  placeholder="Calle Ejemplo, Ciudad Ejemplo, Provincia Ejemplo"
-                />
-                <label
-                  htmlFor="name"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Destino
-                </label>
-                <input
-                  value={destination}
-                  type="text"
-                  onChange={handleDestinationChange}
-                  name="destination"
-                  id="destination"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  placeholder="Calle Ejemplo, Ciudad Ejemplo, Provincia Ejemplo"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="price"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Precio
-                </label>
-                <input
-                  value={price}
-                  onChange={handlePriceChange}
-                  type="number"
-                  name="price"
-                  step="0.01"
-                  id="price"
-                  className="mb-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  placeholder="1,50€"
-                />
-                <label
-                  htmlFor="price"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Fecha
-                </label>
-                <input
-                  type="datetime-local"
-                  value={start_date}
-                  onChange={handleDateChange}
-                  className="bg-gray-50 border border-gray-300 text-gray-400 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                ></input>
-              </div>
-            </div>
-            <button
-              type="submit"
-              className="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-            >
-              <svg
-                className="mr-1 -ml-1 w-6 h-6"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-                  clipRule="evenodd"
-                ></path>
-              </svg>
-              Crear viaje
-            </button>
-          </form>
+              <path
+                fillRule="evenodd"
+                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                clipRule="evenodd"
+              ></path>
+            </svg>
+            <span className="sr-only">Close modal</span>
+          </Link>
         </div>
+        <form className="search-form" onSubmit={handleSubmit}>
+          <div className="input-group">
+            <label htmlFor="origin" className="label">
+              Origen
+            </label>
+            <input
+              value={origin}
+              type="text"
+              onChange={handleOriginChange}
+              name="origin"
+              id="origin"
+              className="input"
+              placeholder="Calle Ejemplo, Ciudad Ejemplo, Provincia Ejemplo"
+            />
+            {originSuggestions.length > 0 && (
+              <div className="suggestions-container">
+                <div className="suggestions">
+                  {originSuggestions.slice(0, 5).map((suggestion, index) => (
+                    <div
+                      key={index}
+                      className="suggestion"
+                      onClick={() => handleOriginSuggestionClick(suggestion)}
+                    >
+                      {suggestion?.label}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="input-group">
+            <label htmlFor="destination" className="label">
+              Destino
+            </label>
+            <input
+              value={destination}
+              type="text"
+              onChange={handleDestinationChange}
+              name="destination"
+              id="destination"
+              className="input"
+              placeholder="Calle Ejemplo, Ciudad Ejemplo, Provincia Ejemplo"
+            />
+            {destinationSuggestions.length > 0 && (
+              <div className="suggestions-container">
+                <div className="suggestions">
+                  {destinationSuggestions.slice(0, 5).map((suggestion, index) => (
+                    <div
+                      key={index}
+                      className="suggestion"
+                      onClick={() => handleDestinationSuggestionClick(suggestion)}
+                    >
+                      {suggestion?.label}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="input-group">
+            <label htmlFor="price" className="label">
+              Precio
+            </label>
+            <input
+              value={price}
+              onChange={handlePriceChange}
+              type="number"
+              name="price"
+              step="0.01"
+              id="price"
+              className="input"
+              placeholder="1,50€"
+            />
+          </div>
+          <div className="input-group">
+            <label htmlFor="start_date" className="label">
+              Fecha
+            </label>
+            <input
+              type="datetime-local"
+              value={start_date}
+              onChange={handleDateChange}
+              className="input"
+            />
+          </div>
+          <button type="submit" className="crear-viaje-button">
+            <svg
+              className="mr-1 -ml-1 w-6 h-6"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                clipRule="evenodd"
+              ></path>
+            </svg>
+            Crear viaje
+          </button>
+        </form>
       </div>
     </div>
-  );
+  );  
 };
 
 export default TravelCreationPage;

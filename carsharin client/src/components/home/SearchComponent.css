@@ -76,7 +76,7 @@
     }
   }
 
-  .suggestions {
+  .suggestions-home {
     position: absolute;
     width: 100%;
     background-color: rgba(255, 255, 255, 0.8);
@@ -90,11 +90,11 @@
     right: 0;
     max-height: 200px; /* Set a maximum height for the suggestions container */
     overflow-y: auto; /* Add a scrollbar for the y-axis */
-    scrollbar-width: none; /* Para cambiar el scrollbar */
-    scrollbar-color: #ddd transparent; 
+    scrollbar-width: thin; /* Para cambiar el scrollbar */
+    scrollbar-color: #c4c4c4 transparent; 
   }
 
-  .suggestion {
+  .suggestion-home {
     padding: 8px 12px;
     border: 1px solid #ddd;
     border-top: none;
@@ -107,11 +107,11 @@
     background-color: #27ae60;
   }
 
-  .suggestion:hover {
-    background-color: #f5f5f5;
+  .suggestion-home:hover {
+    background-color: #e9e7e7;
   }
   
-  .suggestion:first-child {
+  .suggestion-home:first-child {
     border-top: 1px solid #ddd;
   }
   

@@ -10,8 +10,8 @@ class Travel(models.Model):
 
     host = models.ForeignKey(User, on_delete=models.CASCADE, related_name='hosts_travel', null=True)
     passengers = models.ManyToManyField(User, related_name='travels_as_passenger', blank=True)
-    origin = models.CharField(max_length=50)
-    destination = models.CharField(max_length=50)
+    origin = models.CharField(max_length=250)
+    destination = models.CharField(max_length=250)
 
     start_date = models.DateTimeField(auto_now_add=False)
 

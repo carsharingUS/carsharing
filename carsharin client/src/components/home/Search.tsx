@@ -32,7 +32,6 @@ const SearchComponent = () => {
       },
     });
     const results = await provider.search({ query });
-    console.log(results)
     setSuggestions(results);
   };
 
@@ -98,11 +97,11 @@ const SearchComponent = () => {
               className="search-input"
             />
             {originSuggestions.length > 0 && (
-              <div className={`suggestions`}>
+              <div className={`suggestions-home`}>
                 {originSuggestions.slice(0, 5).map((suggestion, index) => (
                   <div
                     key={index}
-                    className="suggestion"
+                    className="suggestion-home"
                     onClick={() =>
                       handleSuggestionClick(suggestion, setOrigin, setOriginSuggestions)
                     }
@@ -130,11 +129,11 @@ const SearchComponent = () => {
               className="search-input"
             />
             {destinationSuggestions.length > 0 && (
-              <div className={`suggestions`}>
+              <div className={`suggestions-home`}>
                 {destinationSuggestions.slice(0, 5).map((suggestion, index) => (
                   <div
                     key={index}
-                    className="suggestion"
+                    className="suggestion-home"
                     onClick={() =>
                       handleSuggestionClick(suggestion, setDestination, setDestinationSuggestions)
                     }
