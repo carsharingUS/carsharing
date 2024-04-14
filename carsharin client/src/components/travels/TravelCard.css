@@ -19,7 +19,7 @@
     align-items: center;
     display: flex;
     width: 100%;
-}
+  }
 
 .rounded-image {
     width: 100%;
@@ -28,7 +28,7 @@
     object-fit: cover;
     justify-content: center;
     align-items: flex-end;
-}
+  }
 
 .travel {
     background-color: #fff;
@@ -40,7 +40,7 @@
     margin: 20px;
     overflow: hidden;
     width: 100%;
-}
+  }
 .travel h6 {
 	margin: 0;
 	letter-spacing: 1px;
@@ -54,58 +54,59 @@
 }
 
 .travel-preview {
-	background-color: #2A265F;
-	color: #fff;
-	padding: 30px;
+    background-color: #2a265f;
+    color: #fff;
+    padding: 30px;
     min-width: 150px;
-}
+  }
 
 .travel-host {
-	color: #ececec;
-	display: inline-block;
-	font-size: 14px;
-	opacity: 0.6;
-	margin-top: 30px;
-	text-decoration: none;
-}
+    color: #ececec;
+    display: inline-block;
+    font-size: 14px;
+    opacity: 0.6;
+    margin-top: 30px;
+    text-decoration: none;
+  }
 
 .travel-info {
-	padding: 30px;
-	position: relative;
-	width: 100%;
-}
+    padding: 30px;
+    position: relative;
+    width: 100%;
+  }
 
-.progress-container {
+  .progress-container {
     position: absolute;
-    top: 3vw;
-    right: 2vw;
+    top: 20px; /* Ajustar posición vertical */
+    right: 20px; /* Ajustar posición horizontal */
     text-align: right;
     width: 20%;
-}
-
-.progress {
-    background-color: #ddd;
-    border-radius: 3px;
-    height: 0.5vw;
+  }
+  
+  .progress {
+    background-color: #6f42c1; /* Color morado */
+    border-radius: 10px; /* Ajustar redondez */
+    height: 10px; /* Ajustar grosor */
     width: 100%;
-}
-
-.progress::after {
-    border-radius: 3px;
-    background-color: #2A265F;
+  }
+  
+  .progress::after {
+    border-radius: 10px; /* Ajustar redondez */
+    background-color: #2a265f; /* Color de progreso */
     content: '';
     position: absolute;
     top: 0;
     left: 0;
-    height: 0.5vw;
-    width: 66%;
-}
-
-.progress-text {
+    height: 100%;
+    width: 66%; /* Ajustar progreso */
+  }
+  
+  .progress-text {
     font-size: 0.8em;
     opacity: 0.6;
     letter-spacing: 1px;
-}
+    margin-top: 10px; /* Ajustar espacio con el texto */
+  }
 
 .btn {
     background-color: #2A265F;

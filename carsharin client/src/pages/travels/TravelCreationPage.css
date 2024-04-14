@@ -14,7 +14,7 @@
   
   .crear-viaje-modal {
     width: 90%; /* Ancho modificado */
-    height: 80vh; /* Altura modificada */
+    height: 85vh; /* Altura modificada */
     max-width: 1200px; /* Ancho máximo */
     background-color: #ffffff;
     padding: 20px;
@@ -150,5 +150,35 @@
     font-size: 16px;
     color: #333333;
     margin-bottom: 10px;
+  }
+
+  .seat-input-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .seat-icons-container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .seat-icons {
+    display: flex;
+  }
+  
+  .seat-icon {
+    margin-right: 10px;
+    margin-bottom: 10px; /* Espacio entre los iconos de los asientos */
+    cursor: pointer;
+  }
+
+  .seat-icon svg {
+    opacity: 0.5; /* Color apagado */
+    transition: opacity 0.3s;
+  }
+  
+  .seat-icon:hover svg,
+  .seat-icon.selected svg {
+    opacity: 1; /* Color más claro */
   }
   

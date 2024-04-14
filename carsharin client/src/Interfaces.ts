@@ -31,6 +31,7 @@ export interface Travel {
     price: number;
     stops: string | null;
     status: 'programado' | 'en_curso' | 'completado';
+    total_seats: number;
 }
 
 export interface User {

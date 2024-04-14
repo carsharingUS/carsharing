@@ -82,6 +82,8 @@ const TravelDetails = () => {
   if (isLoading) return <Loader />;
   if (!travel) return <div>No se encontró el viaje.</div>;
 
+  console.log(travel)
+
   return (
     <div>
       <h1>Detalles del viaje</h1>

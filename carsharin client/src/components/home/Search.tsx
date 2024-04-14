@@ -92,6 +92,7 @@ const SearchComponent = () => {
             <input
               type="text"
               placeholder="Origen"
+              autoComplete="off"
               value={origin}
               onChange={(e) => handleInputChange(e.target.value, setOrigin, setOriginSuggestions)}
               className="search-input"
@@ -124,6 +125,7 @@ const SearchComponent = () => {
             <input
               type="text"
               placeholder="Destino"
+              autoComplete="off"
               value={destination}
               onChange={(e) => handleInputChange(e.target.value, setDestination, setDestinationSuggestions)}
               className="search-input"

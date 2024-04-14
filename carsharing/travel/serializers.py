@@ -5,6 +5,7 @@ from .models import Travel
 
 class TravelSerializer(serializers.ModelSerializer):
     host = UserSerializer(read_only=True)
+    passengers = UserSerializer(many=True, read_only=True)
     class Meta:
         model = Travel
-        fields = ['id', 'host', 'origin', 'destination', 'start_date', 'estimated_duration', 'price', 'stops', 'status']
+        fields = ['id', 'host', 'passengers' ,'origin', 'destination', 'start_date', 'estimated_duration', 'price', 'stops', 'status', 'total_seats']

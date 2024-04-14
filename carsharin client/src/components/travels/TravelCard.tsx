@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import "dayjs/locale/es";
 import utc from "dayjs/plugin/utc";
 import { CardActionArea } from "@mui/material";
+import LinearProgress from "@mui/material/LinearProgress"; // Importa el componente de progreso lineal
 dayjs.locale("es");
 dayjs.extend(utc);
 
@@ -15,13 +16,8 @@ interface Props {
 const TravelCard: FC<Props> = ({ travel }) => {
   const avatarUrl = "travel.host?.avatar";
 
-  // const handleDeleteTravel = async (id: number) => {
-  //   try {
-  //     await deleteTravel(id);
-  //   } catch (error) {
-  //     console.error("Error al eliminar el viaje:", error);
-  //   }
-  // };
+  // Calcula el porcentaje de ocupación de plazas
+  const occupancyPercentage = ((travel.total_seats) / 4) * 100;
 
   return (
     <div className="travels-container">
@@ -57,9 +53,18 @@ const TravelCard: FC<Props> = ({ travel }) => {
           </div>
           <div className="travel-info">
             <div className="progress-container">
-              <div className="progress"></div>
-              <span className="progress-text">6/9 Plazas libres</span>
+              <LinearProgress variant="determinate" value={occupancyPercentage} 
+              sx={{
+                height: 10, // Grosor de la barra
+                borderRadius: 10, // Redondez de las esquinas
+                "& .MuiLinearProgress-bar": {
+                  backgroundColor: "#2a265f", // Color de la barra
+                  borderRadius: 10, // Redondez de la barra
+                },
+              }}/>
+              <span className="progress-text">{travel.total_seats} Plazas libres</span>
             </div>
+            <br />
             <h6>{travel.destination}</h6>
             <h2>Salida: {travel.origin}</h2>
             <h2>Duración estimada: {travel.estimated_duration}</h2>
