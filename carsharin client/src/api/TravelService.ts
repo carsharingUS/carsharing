@@ -35,7 +35,7 @@ export const createTravel = async (data: Partial<Travel>) => {
     formData.append("estimated_duration", data.estimated_duration || "")
     formData.append("price", data.price?.toString() || "")
     formData.append("stops", data.stops || "")
-    formData.append("total_seats", data.seats?.toString() || "")
+    formData.append("total_seats", data.total_seats?.toString() || "")
     
     await authAPI.post('travels/create/', formData)
 };
