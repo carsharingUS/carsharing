@@ -28,14 +28,23 @@ const TravelDetails = () => {
   const [selectedSeats, setSelectedSeats] = useState<number>(0); // Estado para almacenar la cantidad de plazas seleccionadas
   const [typingTimeout, setTypingTimeout] = useState<number>(0); // Nuevo estado para rastrear el tiempo de espera+
   const [intermedio, setIntermedio] = useState<string>("");
+  const [intermedioCoordenadas, setIntermedioCoordenadas] = useState<{ geocode: [number, number]; popUp: string } | null>(null);
   const [intermedioSuggestions, setIntermedioSuggestions] = useState<Array<{ label: string }>>([]);
+  const [isIntermedioTyping, setIsIntermedioTyping] = useState(false);
+
 
   const handleIntermedioChange = (event: ChangeEvent<HTMLInputElement>) => {
     setIntermedio(event.target.value);
+    setIsIntermedioTyping(true);
     // Reiniciar el tiempo de espera
     clearTimeout(typingTimeout);
     // Establecer un nuevo tiempo de espera antes de realizar la búsqueda
     setTypingTimeout(setTimeout(() => searchAddresses(event.target.value, setIntermedioSuggestions), 200));
+  };
+
+  const handleUpdateMap = () => {
+    setIsIntermedioTyping(false); // Reinicia el estado que indica si el usuario está escribiendo en el campo de Estación intermedia
+    showMap(); // Llama a la función para mostrar el mapa
   };
 
   // Función para buscar sugerencias de direcciones
@@ -51,7 +60,7 @@ const TravelDetails = () => {
   };
 
   const handleIntermedioSuggestionClick = (suggestion) => {
-    setOrigin(suggestion.label);
+    setIntermedio(suggestion.label);
     setIntermedioSuggestions([]);
   };
 
@@ -106,12 +115,22 @@ const TravelDetails = () => {
 
       const originCoords = await getCoordinates(travelData.origin);
       const destinationCoords = await getCoordinates(travelData.destination);
+  
+      if (intermedio !== ""){
+        const intermedioCoords2 = await getCoordinates(intermedio);
+
+        if (!intermedioCoords2) return;
+
+        setIntermedioCoordenadas({ geocode: [intermedioCoords2.latitude, intermedioCoords2.longitude], popUp: "Estación intermedia"})
+
+      }
 
       if (!originCoords || !destinationCoords) return;
 
       setOrigin({ geocode: [originCoords.latitude, originCoords.longitude], popUp: "Inicio" });
       setDestination({ geocode: [destinationCoords.latitude, destinationCoords.longitude], popUp: "Destino" });
 
+      
       setIsMapLoading(true);
       setShowMapContainer(true); // Mostrar el contenedor del mapa
 
@@ -130,21 +149,52 @@ const TravelDetails = () => {
       attribution: "&copy; <a href='https://openstreetmaps.org/copyright'>OpenStreetMap</a>",
     }).addTo(map);
 
-    const waypoints = [
-      L.latLng(origin?.geocode[0], origin?.geocode[1]),
-      L.latLng(destination?.geocode[0], destination?.geocode[1]),
-    ];
+    
 
-    L.Routing.control({
-      waypoints,
-      routeWhileDragging: true,
-      language: "es",
-    }).addTo(map);
+    if(intermedioCoordenadas === null && origin !== null && destination !== null){
+
+      // Define los puntos de origen, destino e intermedio
+      const waypointsOriginal = [
+        L.latLng(origin?.geocode[0], origin?.geocode[1]),
+        L.latLng(destination?.geocode[0], destination?.geocode[1]),
+      ];
+      
+
+      L.Routing.control({
+        waypoints: waypointsOriginal,
+        routeWhileDragging: false,
+        draggableWaypoints: false, 
+        addWaypoints: false,
+        language: "es",
+        lineOptions: {
+          styles: [{ color: 'blue', opacity: 0.6, weight: 4 }]
+        }
+      }).addTo(map);
+
+    }else if(intermedioCoordenadas !== null && origin !== null && destination !== null){
+
+      const waypointsNuevo = [
+        L.latLng(origin?.geocode[0], origin?.geocode[1]),
+        L.latLng(intermedioCoordenadas?.geocode[0], intermedioCoordenadas?.geocode[1]),
+        L.latLng(destination?.geocode[0], destination?.geocode[1]),
+      ];
+
+      L.Routing.control({
+        waypoints: waypointsNuevo,
+        routeWhileDragging: false,
+        draggableWaypoints: false, 
+        addWaypoints: false,
+        language: "es",
+        lineOptions: {
+          styles: [{ color: 'red', opacity: 0.6, weight: 4 }]
+        }
+      }).addTo(map);
+    }
 
     return () => {
       map.remove();
     };
-  }, [isActive, origin, destination]);
+  }, [isActive, origin, destination, intermedioCoordenadas]);
 
   const handleRequestTravel = () => {
     // Implementa la lógica para solicitar plaza en el viaje
@@ -154,7 +204,8 @@ const TravelDetails = () => {
   if (!travel || !user) return <div>No se encontró el viaje o el usuario.</div>;
 
   const isCurrentUserOwner = user.id === travel.host?.id;
-
+  console.log(intermedio)
+  
   return (
     <div className="travel-details-container" style={{ padding: "20px 20px 50px" }}>
       <h1 className="travel-details-title">Detalles del viaje</h1>
@@ -221,7 +272,9 @@ const TravelDetails = () => {
 
     <label className="travel-details-label">
               Estación intermedia (opcional):
+            
     </label>
+    
     <input
               value={intermedio}
               type="text"
@@ -230,8 +283,14 @@ const TravelDetails = () => {
               autoComplete="off"
               id="intermedio"
               className="input"
+              style={{ width: "80%" }} // Ajusta el valor del ancho aquí
               placeholder="Calle Ejemplo, Ciudad Ejemplo, Provincia Ejemplo"
             />
+            {isActive && showMapContainer && isIntermedioTyping && ( // Mostrar el botón solo cuando el usuario está escribiendo y el mapa está abierto
+      <button className="update-map-button" onClick={handleUpdateMap}>
+        Actualizar mapa
+      </button>
+    )}
     {intermedioSuggestions.length > 0 && (
               <div className="suggestions-container">
                 <div className="suggestions">
