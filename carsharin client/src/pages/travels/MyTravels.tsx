@@ -13,7 +13,6 @@ const MyTravels = () => {
     queryKey: ["travels"],
     queryFn: getUserTravels,
   });
-
   if (isError) return toast.error("Error!");
   if (isLoading) return <Loader />;
 

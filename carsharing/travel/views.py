@@ -14,17 +14,18 @@ import polyline
 import folium
 from django.shortcuts import render
 
+def get_route(request, locations):
+    data = [tuple(map(float, item.split(','))) for item in locations.split(';')]
+    result = map_route(data)
+    return JsonResponse(result)
 
-def showmap(request):
-    return render(request,'showmap.html')
-
-def get_route(locations):
+def map_route(locations):
     loc = ";".join([f"{lon},{lat}" for lon, lat in locations])
     url = "http://router.project-osrm.org/route/v1/driving/"
     r = requests.get(url + loc) 
     if r.status_code != 200:
         return {}
-    res = r.json()   
+    res = r.json()  
     routes = polyline.decode(res['routes'][0]['geometry'])
     start_point = [res['waypoints'][0]['location'][1], res['waypoints'][0]['location'][0]]
     end_point = [res['waypoints'][-1]['location'][1], res['waypoints'][-1]['location'][0]]
@@ -37,14 +38,16 @@ def get_route(locations):
         'end_point': end_point,
         'distance': distance,
         'duration': duration,
+        'waypoints': res['waypoints'],
     }
-    print(out)
+    #print(out)
     
     return out
 
 def show_route(request, coords):
     coords_list = coords.replace(';',',').split(',')
     locations = [(float(coords_list[i+1]), float(coords_list[i])) for i in range(0, len(coords_list), 2)]
+    print(locations)
     route = get_route(locations)
     print(route)
     figure = folium.Figure()
