@@ -32,6 +32,9 @@ export interface Travel {
     stops: string | null;
     status: 'programado' | 'en_curso' | 'completado';
     total_seats: number;
+    clasificacion_origen?: string; // Campo opcional para clasificación del origen
+    clasificacion_destino?: string; // Campo opcional para clasificación del destino
+    mejor_opcion?:boolean;
 }
 
 export interface User {

@@ -51,3 +51,33 @@ export const getCoordinates = async (location: string) => {
     const response = await API.get(`travels/obtener_latitud_longitud/${location}`)
     return response.data
 }
+
+export const getRoute = async (origin: string, destination: string) => {
+    if (!origin || !destination) {
+      throw new Error('Comprueba las ubicaciones de origen y destino');
+    }
+  
+    const url = `http://localhost:8000/travels/route/${encodeURIComponent(origin)}/${encodeURIComponent(destination)}`;
+  
+    try {
+      const response = await API.get(url);
+      return response.data;
+    } catch (error) {
+      console.error('Error al obtener la ruta:', error);
+      throw error;
+    }
+  };
+
+
+
+
+export const getDistanceSearchUser = async (origen: string, destino: string, start_date: string) => {
+  try{
+    const response = await authAPI.get(`travels/distancia_origen_destino_search/${encodeURIComponent(origen)}/${encodeURIComponent(destino)}/${encodeURIComponent(start_date)}`);
+    
+    return response.data
+  }catch(error){
+    console.error('Error a devolver los viajes mas cercanos: ', error)
+    return null;
+  }
+}

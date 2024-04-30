@@ -1,6 +1,7 @@
 from django.db import models
 from user.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.gis.db import models
 
 class Travel(models.Model):
     STATUS_CHOICES = [
@@ -13,6 +14,9 @@ class Travel(models.Model):
     passengers = models.ManyToManyField(User, related_name='travels_as_passenger', blank=True)
     origin = models.CharField(max_length=250)
     destination = models.CharField(max_length=250)
+
+    origin_coords = models.PointField(geography=True, blank=True)
+    destination_coords = models.PointField(geography=True, blank=True)
 
     start_date = models.DateTimeField(auto_now_add=False)
 

@@ -4,28 +4,120 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from .models import Travel
 from .filters import TravelFilter
-from .serializers import TravelSerializer
+from .serializers import TravelSerializer, NearTravelSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from geopy.geocoders import Nominatim
+from geopy.distance import geodesic
 from django.http import JsonResponse
+from django.contrib.gis.geos import Point
+from django.contrib.gis.db.models.functions import Distance
 
 import requests
 import polyline
 import folium
 from django.shortcuts import render
+from datetime import datetime, timedelta
 
-def get_route(request, locations):
-    data = [tuple(map(float, item.split(','))) for item in locations.split(';')]
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def buscar_viajes_cercanos(request, origen, destino, fecha):
+  
+    # Convertir la fecha pasada como parámetro a un objeto datetime
+    fecha_obj = datetime.strptime(fecha, '%Y-%m-%d')
+
+    origin_latitude, origin_longitude = obtener_latitud_longitud2(origen)
+    destination_latitude, destination_longitude = obtener_latitud_longitud2(destino)
+
+    # Crear objetos Point con las coordenadas
+    punto_origen = Point(origin_longitude, origin_latitude, srid=4326)
+    punto_destino = Point(destination_longitude, destination_latitude, srid=4326)
+
+    data = [(punto_origen.x, punto_origen.y), (punto_destino.x, punto_destino.y)]
+    distancia = map_routeDistance(data)
+
+    viajes_cercanos = []
+    max_distance = 0
+    
+    if distancia <= 50000:
+        max_distance = 0.05
+    else:
+        max_distance = 0.5
+
+    # Obtener los viajes más cercanos al origen y destino
+    viajes_cercanos = Travel.objects.filter(
+        origin_coords__distance_lte=(punto_origen, max_distance),
+        destination_coords__distance_lte=(punto_destino, max_distance),
+        start_date__date=fecha_obj
+    ).annotate(
+        distancia_origen=Distance('origin_coords', punto_origen),
+        distancia_destino=Distance('destination_coords', punto_destino)
+    ).order_by('start_date')
+
+    # Marcar como mejor opción los viajes con la menor distancia entre origen y destino
+    if viajes_cercanos:
+        # Obtener la lista de viajes con la menor distancia total
+        viajes_con_menor_distancia = sorted(viajes_cercanos, key=lambda x: x.distancia_origen + x.distancia_destino)
+        menor_distancia = viajes_con_menor_distancia[0].distancia_origen + viajes_con_menor_distancia[0].distancia_destino
+
+        # Marcar como mejor opción los viajes con la menor distancia al origen y destino, y aquellos con una diferencia de 0.0001 en ambas distancias
+        for viaje in viajes_con_menor_distancia:
+            if viaje.distancia_origen + viaje.distancia_destino == menor_distancia or \
+            (abs(viaje.distancia_origen - viajes_con_menor_distancia[0].distancia_origen) < 0.0001 and \
+                abs(viaje.distancia_destino - viajes_con_menor_distancia[0].distancia_destino) < 0.0001):
+                viaje.mejor_opcion = True
+            else:
+                viaje.mejor_opcion = False
+
+    
+    # Pasar la distancia como un parámetro adicional al serializador en el contexto de la solicitu
+    serializer = NearTravelSerializer(viajes_cercanos, many=True, context={'distancia':distancia})
+    
+
+    return Response(serializer.data, status=status.HTTP_200_OK)
+   
+
+
+def get_route(request, origen, destino):
+    # Convertir las direcciones de origen y destino a coordenadas
+    origin_latitude, origin_longitude = obtener_latitud_longitud2(origen)
+    destination_latitude, destination_longitude = obtener_latitud_longitud2(destino)
+
+    # Crear objetos Point con las coordenadas y el SRID 4326
+    punto_origen = Point(origin_longitude, origin_latitude, srid=4326)
+    punto_destino = Point(destination_longitude, destination_latitude, srid=4326)
+    data = [(punto_origen.x, punto_origen.y), (punto_destino.x, punto_destino.y)]
+    
     result = map_route(data)
     return JsonResponse(result)
 
-def map_route(locations):
+def map_routeDistance(locations):
     loc = ";".join([f"{lon},{lat}" for lon, lat in locations])
-    url = "http://router.project-osrm.org/route/v1/driving/"
+    url = "http://routing.openstreetmap.de/routed-car/route/v1/driving/"
     r = requests.get(url + loc) 
     if r.status_code != 200:
         return {}
-    res = r.json()  
+    res = r.json()
+    distance = res['routes'][0]['distance']
+    return distance
+
+def map_routeDuration(locations):
+    loc = ";".join([f"{lon},{lat}" for lon, lat in locations])
+    url = "http://routing.openstreetmap.de/routed-car/route/v1/driving/"
+    r = requests.get(url + loc) 
+    if r.status_code != 200:
+        return {}
+    res = r.json()
+    duration = res['routes'][0]['duration']
+    return duration
+
+def map_route(locations):
+    loc = ";".join([f"{lon},{lat}" for lon, lat in locations])
+    url = "http://routing.openstreetmap.de/routed-car/route/v1/driving/"
+    r = requests.get(url + loc) 
+    if r.status_code != 200:
+        return {}
+    res = r.json()
     routes = polyline.decode(res['routes'][0]['geometry'])
     start_point = [res['waypoints'][0]['location'][1], res['waypoints'][0]['location'][0]]
     end_point = [res['waypoints'][-1]['location'][1], res['waypoints'][-1]['location'][0]]
@@ -77,6 +169,17 @@ def obtener_latitud_longitud(request, place):
             return JsonResponse({'error': 'No se pudo encontrar la ubicación proporcionada'}, status=400)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+    
+def obtener_latitud_longitud2(place):
+    geolocator = Nominatim(user_agent="geoapi")
+    try:
+        location = geolocator.geocode(place)
+        if location:
+            return location.latitude, location.longitude
+        else:
+            return None, None
+    except Exception as e:
+        return None, None
 
 class TravelsFiltered(generics.ListAPIView):
     serializer_class = TravelSerializer
@@ -99,12 +202,31 @@ def get_travel(request, id):
     seriaizer = TravelSerializer(travel, many=False)
     return Response(seriaizer.data)
 
+
+def format_duration(duration):
+    hours = duration.seconds // 3600
+    minutes = (duration.seconds % 3600) // 60
+    seconds = duration.seconds % 60
+    return timedelta(hours=hours, minutes=minutes, seconds=seconds)
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_travel(request):
     serializer = TravelSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save(host=request.user)
+
+        origin_latitude, origin_longitude = obtener_latitud_longitud2(request.data['origin'])
+        destination_latitude, destination_longitude = obtener_latitud_longitud2(request.data['destination'])
+
+        # Crear objetos Point con las coordenadas
+        origin_coord = Point(origin_longitude, origin_latitude)
+        destination_coord = Point(destination_longitude, destination_latitude)
+        data = [(origin_coord.x, origin_coord.y), (destination_coord.x, destination_coord.y)]
+        duracion = timedelta(seconds=map_routeDuration(data))
+        estimated_duration = format_duration(duracion)
+
+        serializer.save(host=request.user, origin_coords=origin_coord, destination_coords=destination_coord, estimated_duration=estimated_duration)
+    
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -115,7 +237,22 @@ def edit_travel(request, id):
     if request.user == travel.host or request.user.is_staff:
         serializer = TravelSerializer(travel, data=request.data)
         if serializer.is_valid():
-            serializer.save()
+
+            # Verificar si el origen o destino han cambiado
+            origin_changed = serializer.validated_data.get('origin') != travel.origin
+            destination_changed = serializer.validated_data.get('destination') != travel.destination
+
+            if origin_changed or destination_changed:
+                origin_latitude, origin_longitude = obtener_latitud_longitud2(request.data['origin'])
+                destination_latitude, destination_longitude = obtener_latitud_longitud2(request.data['destination'])
+
+                # Crear objetos Point con las coordenadas
+                origin_coord = Point(origin_longitude, origin_latitude)
+                destination_coord = Point(destination_longitude, destination_latitude)
+
+                serializer.save(origin_coords=origin_coord, destination_coords=destination_coord)
+            else:
+                serializer.save()    
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
     else:

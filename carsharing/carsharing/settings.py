@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "chat",
     "rating",
     "django_filters",
+    "django.contrib.gis",
 ]
 
 MIDDLEWARE = [
@@ -99,15 +100,21 @@ CHANNEL_LAYERS = {
 
 DATABASES = {
     "default": {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.contrib.gis.db.backends.mysql',
         'NAME': 'carsharing',
         'USER': 'carsharinguser',
         'PASSWORD': '2329',
         'HOST': 'localhost',  # Puedes cambiar esto según la configuración de tu servidor MySQL
         'PORT': '3306',  # El puerto predeterminado para MySQL
+        'OPTIONS': {
+            'init_command': "SET default_storage_engine=INNODB",
+        },
     }
 }
 
+# Configuración de GDAL
+import os
+GDAL_LIBRARY_PATH = os.path.join(os.path.dirname(__file__), 'C:/Users/danie/miniconda3/Library/bin/gdal.dll')
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
