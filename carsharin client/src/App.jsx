@@ -10,6 +10,7 @@ import TravelCreationPage from './pages/travels/TravelCreationPage';
 import MessagePage from './pages/MessagePage';
 import MyTravels from './pages/travels/MyTravels';
 import TravelDetails from './pages/travels/TravelDetails';
+import Chat from './components/chat/Chat';
 
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
           <Route path='home' element={<HomePage />} />
           <Route path='' element={<HomePage />} />
           <Route path='initial' element={<InitialPage />} />
+          <Route path='chat' element={<Chat />} />
           
           {/* RUTAS PARA VIAJES */}
           <Route path='login' element={<LoginComponent />}/>

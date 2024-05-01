@@ -1,0 +1,32 @@
+.App {
+    text-align: center;
+    font-family: "Arial", sans-serif;
+  }
+  
+  .ChatContainer {
+    width: 300px;
+    margin: 50px auto;
+  }
+  
+  .ChatHistory {
+    height: 200px;
+    border: 1px solid #ccc;
+    overflow-y: auto;
+    padding: 10px;
+  }
+  
+  .ChatInput {
+    display: flex;
+    margin-top: 10px;
+  }
+  
+  .ChatInput input {
+    flex: 1;
+    padding: 5px;
+  }
+  
+  .ChatInput button {
+    padding: 5px;
+    margin-left: 5px;
+  }
+  

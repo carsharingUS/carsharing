@@ -1,20 +1,18 @@
 from django.db import models
 from user.models import User
 
-# Create your models here.
+class Room(models.Model):
+    name = models.CharField(max_length=100, unique=True, verbose_name='Nombre')
+    users = models.ManyToManyField(User, related_name='rooms_joined', blank=True)
 
-
-class Conversation(models.Model):
-    participants = models.ManyToManyField(User)
-    last_message_date = models.DateTimeField(auto_now=True)  # Campo para almacenar la fecha y hora del último mensaje
-
-
-    def get_other_participant(self, user):
-        """Retorna el otro participante en la conversación"""
-        return self.participants.exclude(id=user.id).first()
+    def __str__(self):
+        return self.name
 
 class Message(models.Model):
-    conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE)
-    sender = models.ForeignKey(User, on_delete=models.CASCADE)
-    content = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Usuario')
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, verbose_name='Sala')
+    text = models.TextField(verbose_name='Mensaje')
+    timestamp = models.DateTimeField(auto_now_add=True, verbose_name='Enviado')
+
+    def __str__(self):
+        return f"{self.room}/{self.sender.username}"
