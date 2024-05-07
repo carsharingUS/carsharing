@@ -1,19 +1,21 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Loader from "../../components/Loader";
-import { getCoordinates, getTravel } from "../../api/TravelService";
-import { Token, Travel } from "../../Interfaces";
+import { getCoordinates, getTravel, createTravelRequest } from "../../api/TravelService";
+import { Token, Travel, TravelRequest } from "../../Interfaces";
 import L from "leaflet";
 import "leaflet-routing-machine";
 import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 import "../travels/TravelMap.css";
 import "leaflet/dist/leaflet.css";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { get_solo_user } from "../../api/UserService";
 import { useAuthStore } from "../../store/auth";
 import * as jwt_decode from "jwt-decode";
 import "./TravelDetails.css"; // Importa el archivo CSS aquí
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
+import { getCurrentUser } from "../../utils";
+import toast from "react-hot-toast";
 
 
 const TravelDetails = () => {
@@ -196,8 +198,32 @@ const TravelDetails = () => {
     };
   }, [isActive, origin, destination, intermedioCoordenadas]);
 
-  const handleRequestTravel = () => {
-    // Implementa la lógica para solicitar plaza en el viaje
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+
+  const createTravelRequestMutation = useMutation({
+      mutationFn: createTravelRequest,
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["travelRequests"] });
+        toast.success("Travel request created!");
+        navigate("/");
+      },
+      onError: () => {
+        toast.error("Error!");
+        navigate("/");
+      },
+    }
+  );
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    
+    createTravelRequestMutation.mutate({
+      user: user, // Usuario que solicita el viaje
+      travel: travel, // Viaje al que solicita el usuario
+      intermediate: intermedio, // Estación intermedia (si la hay)
+      seats: selectedSeats, // Número de asientos solicitados
+    });
   };
 
   if (isLoading || userIsLoading) return <Loader />;
@@ -226,7 +252,7 @@ const TravelDetails = () => {
       ) : (
         <div>
           <br />
-          <form className="travel-details-form" onSubmit={handleRequestTravel}>
+          <form className="travel-details-form" onSubmit={handleSubmit}>
           <div className="input-group">
       <label htmlFor="seats" className="label">
         Número de plazas

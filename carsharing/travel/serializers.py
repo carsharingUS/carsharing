@@ -1,22 +1,28 @@
 from rest_framework import serializers
-
+from django.contrib.gis.geos import MultiPoint
 from user.serializer import UserSerializer
-from .models import Travel
+from .models import Travel, TravelRequest
+from django.contrib.gis.geos import Point
 
 class TravelSerializer(serializers.ModelSerializer):
     host = UserSerializer(read_only=True)
     passengers = UserSerializer(many=True, read_only=True)
     origin_coords = serializers.SerializerMethodField(read_only = True)
     destination_coords = serializers.SerializerMethodField(read_only = True)
+    intermediate_coordsTravel = serializers.SerializerMethodField(read_only = True)
     class Meta:
         model = Travel
-        fields = ['id', 'host', 'passengers' ,'origin', 'destination', 'origin_coords', 'destination_coords',  'start_date', 'estimated_duration', 'price', 'stops', 'status', 'total_seats']
+        fields = ['id', 'host', 'passengers' ,'origin', 'intermediateTravel', 'destination', 'origin_coords', 'intermediate_coordsTravel','destination_coords', 'start_date', 'estimated_duration', 'price', 'stops', 'status', 'total_seats']
 
     def get_origin_coords(self, obj):
         return obj.origin_coords.wkt
 
     def get_destination_coords(self, obj):
         return obj.destination_coords.wkt
+    
+    def get_intermediate_coordsTravel(self, obj):
+        if obj.intermediate_coordsTravel:
+            return obj.intermediate_coordsTravel.wkt
     
 class NearTravelSerializer(serializers.ModelSerializer):
     host = UserSerializer(read_only=True)
@@ -83,3 +89,14 @@ class NearTravelSerializer(serializers.ModelSerializer):
                 return "Medio"
             else:
                 return "Lejos"
+
+class TravelRequestSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    travel = TravelSerializer(read_only=True)
+    intermediate_coords = serializers.SerializerMethodField(read_only = True)
+    class Meta:
+        model = TravelRequest
+        fields = ['id', 'user', 'travel' ,'intermediate', 'intermediate_coords', 'seats', 'status']
+
+    def get_intermediate_coords(self, obj):
+        return obj.intermediate_coords.wkt

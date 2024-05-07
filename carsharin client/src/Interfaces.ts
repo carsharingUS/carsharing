@@ -20,6 +20,15 @@ export interface Message {
     content: string;
   }
 
+export interface TravelRequest {
+    id: number;
+    user?: User;
+    travel?: Travel;
+    intermediate: string;
+    seats: number;
+    status: 'pendiente' | 'aceptado' | 'rechazado';
+}
+
 export interface Travel {
     id: number;
     host?: User;

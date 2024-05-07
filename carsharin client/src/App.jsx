@@ -10,6 +10,8 @@ import TravelCreationPage from './pages/travels/TravelCreationPage';
 import MessagePage from './pages/MessagePage';
 import MyTravels from './pages/travels/MyTravels';
 import TravelDetails from './pages/travels/TravelDetails';
+import NotificationPage from './pages/NotificationPage';
+import TravelRequestManagment from './components/notifications/TravelRequestManagment';
 
 
 function App() {
@@ -38,6 +40,10 @@ function App() {
           {/* RUTA PARA CHAT */}
 
           <Route path='chat' element={<MessagePage/>} />
+
+          {/* RUTAS PARA NOTIFICACIONES */}
+          <Route path='notificaciones' element={<NotificationPage />}></Route>
+          <Route path='notificaciones/:travelRequestId' element={<TravelRequestManagment/>}></Route>
 
 
         </Route>

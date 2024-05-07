@@ -1,5 +1,5 @@
 import { API, authAPI } from "./AuthenticationService";
-import { Travel } from "../Interfaces"; 
+import { Travel, TravelRequest } from "../Interfaces"; 
 
 
 /**
@@ -81,3 +81,52 @@ export const getDistanceSearchUser = async (origen: string, destino: string, sta
     return null;
   }
 }
+
+export const createTravelRequest = async (data: Partial<TravelRequest>) => {
+  const formData = new FormData();
+  formData.append("intermediate", data.intermediate || "")
+  formData.append("seats", data.seats?.toString() || "")
+  
+  await authAPI.post(`travels/${data.travel?.id}/create_request`, formData)
+};
+
+
+export const getRequestLikeHost = async (user_id:string) => {
+  try{
+    const response = await authAPI.get(`travels/travel_requests/${user_id}`);
+    return response.data
+  }catch(error){
+    console.error("Error al devolver las peticiones a mis vijaes: ", error)
+    return null;
+  }
+}
+
+export const getRequestTravel = async (travelRequest_id:string) => {
+  try{
+    const response = await authAPI.get(`travels/travel_requests/${travelRequest_id}`);
+    return response.data
+  }catch(error){
+    console.error("Error al devolver la peticion de viaje para ese id: ", error)
+    return null;
+  }
+}
+
+export const acceptTravelRequest = async (travelRequestId) => {
+  try {
+    const response = await authAPI.post(`travels/travel_requests/${travelRequestId}/accept`);
+    return response.data;
+  } catch (error) {
+    console.error("Error al aceptar la solicitud de viaje: ", error);
+    throw new Error("Error al aceptar la solicitud de viaje.");
+  }
+};
+
+export const declineTravelRequest = async (travelRequestId) => {
+  try {
+    const response = await authAPI.post(`travels/travel_requests/${travelRequestId}/decline`);
+    return response.data;
+  } catch (error) {
+    console.error("Error al rechazar la solicitud de viaje: ", error);
+    throw new Error("Error al rechazar la solicitud de viaje.");
+  }
+};

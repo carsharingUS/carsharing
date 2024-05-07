@@ -2,22 +2,25 @@ from rest_framework.response import Response
 from rest_framework import status, generics
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from .models import Travel
+from .models import Travel, TravelRequest, User
 from .filters import TravelFilter
-from .serializers import TravelSerializer, NearTravelSerializer
+from .serializers import TravelSerializer, NearTravelSerializer, TravelRequestSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from geopy.geocoders import Nominatim
 from geopy.distance import geodesic
 from django.http import JsonResponse
 from django.contrib.gis.geos import Point
 from django.contrib.gis.db.models.functions import Distance
+from django.shortcuts import get_object_or_404
+from django.contrib.gis.geos import MultiPoint
+from django.contrib.gis.geos import GEOSGeometry
 
 import requests
 import polyline
 import folium
 from django.shortcuts import render
 from datetime import datetime, timedelta
-
+import json
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -229,6 +232,103 @@ def create_travel(request):
     
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_travel_request(request, travel_id):
+    travel = get_object_or_404(Travel, id=travel_id)
+    serializer = TravelRequestSerializer(data=request.data)
+    if serializer.is_valid():
+
+        intermediate_data = serializer.validated_data.get('intermediate')
+        if intermediate_data:
+            intermediate_latitude, intermediate_longitude = obtener_latitud_longitud2(request.data['intermediate'])
+            intermediate_coord = Point(intermediate_longitude, intermediate_latitude)
+            
+        else:
+            intermediate_coord = Point(0, 0)
+
+        serializer.save(user=request.user, travel=travel, intermediate_coords=intermediate_coord)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_request_like_host(request, user_id):
+    travel_requests = TravelRequest.objects.filter(travel__host_id=user_id)
+    serializer = TravelRequestSerializer(travel_requests, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_request_by_id(request, travelRequest_id):
+    travelRequest = get_object_or_404(TravelRequest, id=travelRequest_id)
+    serializer = TravelRequestSerializer(travelRequest, many=False)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def reject_travel_request(request, travelRequest_id):
+    # Obtener la solicitud de viaje
+    travel_request = get_object_or_404(TravelRequest, id=travelRequest_id)
+
+    # Verificar si el usuario autenticado es el host del viaje asociado a la solicitud
+    if travel_request.travel.host != request.user:
+        return Response({"error": "No tiene permiso para rechazar esta solicitud de viaje."}, status=403)
+
+    # Verificar si la solicitud de viaje ya ha sido rechazada
+    if travel_request.status == 'aceptado' or travel_request.status == 'rechazado':
+        return Response({"error": "Esta solicitud de viaje ya ha sido rechazada."}, status=400)
+
+    # Actualizar el estado de la solicitud de viaje a "rechazado"
+    travel_request.status = 'rechazado'
+    travel_request.save()
+
+    return Response({"message": "Solicitud de viaje rechazada exitosamente."}, status=200)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def accept_travel_request(request, travelRequest_id):
+    travel_request = get_object_or_404(TravelRequest, id=travelRequest_id)
+
+     # Verificar si el usuario autenticado es el host del viaje asociado a la solicitud
+    if travel_request.travel.host != request.user:
+        return Response({"error": "No tiene permiso para aceptar esta solicitud de viaje."}, status=403)
+
+    # Verificar si la solicitud de viaje ya ha sido aceptada
+    if travel_request.status == 'aceptado' or travel_request.status == 'rechazado':
+        return Response({"error": "Esta solicitud de viaje ya ha sido aceptada."}, status=400)
+
+    # Actualizar el estado de la solicitud de viaje a "aceptado"
+    travel_request.status = 'aceptado'
+    travel_request.save()
+    # Obtener el viaje asociado a la solicitud
+    travel = travel_request.travel
+    # Actualizar el número de asientos disponibles en el viaje
+    travel.total_seats -= travel_request.seats
+    travel.save()
+    # Agregar al usuario como pasajero al viaje
+    travel.passengers.add(travel_request.user)
+
+    # Verificar si hay una estación intermedia especificada en la solicitud de viaje
+    if travel_request.intermediate:
+        # Agregar la estación intermedia al campo intermediateTravel del viaje
+        travel.intermediateTravel.append(travel_request.intermediate)
+
+        # Convertir la lista de estaciones intermedias a formato JSON y guardarla
+        travel.intermediateTravel = json.dumps(travel.intermediateTravel)
+
+        # Convertir las coordenadas intermedias a formato Point y agregarlas al campo intermediate_coordsTravel del viaje
+        intermediate_coords = travel_request.intermediate_coords
+        travel.intermediate_coordsTravel.append(intermediate_coords)
+
+        # Guardar las coordenadas intermedias como un campo MultiPointField
+
+        travel.save()
+        
+    return Response({"message": "Solicitud de viaje aceptada exitosamente."}, status=200)
+
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
