@@ -13,6 +13,7 @@ urlpatterns = [
     path('edit/<str:username>/', views.edit_profile),
     path('get/solo/<int:pk>/', views.get_solo_user),
     path('get/<str:username>/', views.get_user_by_username),
+    path('get_websocket_token/<int:user1_id>/<int:user2_id>', views.get_websocket_token, name='get_websocket_token'),
 
     path('<int:id>', views.get_user_by_id),
 ]

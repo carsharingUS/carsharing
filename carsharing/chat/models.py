@@ -15,4 +15,4 @@ class Message(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name='Enviado')
 
     def __str__(self):
-        return f"{self.room}/{self.sender.username}"
+        return f"{self.room}/{self.sender.username}/{self.timestamp}"

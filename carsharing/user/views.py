@@ -6,6 +6,9 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from .serializer import RegisterUserSerializer, MyTokenObtainPairSerializer, UserSerializer
 from rest_framework import status
+import hashlib
+from django.http import JsonResponse
+
 
 
 # Create your views here.
@@ -63,6 +66,15 @@ def register(request):
     serializer = RegisterUserSerializer(user, many=False)
     return Response(serializer.data)
 
+def generate_websocket_token(user1_id, user2_id):
+    sorted_ids = sorted([user1_id, user2_id])
+    combined_ids = "-".join(str(id) for id in sorted_ids)
+    hashed_token = hashlib.sha256(combined_ids.encode()).hexdigest()
+    return hashed_token
+
+def get_websocket_token(request, user1_id, user2_id):
+    websocket_token = generate_websocket_token(user1_id, user2_id)
+    return JsonResponse({'websocket_token': websocket_token})
 
 class LoginView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer

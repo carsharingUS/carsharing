@@ -14,7 +14,7 @@ export const getTravels = async (params) => {
     }
 };
 
-export const getTravel = async (id: string) => {
+export const getTravel = async (id) => {
     if(!id){
         throw new Error('Compruebe el origen y destino')
     }
