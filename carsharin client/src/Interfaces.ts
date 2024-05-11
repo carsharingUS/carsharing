@@ -69,6 +69,12 @@ export interface ChatMessage {
 
   export interface Message {
     text: string;
-    sender: string;
+    sender: User;
     room_id: number;
+  }
+
+  export interface Room {
+    id: string;
+    name: string;
+    users: User[];
   }

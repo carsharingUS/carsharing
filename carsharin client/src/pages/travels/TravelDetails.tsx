@@ -230,7 +230,6 @@ const TravelDetails = () => {
   const handleChatClick = async () => {
     if (travel?.host?.id) {
       const token = await getWebsocketToken(user.id, travel.host.id);
-      console.error(token);
       navigate(`chat/room/${token.websocket_token}`);
     } else {
       console.error("No se pudo obtener el ID del host del viaje.");

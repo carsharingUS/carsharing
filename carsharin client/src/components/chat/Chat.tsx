@@ -1,43 +1,70 @@
 import React, { useState, useEffect, useRef } from "react";
 import "../chat/ChatPanel.css";
-import { getCurrentUser } from "../../utils";
-import { ChatMessage, Message } from "../../Interfaces";
+import { ChatMessage, Message, Token, User } from "../../Interfaces";
 import {
   createMessage,
   createRoom,
   getMessages,
-  getRoomByUsers,
+  getOrCreateRoomByUsers,
 } from "../../api/ChatService";
 import { useParams } from "react-router-dom";
-import { getTravel } from "../../api/TravelService";
+import { getUsersByToken } from "../../api/UserService";
+import { authAPI } from "../../api/AuthenticationService";
+import { useAuthStore } from "../../store/auth";
+import * as jwt_decode from "jwt-decode";
 
 const Chat = () => {
   const [message, setMessage] = useState("");
+  const [user, setUser] = useState<User>();
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
-  const { data: user } = getCurrentUser();
-  const { travelId } = useParams();
+  let { roomName } = useParams();
 
   const socketRef = useRef<WebSocket>();
   const roomIdRef = useRef<number | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
+  const token: string = useAuthStore.getState().access;
+  const tokenDecoded: Token = jwt_decode.jwtDecode(token);
+
+  const id = tokenDecoded.user_id;
+
+  const get_solo_user = async (id: number) => {
+    const response = await authAPI.get(`/user/get/solo/${id}/`);
+    return response.data;
+  };
+
   useEffect(() => {
-    const getUserFromTravel = async () => {
-      console.log(travelId);
-      const travel = await getTravel(travelId);
-      const hostUserId = travel.host;
-      connectToWebSocket(hostUserId.id);
+    const getUserFromToken = async () => {
+      const userr = await get_solo_user(id);
+      setUser(userr);
+
+      if (roomName?.endsWith("_room")) roomName = roomName.replace("_room", "");
+      const token = await getUsersByToken(roomName || "");
+
+      if (token) {
+        const otherUser =
+          token.user1_id !== userr.id ? token.user1_id : token.user2_id;
+        if (otherUser) {
+          connectToWebSocket(userr, otherUser);
+        } else {
+          console.error("No se encontró el otro usuario en la sala");
+        }
+      } else {
+        console.error("La sala no existe o no tiene exactamente 2 usuarios");
+      }
     };
 
-    const connectToWebSocket = async (hostUserId) => {
+    const connectToWebSocket = async (user, otherUser) => {
       try {
-        const existingRoomData = await getRoomByUsers(user.id, hostUserId);
+        const existingRoomData = await getOrCreateRoomByUsers(
+          user.id,
+          otherUser
+        );
+        console.log(existingRoomData);
         let roomId;
         if (existingRoomData) {
-          roomId = existingRoomData.id;
-        } else {
-          const roomData = await createRoom(user.id, hostUserId);
-          roomId = roomData.room_id;
+          roomId = existingRoomData.room_id;
+          console.log(roomId);
         }
         roomIdRef.current = roomId;
 
@@ -46,7 +73,7 @@ const Chat = () => {
           socketRef.current.readyState !== WebSocket.OPEN
         ) {
           socketRef.current = new WebSocket(
-            `ws://127.0.0.1:8000/ws/room/${existingRoomData.name}/`
+            `ws://127.0.0.1:8000/ws/room/${existingRoomData.websocket_token}/`
           );
 
           socketRef.current.onmessage = (event) => {
@@ -57,7 +84,9 @@ const Chat = () => {
           if (chatHistory.length === 0) {
             getMessages(roomId)
               .then((response) => {
-                setChatHistory(response.data);
+                if (response && response.data.length > 0) {
+                  setChatHistory(response.data);
+                }
               })
               .catch((error) => {
                 console.error("Error fetching messages:", error);
@@ -69,7 +98,7 @@ const Chat = () => {
       }
     };
 
-    getUserFromTravel();
+    getUserFromToken();
 
     return () => {
       if (socketRef.current) {
@@ -77,7 +106,7 @@ const Chat = () => {
         socketRef.current.close();
       }
     };
-  }, [travelId, user, chatHistory]);
+  }, []);
 
   useEffect(() => {
     if (chatEndRef.current) {
@@ -96,6 +125,11 @@ const Chat = () => {
     if (message.trim() !== "") {
       const roomId = roomIdRef.current ?? 0;
 
+      if (!user) {
+        console.error("No se ha encontrado el usuario.");
+        return;
+      }
+
       const messageData: Message = {
         text: message,
         sender: user,
@@ -109,7 +143,7 @@ const Chat = () => {
         socketRef.current.send(
           JSON.stringify({
             text: message,
-            sender: user.username,
+            sender: user?.username,
             room_id: roomId,
           })
         );
@@ -127,12 +161,12 @@ const Chat = () => {
     }
   };
 
-  const formatDate = (timestamp: string) => {
+  const formatDate = (timestamp) => {
     const date = new Date(timestamp);
     if (date.toString() === "Invalid Date") {
       return new Date().toLocaleString();
     } else {
-      return date.toLocaleString();
+      return date.toLocaleString("es-ES");
     }
   };
 
@@ -143,7 +177,9 @@ const Chat = () => {
           <div
             key={index}
             className={`message-container ${
-              msg.sender === user.username ? "sent-message" : "received-message"
+              msg.sender === user?.username
+                ? "sent-message"
+                : "received-message"
             }`}
           >
             <div className="message-sender">
@@ -151,7 +187,7 @@ const Chat = () => {
             </div>
             <div
               className={`message ${
-                msg.sender === user.username ? "sent" : "received"
+                msg.sender === user?.username ? "sent" : "received"
               }`}
             >
               {msg.text}
@@ -166,10 +202,10 @@ const Chat = () => {
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={handleKeyDown} // Agrega el manejador de eventos para la tecla Enter
-          placeholder="Type your message..."
+          onKeyDown={handleKeyDown}
+          placeholder="Escribir mensaje..."
         />
-        <button onClick={sendMessage}>Send</button>
+        <button onClick={sendMessage}>Enviar</button>
       </div>
     </div>
   );

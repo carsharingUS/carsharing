@@ -6,44 +6,40 @@ from user.views import generate_websocket_token
 from django.http import JsonResponse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
+from user.serializer import UserSerializer
+from django.core.exceptions import ObjectDoesNotExist
 
 @transaction.atomic
 @csrf_exempt
-def create_room(request,user1_id, user2_id):
+def get_or_create_room(request, user1_id, user2_id):
     user1 = User.objects.get(pk=user1_id)
     user2 = User.objects.get(pk=user2_id)
-    print(user1)
+
+    if user1_id > user2_id:
+        user1, user2 = user2, user1
 
     websocket_token = generate_websocket_token(user1_id, user2_id)
-
     room_name = f"{websocket_token}_room"
-    room = Room.objects.create(name=room_name)
+
+    room, created = Room.objects.get_or_create(name=room_name)
+
+    if not created:
+        return JsonResponse({
+            "websocket_token": websocket_token,
+            "room_id": room.id
+        })
+    
     room.users.add(user1, user2)
 
-    return {
+    return JsonResponse({
         "websocket_token": websocket_token,
         "room_id": room.id
-    }
+    })
 
 def check_room_exists(request, user1_id, user2_id):
     websocket_token = generate_websocket_token(user1_id, user2_id)
     room_exists = Room.objects.filter(name=f"{websocket_token}_room").exists()
     return JsonResponse({'room_exists': room_exists})
-
-def get_room_by_users(request, user1_id, user2_id):
-    try:
-        websocket_token = generate_websocket_token(user1_id, user2_id)
-        room = Room.objects.filter(name=f"{websocket_token}_room").first()
-        if room:
-            room_data = {
-                'id': room.id,
-                'name': room.name,
-            }
-            return JsonResponse(room_data)
-        else:
-            return JsonResponse({'error': 'Room not found'}, status=404)
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
 
 @csrf_exempt
 def create_message(request):
@@ -80,3 +76,25 @@ def get_messages(request, room_id):
         message['sender'] = user_mapping.get(message['sender'], '')
 
     return JsonResponse(list(messages), safe=False)
+
+def get_user_rooms(request, user_id):
+    try:
+        user = User.objects.get(pk=user_id)
+        user_rooms = Room.objects.filter(users=user)
+        
+        room_data = []
+        for room in user_rooms:
+            # Serializa los usuarios utilizando el UserSerializer personalizado
+            serialized_users = UserSerializer(room.users.all(), many=True).data
+            room_info = {
+                'id': room.id,
+                'name': room.name,
+                'users': serialized_users  # Usuarios serializados
+            }
+            room_data.append(room_info)
+            
+        return JsonResponse(room_data, safe=False)
+    except ObjectDoesNotExist:
+        return JsonResponse({'error': 'Usuario no encontrado'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

@@ -1,4 +1,4 @@
-import { Message, User } from "../Interfaces";
+import { Message, Room, User } from "../Interfaces";
 import { API, authAPI } from "./AuthenticationService";
 
 // Usar en un futuro
@@ -37,9 +37,9 @@ export const checkRoomExists = async (user1Id, user2Id) => {
   }
 };
 
-export const getRoomByUsers = async (user1Id, user2Id) => {
+export const getOrCreateRoomByUsers = async (user1Id, user2Id) => {
   try {
-    const response = await API.get(`/chat/room/get_room_by_users/${user1Id}/${user2Id}/`);
+    const response = await API.get(`/chat/room/get_or_create_room/${user1Id}/${user2Id}/`);
     return response.data;
   } catch (error) {
     console.error('Error checking room existence:', error);
@@ -47,9 +47,15 @@ export const getRoomByUsers = async (user1Id, user2Id) => {
   }
 };
 
-
-
-
+export const getUserRooms = async (userId: string): Promise<Room[]> => {
+  try {
+    const response = await authAPI.get(`/chat/room/get_user_rooms/${userId}/`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener las salas del usuario:', error);
+    throw error;
+  }
+};
 
 export const ChatService = {
   getRecentUsers: async (): Promise<string[]> => {
