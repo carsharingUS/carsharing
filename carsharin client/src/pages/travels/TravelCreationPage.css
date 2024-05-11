@@ -14,7 +14,7 @@
   
   .crear-viaje-modal {
     width: 90%; /* Ancho modificado */
-    height: 85vh; /* Altura modificada */
+    height: 70vh; /* Altura modificada */
     max-width: 1200px; /* Ancho máximo */
     background-color: #ffffff;
     padding: 20px;

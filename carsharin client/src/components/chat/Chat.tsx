@@ -3,7 +3,6 @@ import "../chat/ChatPanel.css";
 import { ChatMessage, Message, Token, User } from "../../Interfaces";
 import {
   createMessage,
-  createRoom,
   getMessages,
   getOrCreateRoomByUsers,
 } from "../../api/ChatService";
@@ -12,10 +11,12 @@ import { getUsersByToken } from "../../api/UserService";
 import { authAPI } from "../../api/AuthenticationService";
 import { useAuthStore } from "../../store/auth";
 import * as jwt_decode from "jwt-decode";
+import Navbar from "../home/Navbar";
 
 const Chat = () => {
   const [message, setMessage] = useState("");
   const [user, setUser] = useState<User>();
+  const [otherUser, setOtherUser] = useState<User>();
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   let { roomName } = useParams();
 
@@ -44,6 +45,7 @@ const Chat = () => {
       if (token) {
         const otherUser =
           token.user1_id !== userr.id ? token.user1_id : token.user2_id;
+        setOtherUser(otherUser);
         if (otherUser) {
           connectToWebSocket(userr, otherUser);
         } else {
@@ -60,11 +62,9 @@ const Chat = () => {
           user.id,
           otherUser
         );
-        console.log(existingRoomData);
         let roomId;
         if (existingRoomData) {
           roomId = existingRoomData.room_id;
-          console.log(roomId);
         }
         roomIdRef.current = roomId;
 
@@ -171,41 +171,48 @@ const Chat = () => {
   };
 
   return (
-    <div className="chat-panel" id="chat-panel">
-      <div className="conversation">
-        {chatHistory.map((msg, index) => (
-          <div
-            key={index}
-            className={`message-container ${
-              msg.sender === user?.username
-                ? "sent-message"
-                : "received-message"
-            }`}
-          >
-            <div className="message-sender">
-              <strong>{msg.sender}</strong>
-            </div>
+    <div>
+      <Navbar />
+      <div className="chat-panel" id="chat-panel">
+        <div className="conversation">
+          {chatHistory.map((msg, index) => (
             <div
-              className={`message ${
-                msg.sender === user?.username ? "sent" : "received"
+              key={index}
+              className={`message-container ${
+                msg.sender === user?.username
+                  ? "sent-message"
+                  : "received-message"
               }`}
             >
-              {msg.text}
+              <div className="message-sender">
+                <strong>{msg.sender}</strong>
+              </div>
+              <div
+                className={`message ${
+                  msg.sender === user?.username ? "sent" : "received"
+                }`}
+              >
+                {msg.text}
+              </div>
+              <div className="message-timestamp">
+                {formatDate(msg.timestamp)}
+              </div>
             </div>
-            <div className="message-timestamp">{formatDate(msg.timestamp)}</div>
-          </div>
-        ))}
-        <div ref={chatEndRef}></div>
-      </div>
-      <div className="message-input">
-        <input
-          type="text"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Escribir mensaje..."
-        />
-        <button onClick={sendMessage}>Enviar</button>
+          ))}
+          <div ref={chatEndRef}></div>
+        </div>
+        <div className="message-input">
+          <input
+            type="text"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Escribir mensaje..."
+          />
+          <button className="boton" onClick={sendMessage}>
+            <i className="fas fa-paper-plane"></i>{" "}
+          </button>
+        </div>
       </div>
     </div>
   );

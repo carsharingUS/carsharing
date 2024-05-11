@@ -1,7 +1,7 @@
 .chat-panel {
   display: flex;
   flex-direction: column;
-  height: 100vh; /* Ocupa toda la altura de la pantalla */
+  height: 83vh; /* Ocupa toda la altura de la pantalla */
 }
 
 .message-container {
@@ -88,23 +88,23 @@
   flex: 1;
   padding: 10px;
   border: 1px solid #ccc;
-  border-radius: 20px;
-  margin-right: 1rem;
+  border-radius: 8px 0 0 8px; /* Radio en las esquinas izquierdas */
   margin-left: 20rem;
   outline: none;
 }
 
 .message-input button {
   padding: 10px 20px;
-  background-color: #007bff;
+  background-color: #1ee2a1;
   color: #fff;
   border: none;
-  border-radius: 20px;
+  border-radius: 0 8px 8px 0; /* Radio en las esquinas derechas */
   margin-right: 20rem;
   cursor: pointer;
   outline: none;
 }
 
+
 .message-input button:hover {
-  background-color: #0056b3;
+  background-color: #1ac68d;
 }
