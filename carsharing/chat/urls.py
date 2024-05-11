@@ -1,15 +1,12 @@
 from django.urls import path, include
-from rest_framework import routers
-from .views import *
-from . import views
+from chat import views
+from django.contrib.auth.views import LoginView, LogoutView
 
 
 urlpatterns = [
-
-    #path('create_chat_room/', views.create_chat_room, name='create_chat_room'),
-    path('recent-users/', views.RecentUsersView.as_view(), name='recent_users'),
-    path('search-user/', views.SearchUserView.as_view(), name='search_user'),
-    path('conversations/<str:username>/', views.ConversationView.as_view(), name='conversation'),
-    path('conversations2/<str:username>/', views.ConversationView2.as_view(), name='conversation2'),
-    path('send-message/', views.SendMessageView.as_view(), name='send_message'),
+    path('room/<int:room_id>/messages/', views.get_messages, name='get_messages'),
+    path('room/create_message/', views.create_message, name='create_message'),
+    path('room/get_or_create_room/<int:user1_id>/<int:user2_id>/', views.get_or_create_room),
+    path('room/check_room_exists/<int:user1_id>/<int:user2_id>/', views.check_room_exists),
+    path('room/get_user_rooms/<int:user_id>/', views.get_user_rooms),
 ]

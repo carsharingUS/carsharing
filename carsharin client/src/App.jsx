@@ -7,10 +7,10 @@ import InitialPage from './pages/InitialPage'
 import Travels from './pages/travels/Travels';
 import UserProfile from './pages/UserProfile';
 import TravelCreationPage from './pages/travels/TravelCreationPage';
-import MessagePage from './pages/MessagePage';
 import MyTravels from './pages/travels/MyTravels';
 import TravelDetails from './pages/travels/TravelDetails';
-
+import Chat from './components/chat/Chat';
+import ChatsPage from './pages/chats/ChatsPage';
 
 function App() {
   return (
@@ -22,6 +22,9 @@ function App() {
           <Route path='home' element={<HomePage />} />
           <Route path='' element={<HomePage />} />
           <Route path='initial' element={<InitialPage />} />
+          <Route path='chat' element={<ChatsPage />} />
+          <Route path='chat/:roomName' element={<Chat />} />
+          <Route path='travels/:travelId/chat/room/:roomName' element={<Chat />} />
           
           {/* RUTAS PARA VIAJES */}
           <Route path='login' element={<LoginComponent />}/>
@@ -34,10 +37,6 @@ function App() {
           {/* RUTAS PARA USUARIO */}
           <Route path='updateUser' element={<UserProfile />} />
           <Route path='createTravel' element={<TravelCreationPage />} />
-
-          {/* RUTA PARA CHAT */}
-
-          <Route path='chat' element={<MessagePage/>} />
 
 
         </Route>

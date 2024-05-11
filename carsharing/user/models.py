@@ -54,5 +54,11 @@ class User(AbstractBaseUser, PermissionsMixin):
             return '{}{}'.format(MEDIA_URL, self.avatar)
         return '{}{}'.format(STATIC_URL, 'img/empty.png')
     
-    
+class WebsocketToken(models.Model):
+    token = models.CharField(max_length=64, unique=True)
+    user1_id = models.IntegerField()
+    user2_id = models.IntegerField()
+
+    def __str__(self):
+        return f"Token: {self.token}, Users: ({self.user1_id}, {self.user2_id})"
 

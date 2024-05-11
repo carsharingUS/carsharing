@@ -6,15 +6,19 @@ import { toast } from "react-hot-toast";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
 import { getCurrentUser } from "../../utils";
-import "./TravelCreationPage.css"
-import { OpenStreetMapProvider } from 'leaflet-geosearch';
+import "./TravelCreationPage.css";
+import { OpenStreetMapProvider } from "leaflet-geosearch";
 dayjs.locale("es");
 
 const TravelCreationPage = () => {
   const [origin, setOrigin] = useState<string>("");
-  const [originSuggestions, setOriginSuggestions] = useState<Array<{ label: string }>>([]);
+  const [originSuggestions, setOriginSuggestions] = useState<
+    Array<{ label: string }>
+  >([]);
   const [destination, setDestination] = useState<string>("");
-  const [destinationSuggestions, setDestinationSuggestions] = useState<Array<{ label: string }>>([]);
+  const [destinationSuggestions, setDestinationSuggestions] = useState<
+    Array<{ label: string }>
+  >([]);
   const [start_date, setStartDate] = useState<string>("");
   const [estimated_duration, setEstimatedDuration] = useState<string>("");
   const [price, setPrice] = useState<number>(0);
@@ -36,7 +40,7 @@ const TravelCreationPage = () => {
     },
     onError: () => {
       toast.error("Error!");
-      console.log(onerror)
+      console.log(onerror);
       navigate("/");
     },
   });
@@ -61,7 +65,12 @@ const TravelCreationPage = () => {
     // Reiniciar el tiempo de espera
     clearTimeout(typingTimeout);
     // Establecer un nuevo tiempo de espera antes de realizar la búsqueda
-    setTypingTimeout(setTimeout(() => searchAddresses(event.target.value, setOriginSuggestions), 200));
+    setTypingTimeout(
+      setTimeout(
+        () => searchAddresses(event.target.value, setOriginSuggestions),
+        200
+      )
+    );
   };
 
   const handleDestinationChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -69,7 +78,12 @@ const TravelCreationPage = () => {
     // Reiniciar el tiempo de espera
     clearTimeout(typingTimeout);
     // Establecer un nuevo tiempo de espera antes de realizar la búsqueda
-    setTypingTimeout(setTimeout(() => searchAddresses(event.target.value, setDestinationSuggestions), 200));
+    setTypingTimeout(
+      setTimeout(
+        () => searchAddresses(event.target.value, setDestinationSuggestions),
+        200
+      )
+    );
   };
 
   const handlePriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -82,7 +96,7 @@ const TravelCreationPage = () => {
   };
 
   const handleSeatClick = (numSeats: number) => {
-    setSelectedSeats(prevSelectedSeats => {
+    setSelectedSeats((prevSelectedSeats) => {
       // Si el mismo asiento está seleccionado, deselecciona
       if (prevSelectedSeats === numSeats) {
         return 0;
@@ -93,19 +107,17 @@ const TravelCreationPage = () => {
     });
   };
 
-  
   // Función para buscar sugerencias de direcciones
   const searchAddresses = async (query, setSuggestions) => {
     const provider = new OpenStreetMapProvider({
       params: {
-        'accept-language': 'es',
-        countrycodes: 'es',
+        "accept-language": "es",
+        countrycodes: "es",
       },
     });
     const results = await provider.search({ query });
     setSuggestions(results);
   };
-
 
   const handleOriginSuggestionClick = (suggestion) => {
     setOrigin(suggestion.label);
@@ -191,15 +203,19 @@ const TravelCreationPage = () => {
             {destinationSuggestions.length > 0 && (
               <div className="suggestions-container">
                 <div className="suggestions">
-                  {destinationSuggestions.slice(0, 5).map((suggestion, index) => (
-                    <div
-                      key={index}
-                      className="suggestion"
-                      onClick={() => handleDestinationSuggestionClick(suggestion)}
-                    >
-                      {suggestion?.label}
-                    </div>
-                  ))}
+                  {destinationSuggestions
+                    .slice(0, 5)
+                    .map((suggestion, index) => (
+                      <div
+                        key={index}
+                        className="suggestion"
+                        onClick={() =>
+                          handleDestinationSuggestionClick(suggestion)
+                        }
+                      >
+                        {suggestion?.label}
+                      </div>
+                    ))}
                 </div>
               </div>
             )}
@@ -231,46 +247,40 @@ const TravelCreationPage = () => {
             />
           </div>
           <div className="input-group">
-  <label htmlFor="seats" className="label">
-    Número de plazas
-  </label>
-  &nbsp;
-  &nbsp;
-  &nbsp;
-  <div className="seat-input-container">
-    <div className="seat-icons-container">
-      {[1, 2, 3, 4].map((numSeats) => (
-        <div
-          key={numSeats}
-          className={`seat-icon ${numSeats <= selectedSeats ? 'selected' : ''}`}
-          onClick={() => handleSeatClick(numSeats)}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width="24"
-            height="24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="feather feather-user"
-          >
-            <path 
-            d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
-            ></path>
-            <circle
-            cx="12"
-            cy="7"
-            r="4">
-            </circle>
-          </svg>
-        </div>
-      ))}
-    </div>
-  </div>
-</div>
+            <label htmlFor="seats" className="label">
+              Número de plazas
+            </label>
+            &nbsp; &nbsp; &nbsp;
+            <div className="seat-input-container">
+              <div className="seat-icons-container">
+                {[1, 2, 3, 4].map((numSeats) => (
+                  <div
+                    key={numSeats}
+                    className={`seat-icon ${
+                      numSeats <= selectedSeats ? "selected" : ""
+                    }`}
+                    onClick={() => handleSeatClick(numSeats)}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      width="24"
+                      height="24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="feather feather-user"
+                    >
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
           <button type="submit" className="crear-viaje-button">
             <svg
               className="mr-1 -ml-1 w-6 h-6"
@@ -289,7 +299,7 @@ const TravelCreationPage = () => {
         </form>
       </div>
     </div>
-  );  
+  );
 };
 
 export default TravelCreationPage;

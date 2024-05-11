@@ -1,55 +1,100 @@
-from django.shortcuts import render
-from chat.models import Conversation, Message
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.response import Response
-from rest_framework import generics
-from django.db.models import Subquery, OuterRef, Q
+import json
+from django.db import transaction
+from chat.models import Message, Room
 from user.models import User
-from user.serializer import UserSerializer
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import status
-from rest_framework.views import APIView
+from user.views import generate_websocket_token
 from django.http import JsonResponse
-from .serializer import ConversationSerializer, MessageSerializer
-# Create your views here.
+from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
+from user.serializer import UserSerializer
+from django.core.exceptions import ObjectDoesNotExist
 
+@transaction.atomic
+@csrf_exempt
+def get_or_create_room(request, user1_id, user2_id):
+    user1 = User.objects.get(pk=user1_id)
+    user2 = User.objects.get(pk=user2_id)
 
-class RecentUsersView(APIView):
-    def get(self, request):
-        recent_users = Conversation.objects.filter(participants=request.user).order_by('-last_message_date')[:5]
-        usernames = [conversation.get_other_participant(request.user).username for conversation in recent_users]
-        return Response(usernames, status=status.HTTP_200_OK)
+    if user1_id > user2_id:
+        user1, user2 = user2, user1
+
+    websocket_token = generate_websocket_token(user1_id, user2_id)
+    room_name = f"{websocket_token}_room"
+
+    room, created = Room.objects.get_or_create(name=room_name)
+
+    if not created:
+        return JsonResponse({
+            "websocket_token": websocket_token,
+            "room_id": room.id
+        })
     
-class SearchUserView(APIView):
-    def get(self, request):
-        query = request.query_params.get('query', '')
-        user = User.objects.filter(username__icontains=query).first()
-        if user:
-            return Response({'username': user.username}, status=status.HTTP_200_OK)
-        else:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+    room.users.add(user1, user2)
+
+    return JsonResponse({
+        "websocket_token": websocket_token,
+        "room_id": room.id
+    })
+
+def check_room_exists(request, user1_id, user2_id):
+    websocket_token = generate_websocket_token(user1_id, user2_id)
+    room_exists = Room.objects.filter(name=f"{websocket_token}_room").exists()
+    return JsonResponse({'room_exists': room_exists})
+
+@csrf_exempt
+def create_message(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
         
+        sender_data = data['sender']
+        sender, created = User.objects.get_or_create(
+            email=sender_data['email'],
+            defaults={
+                'username': sender_data['username'],
+                'name': sender_data['name'],
+                'last_name': sender_data['last_name'],
+                'avatar': sender_data['avatar']
+            }
+        )
+        
+        new_message = Message.objects.create(
+            sender=sender,
+            text=data['text'],
+            room_id=data['room_id'],
+            timestamp=timezone.now()
+        )
+        
+        return JsonResponse({'message_id': new_message.id})
 
-class ConversationView(APIView):
-    def get(self, request, username):
-        target_user = User.objects.get(username=username)
-        conversations = Conversation.objects.filter(participants=request.user).filter(participants=target_user)
-        messages = Message.objects.filter(conversation__in=conversations).order_by('timestamp') 
-        serializer = MessageSerializer(messages, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
-class ConversationView2(APIView):
-    def get(self, request, username):
-        target_user = User.objects.get(username=username)
-        conversation = Conversation.objects.filter(participants=target_user).filter(participants=request.user)
-        serializer = ConversationSerializer(conversation, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
-class SendMessageView(APIView):
-    def post(self, request):
-        target_username = request.data.get('username')
-        message_content = request.data.get('message')
-        target_user = User.objects.get(username=target_username)
-        conversation = Conversation.objects.filter(participants__in=[request.user, target_user])
-        message = Message.objects.create(conversation=conversation, sender=request.user, content=message_content)
-        return Response({'message_id': message.id}, status=status.HTTP_201_CREATED)
+def get_messages(request, room_id):
+    messages = Message.objects.filter(room_id=room_id).values('sender', 'text', 'timestamp')
+    user_ids = set(message['sender'] for message in messages)
+    users = User.objects.filter(id__in=user_ids).values('id', 'username')
+    user_mapping = {user['id']: user['username'] for user in users}
+
+    for message in messages:
+        message['sender'] = user_mapping.get(message['sender'], '')
+
+    return JsonResponse(list(messages), safe=False)
+
+def get_user_rooms(request, user_id):
+    try:
+        user = User.objects.get(pk=user_id)
+        user_rooms = Room.objects.filter(users=user)
+        
+        room_data = []
+        for room in user_rooms:
+            # Serializa los usuarios utilizando el UserSerializer personalizado
+            serialized_users = UserSerializer(room.users.all(), many=True).data
+            room_info = {
+                'id': room.id,
+                'name': room.name,
+                'users': serialized_users  # Usuarios serializados
+            }
+            room_data.append(room_info)
+            
+        return JsonResponse(room_data, safe=False)
+    except ObjectDoesNotExist:
+        return JsonResponse({'error': 'Usuario no encontrado'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

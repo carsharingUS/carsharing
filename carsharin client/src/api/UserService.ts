@@ -34,7 +34,6 @@ export const edit_user = async (data: User) => {
 export const get_solo_user = async (id: number) => {
     const response = await authAPI.get(`/user/get/solo/${id}/`)
     return response.data
-
 }
 
 export const getUserByUsername = async (username: string) => {
@@ -52,12 +51,36 @@ export const getUser = async (id: number | undefined) => {
 
 export const createChatRoom = async (user1Id: number, user2Id: number) => {
     try {
-        const response = await API.post('/chat/create_chat_room/', {
+        const response = await API.post('/chat/create_room/', {
             user1_id: user1Id,
             user2_id: user2Id
         });
         return response.data;
     } catch (error) {
         throw new Error('Error al crear la sala de chat: ' + error.message);
+    }
+};
+
+export const getWebsocketToken = async (user1Id: number, user2Id: number) => {
+    try {
+        if(!user1Id || !user2Id){
+            throw new Error('Compruebe el id')
+        }
+        const response = await API.get(`/user/get_websocket_token/${user1Id}/${user2Id}`)
+        return response.data;
+    } catch (error) {
+        throw new Error('Error al obtener el token de la sala: ' + error.message);
+    }
+};
+
+export const getUsersByToken = async (token: string) => {
+    try {
+        if(!token){
+            throw new Error('Compruebe el token')
+        }
+        const response = await API.get(`/user/get_users_by_token/${token}/`)
+        return response.data;
+    } catch (error) {
+        throw new Error('Error al obtener el token de la sala: ' + error.message);
     }
 };
