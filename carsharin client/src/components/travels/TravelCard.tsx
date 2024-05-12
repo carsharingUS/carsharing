@@ -5,7 +5,8 @@ import dayjs from "dayjs";
 import "dayjs/locale/es";
 import utc from "dayjs/plugin/utc";
 import { CardActionArea } from "@mui/material";
-import LinearProgress from "@mui/material/LinearProgress"; // Importa el componente de progreso lineal
+import LinearProgress from "@mui/material/LinearProgress";
+import "./TravelCard.css"; // Estilos CSS personalizados
 dayjs.locale("es");
 dayjs.extend(utc);
 
@@ -15,63 +16,67 @@ interface Props {
 
 const TravelCard: FC<Props> = ({ travel }) => {
   const avatarUrl = "travel.host?.avatar";
-
-  // Calcula el porcentaje de ocupación de plazas
   const occupancyPercentage = ((travel.total_seats) / 4) * 100;
 
+
   return (
-    <div className="travels-container">
+    <div className="travel-card">
       <CardActionArea href={`/travels/${travel.id}`}>
         <div className="travel">
+          {travel.mejor_opcion && (
+            <div className="best-option-indicator">★</div>
+          )}
           <div className="travel-preview">
             <div className="rounded-image">
               <img
                 src={avatarUrl}
                 alt="Foto de perfil"
-                style={{
-                  width: "80px",
-                  height: "80px",
-                  borderRadius: "50%",
-                  margin: "auto",
-                  display: "block",
-                }}
+                className="avatar-image"
               />
             </div>
-            <div
-              className="travel-host"
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "flex-end",
-                height: "40%",
-              }}
-            >
+            <div className="travel-host">
               <div className="fas fa-chevron-right"></div>
               {travel.host?.username}
             </div>
           </div>
           <div className="travel-info">
             <div className="progress-container">
-              <LinearProgress variant="determinate" value={occupancyPercentage} 
-              sx={{
-                height: 10, // Grosor de la barra
-                borderRadius: 10, // Redondez de las esquinas
-                "& .MuiLinearProgress-bar": {
-                  backgroundColor: "#2a265f", // Color de la barra
-                  borderRadius: 10, // Redondez de la barra
-                },
-              }}/>
+              <LinearProgress
+                variant="determinate"
+                value={occupancyPercentage}
+                sx={{
+                  height: 10,
+                  borderRadius: 10,
+                  "& .MuiLinearProgress-bar": {
+                    backgroundColor: "#2a265f",
+                    borderRadius: 10,
+                  },
+                }}
+              />
               <span className="progress-text">{travel.total_seats} Plazas libres</span>
             </div>
             <br />
+            <div className="destination-info">
             <h6>{travel.destination}</h6>
+            &nbsp;
+            {travel.clasificacion_destino && (
+              <div className={`classification-indicator ${travel.clasificacion_destino}`}>
+                {travel.clasificacion_destino}
+              </div>
+            )}
+            </div>
+            <div className="origin-info">
             <h2>Salida: {travel.origin}</h2>
+            &nbsp;
+            {travel.clasificacion_origen && (
+              <div className={`classification-indicator ${travel.clasificacion_origen}`}>
+                {travel.clasificacion_origen}
+              </div>
+            )}
+            </div>
             <h2>Duración estimada: {travel.estimated_duration}</h2>
             <h2>Precio: {travel.price} €</h2>
-            <h2>
-              Fecha: {dayjs(travel.start_date).format("DD/MM/YYYY HH:mm")}
-            </h2>
+            <h2>Fecha: {dayjs(travel.start_date).format("DD/MM/YYYY HH:mm")}</h2>
             <div className="progress-text">
               <Typography sx={{ textTransform: "capitalize" }}>
                 {travel.status}

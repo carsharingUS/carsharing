@@ -149,3 +149,106 @@
         height: 0.3vw;
     }
 }
+
+/* Añade estilos para las clasificaciones */
+.classification-indicator {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 20px;
+  margin-left: 10px;
+  font-weight: bold;
+  transition: transform 0.3s ease;
+}
+
+.Muy-cerca {
+  background: linear-gradient(135deg, #6bd19d, #4caf50); /* Verde */
+  color: white;
+}
+
+.Cerca {
+  background: linear-gradient(135deg, #6ec3ff, #2196f3); /* Azul */
+  color: white;
+}
+
+.Medio {
+  background: linear-gradient(135deg, #ffe082, #ffc107); /* Amarillo */
+  color: #333;
+}
+
+.Lejos {
+  background: linear-gradient(135deg, #ff8a80, #f44336); /* Rojo */
+  color: white;
+}
+
+/* Estilos para los iconos de clasificación */
+.classification-indicator i {
+  font-size: 16px;
+  margin-right: 5px;
+}
+
+/* Estilos de animación para las clasificaciones */
+.classification-indicator:hover {
+  transform: scale(1.1);
+}
+
+.Muy-cerca:hover {
+  background-color: #388e3c; /* Verde más oscuro */
+}
+
+.Cerca:hover {
+  background-color: #1976d2; /* Azul más oscuro */
+}
+
+.Medio:hover {
+  background-color: #ffa000; /* Amarillo más oscuro */
+}
+
+.Lejos:hover {
+  background-color: #c62828; /* Rojo más oscuro */
+}
+/* Alineación de los indicadores de clasificación */
+.destination-info,
+.origin-info {
+  display: flex;
+  align-items: center;
+  text-align: left;
+}
+
+.destination-info .classification-indicator,
+.origin-info .classification-indicator {
+  margin-left: auto;
+}
+
+
+
+/* Alineación del contenido restante a la izquierda */
+.travel-info {
+  text-align: left;
+}
+
+.travel-card {
+  position: relative;
+}
+
+.best-option-indicator {
+  position: absolute;
+  top: -10px;
+  left: 10px;
+  background-color: gold; /* Color dorado */
+  color: #fff;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5em;
+  font-weight: bold;
+  z-index: 1; /* Asegura que esté por encima del contenido */
+  transition: transform 0.3s ease;
+}
+
+.best-option-indicator:hover {
+  transform: scale(1.2);
+}

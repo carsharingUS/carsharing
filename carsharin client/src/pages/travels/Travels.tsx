@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { getTravels } from "../../api/TravelService";
 import { Travel } from "../../Interfaces";
 import TravelCard from "../../components/travels/TravelCard";
@@ -16,11 +16,39 @@ const Travels = () => {
   const [error, setError] = useState(null);
   const searchParams = new URLSearchParams(location.search);
 
+  const [closeTripsLoaded, setCloseTripsLoaded] = useState(false);
+
+  
+  // Al cargar la página, primero intenta recuperar los datos del almacenamiento local
+  const storedCloseTrips = localStorage.getItem('closeTrips');
+
   useEffect(() => {
     const origin = searchParams.get("origin") || "";
     const destination = searchParams.get("destination") || "";
     const start_date = searchParams.get("start_date") || "";
 
+    if (storedCloseTrips) {
+      console.log(storedCloseTrips);
+
+  
+      let closeTripsData = [];
+      if (storedCloseTrips && closeTripsLoaded === false) {
+        closeTripsData = JSON.parse(storedCloseTrips);
+        setTravels(closeTripsData);
+        setIsLoading(false);
+      } else {
+        setError(error);
+        setIsLoading(false);
+      }
+  
+      setCloseTripsLoaded(true); // Marcar closeTrips como cargado
+    }else{
+      localStorage.setItem('closeTrips', '');
+      setTravels([])
+      setIsLoading(false)
+      setCloseTripsLoaded(true)
+    }
+    /*
     const params = {
       origin,
       destination,
@@ -36,7 +64,10 @@ const Travels = () => {
         setError(error);
         setIsLoading(false);
       });
-  }, []);
+
+      */
+  }, [storedCloseTrips, searchParams, error]);
+
 
   if (isLoading) return <Loader />;
   if (error) return toast.error("Error!");
