@@ -6,7 +6,7 @@
 
 
 body {
-    background-color: #aba5f4;
+    background-color: #B4D4FF;
     font-family: 'Muli', sans-serif;
     background-size: cover;
     background-position: center;
@@ -16,3 +16,22 @@ body {
     display: flex;
     flex-direction: column;
 }
+
+::-webkit-scrollbar {
+    width: 10px; /* Ancho del scroll */
+  }
+  
+  ::-webkit-scrollbar-track {
+    background-color: #EEF5FF; /* Color del track (fondo) del scroll */
+    border-radius: 5px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background-color: #6f98cd; /* Color del thumb (barra) del scroll */
+    border-radius: 5px; /* Radio de borde para dar forma redondeada al thumb */
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #176B87; /* Color del thumb al pasar el cursor sobre él */
+  }
+  

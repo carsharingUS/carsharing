@@ -4,6 +4,47 @@
 @tailwind components;
 @tailwind utilities;
 
+nav {
+  background-color: #86B6F6; /* Ajusta el color aquí para que sea un poco más oscuro que el fondo */
+  /* Otros estilos del Navbar */
+}
+
+nav img {
+  margin-right: 0.5rem; /* Ajusta el valor del margen a la derecha de la imagen según tus necesidades */
+}
+
+/* Agrega estas reglas CSS al archivo de estilos CSS correspondiente */
+/* Agrega estas reglas CSS al archivo de estilos CSS correspondiente */
+.navbar-container {
+  display: flex;
+  justify-content: center; /* Alinea los elementos en el centro horizontalmente */
+  align-items: center; /* Alinea los elementos en el centro verticalmente */
+}
+
+/* Estilo para los enlaces del Navbar */
+.navbar-link {
+  position: relative;
+  margin-right: 3rem; /* Espacio entre enlaces */
+  font-size: 18px;
+  color: #000;
+}
+
+.navbar-link.active {
+  font-weight: bold; /* Estilo de fuente en negrita para el enlace activo */
+}
+
+.navbar-link.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 8px; /* Posición vertical del gradiente debajo de la palabra */
+  width: 100%;
+  height: 2px; /* Altura del gradiente */
+  background-image: linear-gradient(to right, transparent, black, transparent); /* Gradiente de color negro */
+}
+
+
+
 
 .bodyInitialPage {
   font-family: Inter;
@@ -147,15 +188,4 @@
   .get-app {
     @apply max-container relative flex w-full  flex-col justify-between gap-32 overflow-hidden bg-green-90 bg-pattern bg-cover bg-center bg-no-repeat px-6 py-12 text-white sm:flex-row sm:gap-12 sm:py-24 lg:px-20 xl:max-h-[598px] 2xl:rounded-5xl;
   }
-}
-
-/* Hide scrollbar for Chrome, Safari and Opera */
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
-/* Hide scrollbar for IE, Edge and Firefox */
-.hide-scrollbar {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
 }

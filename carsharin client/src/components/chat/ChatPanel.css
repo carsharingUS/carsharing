@@ -1,34 +1,81 @@
 .chat-panel {
-  flex: 1;
   display: flex;
   flex-direction: column;
+  height: 77vh;
 }
 
+.chat-panel-room-true {
+  padding: 20px;
+}
+
+.chat-panel-room-false {
+  padding: 10px;
+}
 
 .message-container {
   display: flex;
-  justify-content: flex-start;
+  flex-direction: column; /* Cambiar el flujo a columnas */
   margin-bottom: 10px;
 }
 
-.sent-message {
-  background-color: #a1ee66;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  border-bottom-right-radius: 20px;
-  padding: 10px 15px;
-  margin-left: auto;
-  max-width: 10%;
+.message-sender {
+  margin-bottom: 5px; /* Espacio entre el nombre del emisor y el mensaje */
+  margin-right: 100px;
 }
 
-.received-message {
-  background-color: #87e73e;
+/* CSS para la fecha del mensaje */
+.message-timestamp {
+  font-size: 10px; /* Tamaño de letra más pequeño */
+  color: #888; /* Color gris para la fecha */
+  position: absolute; /* Posición absoluta para poder ubicarla en la esquina */
+  bottom: 5px; /* Distancia desde la parte inferior */
+  right: 5px; /* Distancia desde la parte derecha */
+}
+
+/* CSS para los mensajes */
+.sent-message {
+  position: relative; /* Necesario para que la fecha esté posicionada correctamente */
+  background-color: #EEF5FF;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   border-bottom-left-radius: 20px;
   padding: 10px 15px;
+  margin-left: auto;
+  margin-right: 20rem;
+  width: fit-content; /* Ancho se ajusta al contenido */
+  max-width: 45%; /* Ancho máximo del 80% de la pantalla */
+  min-width: 18%;
+  overflow-wrap: break-word; /* Romper palabras largas cuando exceden el contenedor */
+}
+
+.sent-message-room-true {
+  margin-right: 1rem;
+}
+.sent-message-room-false {
+  margin-right: 20rem;
+}
+
+.received-message {
+  position: relative; /* Necesario para que la fecha esté posicionada correctamente */
+  background-color: #86B6F6;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  padding: 10px 15px;
   margin-right: auto;
-  max-width: 70%;
+  margin-left: 20rem;
+  width: fit-content; /* Ancho se ajusta al contenido */
+  max-width: 45%; /* Ancho máximo del 80% de la pantalla */
+  min-width: 18%;
+  overflow-wrap: break-word; /* Romper palabras largas cuando exceden el contenedor */
+}
+
+.received-message-room-true {
+  margin-left: 1rem;
+}
+
+.received-message-room-false {
+  margin-left: 20rem;
 }
 
 .conversation {
@@ -45,12 +92,12 @@
 }
 
 .sent {
-  background-color: #dcf8c6;
+  background-color: #f8fbfe;
   align-self: flex-end;
 }
 
 .received {
-  background-color: #fff;
+  background-color: #B4D4FF;
   align-self: flex-start;
 }
 
@@ -58,28 +105,50 @@
   display: flex;
   align-items: center;
   padding: 15px;
-  background-color: #f5f5f5;
 }
 
-.message-input input {
+.message-input input.room-true {
   flex: 1;
   padding: 10px;
   border: 1px solid #ccc;
-  border-radius: 20px;
-  margin-right: 10px;
+  border-radius: 8px 0 0 8px; /* Radio en las esquinas izquierdas */
+  margin-left: 5rem;
   outline: none;
 }
 
-.message-input button {
+.message-input input.room-false {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px 0 0 8px; /* Radio en las esquinas izquierdas */
+  margin-left: 20rem;
+  outline: none;
+}
+
+
+.message-input button.room-true {
   padding: 10px 20px;
-  background-color: #007bff;
+  background-color: #176B87;
   color: #fff;
   border: none;
-  border-radius: 20px;
+  border-radius: 0 8px 8px 0; /* Radio en las esquinas derechas */
+  margin-right: 5rem;
   cursor: pointer;
   outline: none;
 }
 
+.message-input button.room-false {
+  padding: 10px 20px;
+  background-color: #176B87;
+  color: #fff;
+  border: none;
+  border-radius: 0 8px 8px 0; /* Radio en las esquinas derechas */
+  margin-right: 20rem;
+  cursor: pointer;
+  outline: none;
+}
+
+
 .message-input button:hover {
-  background-color: #0056b3;
+  background-color: #1ac68d;
 }

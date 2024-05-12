@@ -7,11 +7,12 @@ import InitialPage from './pages/InitialPage'
 import Travels from './pages/travels/Travels';
 import UserProfile from './pages/UserProfile';
 import TravelCreationPage from './pages/travels/TravelCreationPage';
-import MessagePage from './pages/MessagePage';
 import MyTravels from './pages/travels/MyTravels';
 import TravelDetails from './pages/travels/TravelDetails';
 import NotificationPage from './pages/NotificationPage';
 import TravelRequestManagment from './components/notifications/TravelRequestManagment';
+import Chat from './components/chat/Chat';
+import ChatsPage from './pages/chats/ChatsPage';
 
 
 function App() {
@@ -24,6 +25,9 @@ function App() {
           <Route path='home' element={<HomePage />} />
           <Route path='' element={<HomePage />} />
           <Route path='initial' element={<InitialPage />} />
+          <Route path='chat' element={<ChatsPage />} />
+          <Route path='chat/:roomName' element={<Chat />} />
+          <Route path='travels/:travelId/chat/room/:roomName' element={<Chat />} />
           
           {/* RUTAS PARA VIAJES */}
           <Route path='login' element={<LoginComponent />}/>
@@ -37,6 +41,7 @@ function App() {
           <Route path='updateUser' element={<UserProfile />} />
           <Route path='createTravel' element={<TravelCreationPage />} />
 
+
           {/* RUTA PARA CHAT */}
 
           <Route path='chat' element={<MessagePage/>} />
@@ -44,7 +49,6 @@ function App() {
           {/* RUTAS PARA NOTIFICACIONES */}
           <Route path='notificaciones' element={<NotificationPage />}></Route>
           <Route path='notificaciones/:travelRequestId' element={<TravelRequestManagment/>}></Route>
-
 
         </Route>
       </Routes>

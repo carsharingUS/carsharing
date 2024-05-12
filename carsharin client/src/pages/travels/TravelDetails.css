@@ -49,6 +49,7 @@
   border-color: #007bff;
 }
 
+.travel-details-chat-btn[type="button"],
 .travel-details-submit-btn[type="submit"],
 .travel-details-request-btn {
   display: block;
@@ -66,6 +67,7 @@
 }
 
 .travel-details-submit-btn[type="submit"]:hover,
+.travel-details-chat-btn[type="button"]:hover,
 .travel-details-request-btn:hover {
   background-color: #0056b3;
 }

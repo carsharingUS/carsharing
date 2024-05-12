@@ -28,7 +28,7 @@ const MyTravels = () => {
           margin: "16px",
         }}
       >
-        <div className="text-title">Lista de Viajes</div>
+        <div className="chats-header mt-4">Lista de Viajes</div>
         <div className="container-card">
           {data.map((travel: Travel) => (
             <TravelCard key={travel.id} travel={travel} />

@@ -13,12 +13,6 @@ export interface Travel {
     status: string;
 }
 */
-export interface Message {
-    conversation: number;
-    sender: number;
-    sender_username: string;
-    content: string;
-  }
 
 export interface TravelRequest {
     id: number;
@@ -77,3 +71,22 @@ export interface Coordinates {
     latitude: string;
     longitude: string;
 }
+
+export interface ChatMessage {
+    id: string;
+    text: string;
+    sender: string;
+    timestamp: string;
+  }
+
+  export interface Message {
+    text: string;
+    sender: User;
+    room_id: number;
+  }
+
+  export interface Room {
+    id: string;
+    name: string;
+    users: User[];
+  }
