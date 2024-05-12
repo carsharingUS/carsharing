@@ -103,11 +103,11 @@ export const getRequestLikeHost = async (user_id:string) => {
 
 export const getRequestTravel = async (travelRequest_id:string) => {
   try{
-    const response = await authAPI.get(`travels/travel_requests/${travelRequest_id}`);
+    const response = await authAPI.get(`travels/travel_requests/managment/${travelRequest_id}`);
     return response.data
   }catch(error){
     console.error("Error al devolver la peticion de viaje para ese id: ", error)
-    return null;
+    throw error;
   }
 }
 

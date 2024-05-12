@@ -13,7 +13,7 @@ from django.contrib.gis.geos import Point
 from django.contrib.gis.db.models.functions import Distance
 from django.shortcuts import get_object_or_404
 from django.contrib.gis.geos import MultiPoint
-from django.contrib.gis.geos import GEOSGeometry
+from django.contrib.gis.geos import GEOSGeometry, GeometryCollection
 
 import requests
 import polyline
@@ -240,6 +240,11 @@ def create_travel_request(request, travel_id):
     travel = get_object_or_404(Travel, id=travel_id)
     serializer = TravelRequestSerializer(data=request.data)
     if serializer.is_valid():
+        print(travel.total_seats)
+        print(serializer.validated_data.get('seats'))
+        # Verificar que el numero de asientos esta dentro del intervalo de total_seats del viaje asociado
+        if (int(serializer.validated_data.get('seats')) > int(travel.total_seats)) and (int(serializer.validated_data.get('seats')) == 0 or int(serializer.validated_data.get('seats')) < 0):
+            return Response({"error": "El número de asientos solicitados excede el número de asientos disponibles en el viaje."}, status=status.HTTP_400_BAD_REQUEST)
 
         intermediate_data = serializer.validated_data.get('intermediate')
         if intermediate_data:
@@ -263,9 +268,17 @@ def get_request_like_host(request, user_id):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_request_by_id(request, travelRequest_id):
-    travelRequest = get_object_or_404(TravelRequest, id=travelRequest_id)
-    serializer = TravelRequestSerializer(travelRequest, many=False)
-    return Response(serializer.data)
+    try:
+        travel_request = get_object_or_404(TravelRequest, id=travelRequest_id)
+
+        # Verificar si la solicitud está aceptada o rechazada
+        if travel_request.status in ['aceptado', 'rechazado']:
+            return Response({'error': 'La solicitud ya ha sido procesada'}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = TravelRequestSerializer(travel_request)
+        return Response(serializer.data)
+    except Exception as e:
+        return Response({"error": str(e)}, status=400)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -323,7 +336,20 @@ def accept_travel_request(request, travelRequest_id):
         intermediate_coords = travel_request.intermediate_coords
         travel.intermediate_coordsTravel.append(intermediate_coords)
 
-        # Guardar las coordenadas intermedias como un campo MultiPointField
+        # Guardar nueva duración teniendo en cuenta los puntos intermedios
+        origin_coord = travel.origin_coords
+        destination_coord = travel.destination_coords
+
+        # Crear una lista de coordenadas que incluya origen, intermedios y destino
+        data = [(origin_coord.x, origin_coord.y)]
+        data += [(point.x, point.y) for point in travel.intermediate_coordsTravel]
+        data.append((destination_coord.x, destination_coord.y))
+
+
+        duracion = timedelta(seconds=map_routeDuration(data))
+        estimated_duration = format_duration(duracion)
+
+        travel.estimated_duration = estimated_duration
 
         travel.save()
         

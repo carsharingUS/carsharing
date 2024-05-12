@@ -12,7 +12,7 @@ import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 
 const TravelRequestManagment = () => {
     const navigate = useNavigate();
-    const { travelRequest_id } = useParams();
+    const { travelRequestId = '' } = useParams();
     const [travelRequest, setTravelRequest] = useState<TravelRequest | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isMapLoading, setIsMapLoading] = useState(false);
@@ -21,22 +21,28 @@ const TravelRequestManagment = () => {
     const [intermedioCoordenadas, setIntermedioCoordenadas] = useState<{ geocode: [number, number]; popUp: string } | null>(null);
     const [origin, setOrigin] = useState<{ geocode: [number, number]; popUp: string } | null>(null);
     const [destination, setDestination] = useState<{ geocode: [number, number]; popUp: string } | null>(null);
+    const [isRequestProcessed, setIsRequestProcessed] = useState(false);
 
     useEffect(() => {
-        // Obtener el TravelRequest del localStorage
-        const storedTravelRequest = localStorage.getItem('travelRequest');
-        if (storedTravelRequest) {
-            const parsedTravelRequest = JSON.parse(storedTravelRequest);
-            setTravelRequest(parsedTravelRequest);
-            setIsLoading(false);
-        } else {
-            setIsLoading(false);
+      const fetchTravelRequest = async () => {
+        try {
+          const response = await getRequestTravel(travelRequestId);
+          setTravelRequest(response);
+          setIsLoading(false);
+        } catch (error) {
+          console.error('Error al obtener la solicitud de viaje:', error);
+          setIsLoading(false);
+          if (error.response && error.response.data.error === 'La solicitud ya ha sido procesada') {
+            toast.error('La solicitud ya ha sido procesada');
+            setIsRequestProcessed(true);
+          } else {
+            toast.error('Error al obtener la solicitud de viaje');
+          }
         }
-    }, []);
+      };
+      fetchTravelRequest();
+    }, [travelRequestId]);
 
-    const handleShowNewRoute = () => {
-        // Lógica para mostrar la nueva ruta
-    };
 
     const showMap = async () => {
         if (isActive) {
@@ -129,34 +135,35 @@ const TravelRequestManagment = () => {
         };
       }, [isActive, origin, destination, intermedioCoordenadas]);
 
-    const handleAcceptRequest = async () => {
-        try{
-            await acceptTravelRequest(travelRequest?.id)
-            toast.success("Petición aceptada!");
-            navigate("/")
-        }catch(error){
-            toast.error("Error!");
-            console.error("Error al cargar la solicitud de viaje: ", error);
+      const handleAcceptRequest = async () => {
+        try {
+          await acceptTravelRequest(travelRequest?.id);
+          toast.success('Petición aceptada!');
+          navigate('/');
+        } catch (error) {
+          console.error('Error al aceptar la solicitud de viaje:', error);
+          toast.error('Error al aceptar la solicitud de viaje');
         }
-    };
+      };
 
-    const handleRejectRequest = async () => {
-      try{
-        await declineTravelRequest(travelRequest?.id)
-        toast.success("Petición rechazada");
-        navigate("/")
-    }catch(error){
-        toast.error("Error!");
-        console.error("Error al cargar la solicitud de viaje: ", error);
-    }
-    };
+      const handleRejectRequest = async () => {
+        try {
+          await declineTravelRequest(travelRequest?.id);
+          toast.success('Petición rechazada');
+          navigate('/');
+        } catch (error) {
+          console.error('Error al rechazar la solicitud de viaje:', error);
+          toast.error('Error al rechazar la solicitud de viaje');
+        }
+      };
 
     const handleMessageUser = () => {
         // Lógica para enviar un mensaje al usuario que solicitó el viaje
     };
-    console.log(travelRequest)
+    console.log(isRequestProcessed)
     if (isLoading) return <Loader />;
-    if (!travelRequest) return <div>No se encontró el viaje o el usuario.</div>;
+    if (!travelRequest && !isRequestProcessed) return <div>No se encontró el viaje o el usuario.</div>;
+    if (!travelRequest && isRequestProcessed) return <div>Esta solicitud ya ha sido procesada.</div>
     
     // Aquí puedes renderizar el contenido del componente utilizando los datos de travelRequest
     return (
@@ -164,13 +171,13 @@ const TravelRequestManagment = () => {
             <h2>Aceptar Solicitud de Viaje</h2>
 
             <div className="travel-request-details">
-                <p>Usuario: {travelRequest.user?.name}</p>
-                <p>Origen: {travelRequest.travel?.origin}</p>
-                <p>Destino: {travelRequest.travel?.destination}</p>
-                <p>Fecha de Inicio: {travelRequest.travel?.start_date}</p>
-                <p>Precio: {travelRequest.travel?.price}</p>
-                <p>Número de Asientos Solicitados: {travelRequest.seats}</p>
-                {travelRequest.intermediate && (
+                <p>Usuario: {travelRequest?.user?.name}</p>
+                <p>Origen: {travelRequest?.travel?.origin}</p>
+                <p>Destino: {travelRequest?.travel?.destination}</p>
+                <p>Fecha de Inicio: {travelRequest?.travel?.start_date}</p>
+                <p>Precio: {travelRequest?.travel?.price}</p>
+                <p>Número de Asientos Solicitados: {travelRequest?.seats}</p>
+                {travelRequest?.intermediate && (
                     <div>
                     <button className="show-route-button" onClick={showMap}>
                       {isActive ? "Cerrar mapa" : "Mostrar Nueva Ruta"}

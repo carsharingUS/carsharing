@@ -35,6 +35,7 @@ const TravelDetails = () => {
   const [isIntermedioTyping, setIsIntermedioTyping] = useState(false);
 
 
+
   const handleIntermedioChange = (event: ChangeEvent<HTMLInputElement>) => {
     setIntermedio(event.target.value);
     setIsIntermedioTyping(true);
@@ -84,6 +85,7 @@ const TravelDetails = () => {
       if (!travelId) return;
       const travelData = await getTravel(travelId);
       setTravel(travelData);
+      console.log(travelData)
       setIsLoading(false);
       return travelData;
     } catch (error) {

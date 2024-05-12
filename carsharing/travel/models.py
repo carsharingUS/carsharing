@@ -46,5 +46,5 @@ class TravelRequest(models.Model):
     intermediate = models.CharField(max_length=250, blank=True, null=True)
     intermediate_coords = models.PointField(geography=True, blank=True, default=Point(0, 0))
     #Número de asientos que solicita del viaje
-    seats = models.IntegerField()
+    seats = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(4)])
     status = models.CharField(max_length=20, choices=[('pendiente', 'Pendiente'), ('aceptado', 'Aceptado'), ('rechazado', 'Rechazado')], default='pendiente')

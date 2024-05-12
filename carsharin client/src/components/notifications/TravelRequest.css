@@ -1,45 +1,62 @@
 .travel-request-card {
-    display: flex;
-    justify-content: space-between; /* Distribuir los elementos de manera uniforme a lo largo del contenedor */
-    align-items: center; /* Centrar verticalmente los elementos */
-    background-color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 5px;
-    margin: 0 10px;
-    margin-bottom: 15px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  
-    &:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
-    }
-  }
-  
-  .travel-request-card p {
-    margin: 0;
-    font-size: 16px;
-  }
-  
-  .travel-request-card .text-container {
-    flex: 1; /* Que el contenedor de texto ocupe todo el espacio disponible */
-  }
-  
-  .travel-request-card button {
-    margin-left: 10px;
-    margin-top: 5px; /* Espacio entre los botones */
-    margin-bottom: 5px;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    background-color: #007bff;
-    color: #fff;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .travel-request-card button:hover {
-    background-color: #0056b3;
-  }
-  
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  margin: 0 10px;
+  margin-bottom: 15px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.travel-request-card.accepted {
+  background-color: #e0f5e0; /* Verde claro */
+}
+
+.travel-request-card.rejected {
+  background-color: #f5e0e0; /* Rojo claro */
+}
+
+.travel-request-card p {
+  margin: 0;
+  font-size: 16px;
+}
+
+.travel-request-card .status-indicator {
+  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.travel-request-card .status-indicator.accepted {
+  color: #4caf50; /* Verde */
+}
+
+.travel-request-card .status-indicator.rejected {
+  color: #f44336; /* Rojo */
+}
+
+.travel-request-card button {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.travel-request-card button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.travel-request-card button:hover {
+  background-color: #0056b3;
+}

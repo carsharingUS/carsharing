@@ -20,7 +20,7 @@ urlpatterns = [
     #URLS REQUEST TRAVLES
     path('<int:travel_id>/create_request', views.create_travel_request),
     path('travel_requests/<int:user_id>', views.get_request_like_host),
-    path('travel_requests/<int:travelRequest_id>', views.get_request_by_id),
+    path('travel_requests/managment/<int:travelRequest_id>', views.get_request_by_id),
     path('travel_requests/<int:travelRequest_id>/accept', views.accept_travel_request),
     path('travel_requests/<int:travelRequest_id>/decline', views.reject_travel_request),
 ]

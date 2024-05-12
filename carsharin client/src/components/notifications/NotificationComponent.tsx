@@ -27,6 +27,7 @@ const NotificationComponent = () => {
     
         fetchTravelRequests();
       }, []);
+      
 
     return (
         <div className="travel-request-list">
