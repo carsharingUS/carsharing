@@ -9,8 +9,11 @@ import UserProfile from './pages/UserProfile';
 import TravelCreationPage from './pages/travels/TravelCreationPage';
 import MyTravels from './pages/travels/MyTravels';
 import TravelDetails from './pages/travels/TravelDetails';
+import NotificationPage from './pages/NotificationPage';
+import TravelRequestManagment from './components/notifications/TravelRequestManagment';
 import Chat from './components/chat/Chat';
 import ChatsPage from './pages/chats/ChatsPage';
+
 
 function App() {
   return (
@@ -38,6 +41,14 @@ function App() {
           <Route path='updateUser' element={<UserProfile />} />
           <Route path='createTravel' element={<TravelCreationPage />} />
 
+
+          {/* RUTA PARA CHAT */}
+
+          <Route path='chat' element={<MessagePage/>} />
+
+          {/* RUTAS PARA NOTIFICACIONES */}
+          <Route path='notificaciones' element={<NotificationPage />}></Route>
+          <Route path='notificaciones/:travelRequestId' element={<TravelRequestManagment/>}></Route>
 
         </Route>
       </Routes>
