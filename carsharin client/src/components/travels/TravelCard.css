@@ -122,6 +122,58 @@
     letter-spacing: 1px;
 }
 
+.chat-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-item {
+  display: inline-block;
+  margin-right: 20px;
+  margin-bottom: 0; /* Elimina el margen inferior */
+  vertical-align: top; /* Alinea las cards verticalmente */
+}
+
+.chat-item .card-title {
+  font-size: 18px; /* Tamaño de fuente más grande */
+  font-weight: bold; /* Fuente en negrita */
+  color: #333; /* Color de fuente más oscuro */
+}
+
+.card {
+  border-radius: 0; /* Elimina el radio de las esquinas */
+}
+
+.transparent-chat {
+  background-color: transparent !important;
+}
+
+.selected-chat {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.6); /* Efecto de sombra */
+}
+
+.card-item {
+  cursor: pointer;
+}
+
+.chats-header {
+  font-size: 22px; /* Tamaño de fuente más grande */
+  font-weight: bold; /* Texto en negrita */
+  text-align: center; /* Centrar el texto */
+  margin-bottom: 20px; /* Espacio debajo del encabezado */
+}
+
+.chat-list {
+  max-height: 70vh; /* Establece la altura máxima del contenedor del listado de chats */
+  overflow-y: auto; /* Habilita el scroll vertical cuando el contenido excede la altura máxima */
+}
+
+
+
+
+
+
+
 @media screen and (max-width: 800px) {
     .btn {
         font-size: 0.6em;

@@ -1,21 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { Room } from "../../Interfaces";
+import { Room, Message } from "../../Interfaces";
 import Navbar from "../../components/home/Navbar";
 import "../../components/travels/TravelCard.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Loader from "../../components/Loader";
 import toast from "react-hot-toast";
-import NoTravelFound from "../../components/travels/NoTravelFound";
-import { useNavigate } from "react-router-dom";
+import SelectChat from "../../components/chat/SelectChat";
+import StartChat from "../../components/chat/StartChat";
 import { getUserRooms } from "../../api/ChatService";
 import { getCurrentUser } from "../../utils";
 import { useQuery } from "@tanstack/react-query";
+import { getMessages } from "../../api/ChatService";
+import Chat from "../../components/chat/Chat";
 
 const ChatsPage = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
-  const navigate = useNavigate();
-  const { data: user } = getCurrentUser();
+  const [lastMessages, setLastMessages] = useState<{
+    [roomId: string]: Message;
+  }>({});
+  const [selectedRooms, setSelectedRooms] = useState<Room[]>([]);
 
+  const { data: user } = getCurrentUser();
   const { data, isError, isLoading } = useQuery({
     queryKey: ["user", user],
     queryFn: () => getUserRooms(user.id),
@@ -24,8 +29,20 @@ const ChatsPage = () => {
   useEffect(() => {
     if (data) {
       setRooms(data);
+      fetchLastMessages(data);
     }
   }, [data]);
+
+  const fetchLastMessages = async (rooms: Room[]) => {
+    const lastMessagesPromises = rooms.map(async (room) => {
+      const messages = await getMessages(room.id);
+      const lastMessage = messages[messages.length - 1];
+      return { [room.id]: lastMessage };
+    });
+    const lastMessagesObjects = await Promise.all(lastMessagesPromises);
+    const mergedLastMessages = Object.assign({}, ...lastMessagesObjects);
+    setLastMessages(mergedLastMessages);
+  };
 
   const getOtherUser = (room: Room) => {
     if (room && room.users) {
@@ -36,37 +53,72 @@ const ChatsPage = () => {
     }
   };
 
+  const handleChatClick = (room: Room) => {
+    setSelectedRooms((prevSelectedRooms) => {
+      if (prevSelectedRooms.length > 0) {
+        return [room];
+      } else {
+        return [...prevSelectedRooms, room];
+      }
+    });
+  };
+
   if (isLoading) return <Loader />;
   if (isError) return toast.error("Error!");
 
   return (
     <div>
       <Navbar />
-      <div className="container mt-4">
-        <h2>Chats</h2>
-        <div className="row">
-          {rooms.length > 0 ? (
-            rooms.map((room) => (
-              <div key={room.id} className="col-lg-4 col-md-6 mb-4">
-                <div className="card h-100">
-                  <div className="card-body">
-                    <h5 className="card-title">
-                      Chat con {getOtherUser(room)}
-                    </h5>
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => navigate(`/chat/${room.name}`)}
+      <div className="container-fluid mt-4">
+        {rooms.length > 0 ? (
+          <div className="row">
+            <div className="col-4">
+              <h2 className="chats-header">Chats</h2>
+              <div className="chat-list">
+                {rooms.map((room) => (
+                  <div
+                    key={room.id}
+                    className={`chat-item ${
+                      selectedRooms.includes(room) ? "selected-chat" : ""
+                    }`}
+                    onClick={() => handleChatClick(room)}
+                  >
+                    <div
+                      className="card h-100 transparent-chat"
+                      style={{
+                        width: "100%",
+                        borderRadius: "0",
+                      }}
                     >
-                      Ir al chat
-                    </button>
+                      <div className="card-body">
+                        <h5 className="card-title">{getOtherUser(room)}</h5>
+                        <p className="card-text">
+                          {lastMessages[room.id]?.sender === user.username
+                            ? "Tú: "
+                            : lastMessages[room.id]?.sender + ": "}
+                          {lastMessages[room.id]?.text || "No hay mensajes"}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                ))}
               </div>
-            ))
-          ) : (
-            <NoTravelFound />
-          )}
-        </div>
+            </div>
+            <div className="col-8">
+              {selectedRooms.length > 0 ? (
+                selectedRooms.map((selectedRoom) => (
+                  <div key={selectedRoom.id} className="chat-container">
+                    <Chat room={selectedRoom} />
+                  </div>
+                ))
+              ) : (
+                <SelectChat />
+              )}
+            </div>
+          </div>
+        ) : (
+          <StartChat />
+        )}
       </div>
     </div>
   );

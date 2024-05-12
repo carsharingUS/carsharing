@@ -47,7 +47,7 @@ const Travels = () => {
       <Navbar />
       <div className="container-fluid">
         <div className="row">
-          <div className="text-title">Lista de Viajes</div>
+          <div className="chats-header mt-4">Lista de Viajes</div>
         </div>
         <div className="row justify-content-between">
           <div className="col-md-8">

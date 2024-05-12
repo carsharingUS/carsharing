@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import "../chat/ChatPanel.css";
-import { ChatMessage, Message, Token, User } from "../../Interfaces";
+import { ChatMessage, Message, Room, Token, User } from "../../Interfaces";
 import {
   createMessage,
   getMessages,
@@ -13,7 +13,8 @@ import { useAuthStore } from "../../store/auth";
 import * as jwt_decode from "jwt-decode";
 import Navbar from "../home/Navbar";
 
-const Chat = () => {
+const Chat = ({ room }: { room: Room }) => {
+  const chatContainerClass = room ? true : false;
   const [message, setMessage] = useState("");
   const [user, setUser] = useState<User>();
   const [otherUser, setOtherUser] = useState<User>();
@@ -39,20 +40,27 @@ const Chat = () => {
       const userr = await get_solo_user(id);
       setUser(userr);
 
-      if (roomName?.endsWith("_room")) roomName = roomName.replace("_room", "");
-      const token = await getUsersByToken(roomName || "");
-
-      if (token) {
-        const otherUser =
-          token.user1_id !== userr.id ? token.user1_id : token.user2_id;
+      if (room) {
+        const otherUser = room.users.find((u) => u.id !== userr.id);
         setOtherUser(otherUser);
-        if (otherUser) {
-          connectToWebSocket(userr, otherUser);
-        } else {
-          console.error("No se encontró el otro usuario en la sala");
-        }
+        connectToWebSocket(userr, otherUser?.id);
       } else {
-        console.error("La sala no existe o no tiene exactamente 2 usuarios");
+        if (roomName?.endsWith("_room"))
+          roomName = roomName.replace("_room", "");
+        const token = await getUsersByToken(roomName || "");
+
+        if (token) {
+          const otherUser =
+            token.user1_id !== userr.id ? token.user1_id : token.user2_id;
+          setOtherUser(otherUser);
+          if (otherUser) {
+            connectToWebSocket(userr, otherUser);
+          } else {
+            console.error("No se encontró el otro usuario en la sala");
+          }
+        } else {
+          console.error("La sala no existe o no tiene exactamente 2 usuarios");
+        }
       }
     };
 
@@ -84,8 +92,15 @@ const Chat = () => {
           if (chatHistory.length === 0) {
             getMessages(roomId)
               .then((response) => {
-                if (response && response.data.length > 0) {
-                  setChatHistory(response.data);
+                if (response && response.length > 0) {
+                  setChatHistory(
+                    response.map((message) => ({
+                      id: message.id,
+                      text: message.text,
+                      sender: message.sender,
+                      timestamp: message.timestamp,
+                    }))
+                  );
                 }
               })
               .catch((error) => {
@@ -106,7 +121,7 @@ const Chat = () => {
         socketRef.current.close();
       }
     };
-  }, []);
+  }, [room]);
 
   useEffect(() => {
     if (chatEndRef.current) {
@@ -172,16 +187,27 @@ const Chat = () => {
 
   return (
     <div>
-      <Navbar />
-      <div className="chat-panel" id="chat-panel">
+      {!room ? <Navbar /> : null}
+      <div
+        className={`chat-panel chat-panel-${chatContainerClass}`}
+        id="chat-panel"
+      >
         <div className="conversation">
           {chatHistory.map((msg, index) => (
             <div
               key={index}
               className={`message-container ${
                 msg.sender === user?.username
-                  ? "sent-message"
-                  : "received-message"
+                  ? `sent-message ${
+                      room
+                        ? "sent-message-room-true"
+                        : "sent-message-room-false"
+                    }`
+                  : `received-message ${
+                      room
+                        ? "received-message-room-true"
+                        : "received-message-room-false"
+                    }`
               }`}
             >
               <div className="message-sender">
@@ -199,6 +225,7 @@ const Chat = () => {
               </div>
             </div>
           ))}
+
           <div ref={chatEndRef}></div>
         </div>
         <div className="message-input">
@@ -208,8 +235,12 @@ const Chat = () => {
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Escribir mensaje..."
+            className={`room-${chatContainerClass}`}
           />
-          <button className="boton" onClick={sendMessage}>
+          <button
+            className={`room-${chatContainerClass}`}
+            onClick={sendMessage}
+          >
             <i className="fas fa-paper-plane"></i>{" "}
           </button>
         </div>

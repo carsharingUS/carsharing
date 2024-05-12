@@ -1,7 +1,15 @@
 .chat-panel {
   display: flex;
   flex-direction: column;
-  height: 83vh; /* Ocupa toda la altura de la pantalla */
+  height: 77vh;
+}
+
+.chat-panel-room-true {
+  padding: 20px;
+}
+
+.chat-panel-room-false {
+  padding: 10px;
 }
 
 .message-container {
@@ -27,7 +35,7 @@
 /* CSS para los mensajes */
 .sent-message {
   position: relative; /* Necesario para que la fecha esté posicionada correctamente */
-  background-color: #a8e3f5;
+  background-color: #EEF5FF;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   border-bottom-left-radius: 20px;
@@ -40,9 +48,16 @@
   overflow-wrap: break-word; /* Romper palabras largas cuando exceden el contenedor */
 }
 
+.sent-message-room-true {
+  margin-right: 1rem;
+}
+.sent-message-room-false {
+  margin-right: 20rem;
+}
+
 .received-message {
   position: relative; /* Necesario para que la fecha esté posicionada correctamente */
-  background-color: #ffffff;
+  background-color: #86B6F6;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   border-bottom-right-radius: 20px;
@@ -53,6 +68,14 @@
   max-width: 45%; /* Ancho máximo del 80% de la pantalla */
   min-width: 18%;
   overflow-wrap: break-word; /* Romper palabras largas cuando exceden el contenedor */
+}
+
+.received-message-room-true {
+  margin-left: 1rem;
+}
+
+.received-message-room-false {
+  margin-left: 20rem;
 }
 
 .conversation {
@@ -69,12 +92,12 @@
 }
 
 .sent {
-  background-color: #9eddf0;
+  background-color: #f8fbfe;
   align-self: flex-end;
 }
 
 .received {
-  background-color: #eaeaea;
+  background-color: #B4D4FF;
   align-self: flex-start;
 }
 
@@ -84,7 +107,16 @@
   padding: 15px;
 }
 
-.message-input input {
+.message-input input.room-true {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px 0 0 8px; /* Radio en las esquinas izquierdas */
+  margin-left: 5rem;
+  outline: none;
+}
+
+.message-input input.room-false {
   flex: 1;
   padding: 10px;
   border: 1px solid #ccc;
@@ -93,9 +125,21 @@
   outline: none;
 }
 
-.message-input button {
+
+.message-input button.room-true {
   padding: 10px 20px;
-  background-color: #1ee2a1;
+  background-color: #176B87;
+  color: #fff;
+  border: none;
+  border-radius: 0 8px 8px 0; /* Radio en las esquinas derechas */
+  margin-right: 5rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.message-input button.room-false {
+  padding: 10px 20px;
+  background-color: #176B87;
   color: #fff;
   border: none;
   border-radius: 0 8px 8px 0; /* Radio en las esquinas derechas */

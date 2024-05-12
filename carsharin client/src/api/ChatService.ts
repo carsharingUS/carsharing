@@ -1,4 +1,5 @@
-import { Message, Room, User } from "../Interfaces";
+import { AxiosResponse } from "axios";
+import { ChatMessage, Message, Room, User } from "../Interfaces";
 import { API, authAPI } from "./AuthenticationService";
 
 // Usar en un futuro
@@ -8,9 +9,9 @@ export const createWebsocket = async (roomId: number) => {
 }
 
 // Send a get request to the api endpoint to get the message of the logged in user
-export const getMessages = async (roomId: string) => {
-  const response = await authAPI.get("/chat/room/"+roomId+"/messages/")
-  return response;
+export const getMessages = async (roomId: string) : Promise<ChatMessage[]> => {
+  const response: AxiosResponse<ChatMessage[]> = await authAPI.get(`/chat/room/${roomId}/messages/`);
+  return response.data;
 }
 
 export const createMessage = async (data: Message) => {

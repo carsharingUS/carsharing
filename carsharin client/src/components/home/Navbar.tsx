@@ -42,37 +42,41 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="flexBetween max-container padding-container-sm relative z-30 py-3">
+    <nav className="flexBetween padding-container-sm relative z-30 py-3">
       <Link to="/">
-        <img src="/carsharing.svg" alt="logo" width={80} height={40}></img>
+        <img src="/carsharing.svg" alt="logo" width={100}></img>
       </Link>
-      {isAuth ? (
-        <ul className="hidden h-full gap-8 lg:flex">
-          {NAV_HOME_LINKS.map((link) => (
-            <Link
-              to={link.href}
-              key={link.key}
-              className="regular-14 text-gray-50 flexCenter cursor-pointer pb-1.5 
-                    transition-all hover:font-bold"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </ul>
-      ) : (
-        <ul className="hidden h-full gap-8 lg:flex">
-          {NAV_HOME_LINKS_NO_LOGIN.map((link) => (
-            <Link
-              to={link.href}
-              key={link.key}
-              className="regular-14 text-gray-50 flexCenter cursor-pointer pb-1.5 
-                    transition-all hover:font-bold"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </ul>
-      )}
+      <div className="navbar-container">
+        {isAuth ? (
+          <ul className="hidden h-full lg:flex">
+            {NAV_HOME_LINKS.map((link) => (
+              <Link
+                to={link.href}
+                key={link.key}
+                className={`navbar-link flexCenter cursor-pointer pb-1.5 transition-all hover:font-bold ${
+                  window.location.pathname === link.href ? "active" : ""
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </ul>
+        ) : (
+          <ul className="hidden h-full lg:flex">
+            {NAV_HOME_LINKS_NO_LOGIN.map((link) => (
+              <Link
+                to={link.href}
+                key={link.key}
+                className={`navbar-link flexCenter cursor-pointer pb-1.5 transition-all hover:font-bold ${
+                  window.location.pathname === link.href ? "active" : ""
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </ul>
+        )}
+      </div>
 
       <div className="lg:flexCenter">
         {isAuth ? (
@@ -82,8 +86,8 @@ const Navbar = () => {
                 <img
                   src={`http://localhost:8000${user.avatar}`}
                   alt={user.username}
-                  width={40}
-                  height={40}
+                  width={50}
+                  height={50}
                   className="rounded-full"
                 />
               )}

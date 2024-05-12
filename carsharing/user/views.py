@@ -77,8 +77,8 @@ def generate_websocket_token(user1_id, user2_id):
 
     new_token, created = WebsocketToken.objects.get_or_create(
         token=hashed_token,
-        user1_id=user1_id,
-        user2_id=user2_id
+        user1_id=sorted_ids[0],
+        user2_id=sorted_ids[1]
     )
 
     return new_token.token
