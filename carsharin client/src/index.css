@@ -23,6 +23,7 @@ body {
   
   ::-webkit-scrollbar-track {
     background-color: #EEF5FF; /* Color del track (fondo) del scroll */
+    border-radius: 5px;
   }
   
   ::-webkit-scrollbar-thumb {

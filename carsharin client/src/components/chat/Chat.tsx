@@ -13,7 +13,7 @@ import { useAuthStore } from "../../store/auth";
 import * as jwt_decode from "jwt-decode";
 import Navbar from "../home/Navbar";
 
-const Chat = ({ room }: { room: Room }) => {
+const Chat = ({ room, updateLastMessage }) => {
   const chatContainerClass = room ? true : false;
   const [message, setMessage] = useState("");
   const [user, setUser] = useState<User>();
@@ -169,6 +169,11 @@ const Chat = ({ room }: { room: Room }) => {
       createMessage(messageData)
         .then((response) => {
           console.log("Message created successfully:", response.data);
+          updateLastMessage(roomId, {
+            sender: user?.username,
+            text: message,
+            timestamp: new Date().toISOString(),
+          });
         })
         .catch((error) => {
           console.error("Error creating message:", error);

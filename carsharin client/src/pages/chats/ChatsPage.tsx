@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Room, Message } from "../../Interfaces";
+import { Room, Message, ChatMessage } from "../../Interfaces";
 import Navbar from "../../components/home/Navbar";
 import "../../components/travels/TravelCard.css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -15,8 +15,9 @@ import Chat from "../../components/chat/Chat";
 
 const ChatsPage = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
+  const [messageSent, setMessageSent] = useState(false);
   const [lastMessages, setLastMessages] = useState<{
-    [roomId: string]: Message;
+    [roomId: string]: ChatMessage;
   }>({});
   const [selectedRooms, setSelectedRooms] = useState<Room[]>([]);
 
@@ -42,6 +43,20 @@ const ChatsPage = () => {
     const lastMessagesObjects = await Promise.all(lastMessagesPromises);
     const mergedLastMessages = Object.assign({}, ...lastMessagesObjects);
     setLastMessages(mergedLastMessages);
+    setMessageSent(false); // Establece messageSent en false después de actualizar la lista de mensajes
+  };
+
+  useEffect(() => {
+    if (messageSent) {
+      fetchLastMessages(rooms);
+    }
+  }, [messageSent, rooms, fetchLastMessages]);
+
+  const updateLastMessage = (roomId, message) => {
+    setLastMessages((prevLastMessages) => ({
+      ...prevLastMessages,
+      [roomId]: message,
+    }));
   };
 
   const getOtherUser = (room: Room) => {
@@ -98,6 +113,13 @@ const ChatsPage = () => {
                             : lastMessages[room.id]?.sender + ": "}
                           {lastMessages[room.id]?.text || "No hay mensajes"}
                         </p>
+                        <p className="last-message-date">
+                          {lastMessages[room.id]?.timestamp
+                            ? new Date(
+                                lastMessages[room.id].timestamp
+                              ).toLocaleString()
+                            : ""}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -108,7 +130,10 @@ const ChatsPage = () => {
               {selectedRooms.length > 0 ? (
                 selectedRooms.map((selectedRoom) => (
                   <div key={selectedRoom.id} className="chat-container">
-                    <Chat room={selectedRoom} />
+                    <Chat
+                      room={selectedRoom}
+                      updateLastMessage={updateLastMessage}
+                    />
                   </div>
                 ))
               ) : (
