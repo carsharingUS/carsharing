@@ -401,3 +401,11 @@ def get_travels_by_user(request):
     travels = Travel.objects.filter(host=user)
     serializer = TravelSerializer(travels, many=True)
     return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_travels_by_user_as_passenger(request):
+    user = request.user
+    travels = Travel.objects.filter(passengers=user)
+    serializer = TravelSerializer(travels, many=True)
+    return Response(serializer.data)
