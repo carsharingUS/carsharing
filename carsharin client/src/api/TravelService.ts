@@ -27,6 +27,15 @@ export const getUserTravels =async () => {
     return response.data
 }
 
+export const getUserTravelsAsPassenger = async () => {
+    try {
+        const response = await authAPI.get("travels/user_as_passenger")
+        return response.data;
+    } catch (error) {
+        throw new Error("Error al obtener los viajes filtrados.");
+    }
+};
+
 export const createTravel = async (data: Partial<Travel>) => {
     const formData = new FormData();
     formData.append("origin", data.origin || "")
