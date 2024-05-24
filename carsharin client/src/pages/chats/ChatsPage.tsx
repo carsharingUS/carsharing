@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Room, Message, ChatMessage } from "../../Interfaces";
 import Navbar from "../../components/home/Navbar";
-import "../../components/travels/TravelCard.css";
+import "../../components/chat/ChatsPage.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Loader from "../../components/Loader";
 import toast from "react-hot-toast";

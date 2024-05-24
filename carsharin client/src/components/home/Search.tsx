@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext  } from "react";
 import { motion } from "framer-motion";
 import "./SearchComponent.css";
 import { useNavigate } from "react-router-dom";
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
+import { getCoordinates, getDistanceSearchUser, getRoute } from "../../api/TravelService";
 
 const SearchComponent = () => {
   const [origin, setOrigin] = useState("");
@@ -13,7 +14,19 @@ const SearchComponent = () => {
   const [typingTimeout, setTypingTimeout] = useState(0); // Nuevo estado para rastrear el tiempo de espera
   const navigate = useNavigate();
 
-  const handleSearch = () => {
+
+  const handleSearch = async () => {
+    
+
+    if (origin != null && destination != null){
+
+      const closeTravels = await getDistanceSearchUser(origin, destination, start_date);
+
+      if (closeTravels) {
+        localStorage.setItem('closeTrips', JSON.stringify(closeTravels));
+      }
+
+    //una vez que tengo la distancia de la ruta que ha introducido el usuario le paso a la nueva pagina la distancia y que procese los viajes mas cercanos primero
     const queryParams = new URLSearchParams({
       origin,
       destination,
@@ -21,6 +34,8 @@ const SearchComponent = () => {
     });
 
     navigate(`/travels?${queryParams.toString()}`);
+    
+    }
   };
 
   // Función para buscar sugerencias de direcciones
@@ -52,10 +67,10 @@ const SearchComponent = () => {
 
   // Limpiar las sugerencias cuando el campo de búsqueda está vacío
   useEffect(() => {
+    
     if (origin === "") setOriginSuggestions([]);
     if (destination === "") setDestinationSuggestions([]);
   }, [origin, destination]);
-
   return (
     <div className="search-section">
       <div className="background-video">
