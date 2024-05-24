@@ -107,6 +107,9 @@ DATABASES = {
         'PASSWORD': '2329',
         'HOST': 'localhost',  # Puedes cambiar esto según la configuración de tu servidor MySQL
         'PORT': '3306',  # El puerto predeterminado para MySQL
+        'TEST': {
+            'NAME': 'test_carsharing',  # Nombre de la base de datos de pruebas
+        },
     }
 }
 
