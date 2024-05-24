@@ -1,5 +1,5 @@
 import { API, authAPI } from "./AuthenticationService";
-import { Travel } from "../Interfaces"; 
+import { Travel, TravelRequest } from "../Interfaces"; 
 
 
 /**
@@ -60,3 +60,82 @@ export const getCoordinates = async (location: string) => {
     const response = await API.get(`travels/obtener_latitud_longitud/${location}`)
     return response.data
 }
+
+export const getRoute = async (origin: string, destination: string) => {
+    if (!origin || !destination) {
+      throw new Error('Comprueba las ubicaciones de origen y destino');
+    }
+  
+    const url = `http://localhost:8000/travels/route/${encodeURIComponent(origin)}/${encodeURIComponent(destination)}`;
+  
+    try {
+      const response = await API.get(url);
+      return response.data;
+    } catch (error) {
+      console.error('Error al obtener la ruta:', error);
+      throw error;
+    }
+  };
+
+
+
+
+export const getDistanceSearchUser = async (origen: string, destino: string, start_date: string) => {
+  try{
+    const response = await authAPI.get(`travels/distancia_origen_destino_search/${encodeURIComponent(origen)}/${encodeURIComponent(destino)}/${encodeURIComponent(start_date)}`);
+    
+    return response.data
+  }catch(error){
+    console.error('Error a devolver los viajes mas cercanos: ', error)
+    return null;
+  }
+}
+
+export const createTravelRequest = async (data: Partial<TravelRequest>) => {
+  const formData = new FormData();
+  formData.append("intermediate", data.intermediate || "")
+  formData.append("seats", data.seats?.toString() || "")
+  
+  await authAPI.post(`travels/${data.travel?.id}/create_request`, formData)
+};
+
+
+export const getRequestLikeHost = async (user_id:string) => {
+  try{
+    const response = await authAPI.get(`travels/travel_requests/${user_id}`);
+    return response.data
+  }catch(error){
+    console.error("Error al devolver las peticiones a mis vijaes: ", error)
+    return null;
+  }
+}
+
+export const getRequestTravel = async (travelRequest_id:string) => {
+  try{
+    const response = await authAPI.get(`travels/travel_requests/managment/${travelRequest_id}`);
+    return response.data
+  }catch(error){
+    console.error("Error al devolver la peticion de viaje para ese id: ", error)
+    throw error;
+  }
+}
+
+export const acceptTravelRequest = async (travelRequestId) => {
+  try {
+    const response = await authAPI.post(`travels/travel_requests/${travelRequestId}/accept`);
+    return response.data;
+  } catch (error) {
+    console.error("Error al aceptar la solicitud de viaje: ", error);
+    throw new Error("Error al aceptar la solicitud de viaje.");
+  }
+};
+
+export const declineTravelRequest = async (travelRequestId) => {
+  try {
+    const response = await authAPI.post(`travels/travel_requests/${travelRequestId}/decline`);
+    return response.data;
+  } catch (error) {
+    console.error("Error al rechazar la solicitud de viaje: ", error);
+    throw new Error("Error al rechazar la solicitud de viaje.");
+  }
+};

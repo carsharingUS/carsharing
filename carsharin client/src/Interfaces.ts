@@ -14,6 +14,15 @@ export interface Travel {
 }
 */
 
+export interface TravelRequest {
+    id: number;
+    user?: User;
+    travel?: Travel;
+    intermediate: string;
+    seats: number;
+    status: 'pendiente' | 'aceptado' | 'rechazado';
+}
+
 export interface Travel {
     id: number;
     host?: User;
@@ -26,11 +35,14 @@ export interface Travel {
     stops: string | null;
     status: 'programado' | 'en_curso' | 'completado';
     total_seats: number;
+    clasificacion_origen?: string; // Campo opcional para clasificación del origen
+    clasificacion_destino?: string; // Campo opcional para clasificación del destino
+    mejor_opcion?:boolean;
 }
 
 export interface User {
     id?: number;
-    avatar: File | null;
+    avatar: string | null;
     username: string,
     email: string;
     name: string;

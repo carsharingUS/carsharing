@@ -1,20 +1,25 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Loader from "../../components/Loader";
-import { getCoordinates, getTravel } from "../../api/TravelService";
-import { Token, Travel } from "../../Interfaces";
+import { getCoordinates, getTravel, createTravelRequest } from "../../api/TravelService";
+import { Token, Travel, TravelRequest } from "../../Interfaces";
 import L from "leaflet";
 import "leaflet-routing-machine";
 import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 import "../travels/TravelMap.css";
 import "leaflet/dist/leaflet.css";
-import { useQuery } from "@tanstack/react-query";
-import { getWebsocketToken, get_solo_user } from "../../api/UserService";
+
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { get_solo_user } from "../../api/UserService";
 import { useAuthStore } from "../../store/auth";
 import * as jwt_decode from "jwt-decode";
 import "./TravelDetails.css"; // Importa el archivo CSS aquí
-import { OpenStreetMapProvider } from "leaflet-geosearch";
+import { OpenStreetMapProvider } from 'leaflet-geosearch';
+import { getCurrentUser } from "../../utils";
+import toast from "react-hot-toast";
+import { getWebsocketToken, get_solo_user } from "../../api/UserService";
 import Navbar from "../../components/home/Navbar";
+
 
 const TravelDetails = () => {
   const { travelId } = useParams();
@@ -43,6 +48,7 @@ const TravelDetails = () => {
   >([]);
   const [isIntermedioTyping, setIsIntermedioTyping] = useState(false);
   const navigate = useNavigate();
+
 
   const handleIntermedioChange = (event: ChangeEvent<HTMLInputElement>) => {
     setIntermedio(event.target.value);
@@ -97,6 +103,7 @@ const TravelDetails = () => {
       if (!travelId) return;
       const travelData = await getTravel(travelId);
       setTravel(travelData);
+      console.log(travelData)
       setIsLoading(false);
       return travelData;
     } catch (error) {
@@ -224,8 +231,32 @@ const TravelDetails = () => {
     };
   }, [isActive, origin, destination, intermedioCoordenadas]);
 
-  const handleRequestTravel = () => {
-    // Implementa la lógica para solicitar plaza en el viaje
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+
+  const createTravelRequestMutation = useMutation({
+      mutationFn: createTravelRequest,
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["travelRequests"] });
+        toast.success("Travel request created!");
+        navigate("/");
+      },
+      onError: () => {
+        toast.error("Error!");
+        navigate("/");
+      },
+    }
+  );
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    
+    createTravelRequestMutation.mutate({
+      user: user, // Usuario que solicita el viaje
+      travel: travel, // Viaje al que solicita el usuario
+      intermediate: intermedio, // Estación intermedia (si la hay)
+      seats: selectedSeats, // Número de asientos solicitados
+    });
   };
 
   const handleChatClick = async () => {
@@ -243,33 +274,40 @@ const TravelDetails = () => {
   const isCurrentUserOwner = user.id === travel.host?.id;
 
   return (
-    <div>
-      <Navbar />
-      <div
-        className="travel-details-container"
-        style={{ padding: "20px 20px 50px" }}
-      >
-        <h1 className="travel-details-title">Detalles del viaje</h1>
-        <p>Origen: {travel.origin}</p>
-        <p>Destino: {travel.destination}</p>
-        {isCurrentUserOwner ? (
-          <div>
-            <button className="travel-details-request-btn" onClick={showMap}>
-              {isActive ? "Cerrar mapa" : "Mostrar mapa en caja"}
-            </button>
-            {showMapContainer && isActive && (
-              <div className={`map-container ${isActive ? "open" : ""}`}>
-                <div>{isMapLoading && <Loader />}</div>
-                <div className="map" id="map"></div>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div>
-            <br />
-            <form
-              className="travel-details-form"
-              onSubmit={handleRequestTravel}
+    <div className="travel-details-container" style={{ padding: "20px 20px 50px" }}>
+      <h1 className="travel-details-title">Detalles del viaje</h1>
+      <p>Origen: {travel.origin}</p>
+      <p>Destino: {travel.destination}</p>
+      {isCurrentUserOwner ? (
+        <div>
+          <button className="travel-details-request-btn" onClick={showMap}>
+            {isActive ? "Cerrar mapa" : "Mostrar mapa en caja"}
+          </button>
+          {showMapContainer && isActive && (
+            <div className={`map-container ${isActive ? "open" : ""}`} >
+              <div>{isMapLoading && <Loader />}</div>
+              <div className="map" id="map"></div>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div>
+          <br />
+          <form className="travel-details-form" onSubmit={handleSubmit}>
+          <div className="input-group">
+      <label htmlFor="seats" className="label">
+        Número de plazas
+      </label>
+      &nbsp;
+      &nbsp;
+      &nbsp;
+      <div className="seat-input-container">
+        <div className="seat-icons-container">
+          {Array.from({length: travel.total_seats}, (_, i) => i + 1).map((numSeats) => (
+            <div
+              key={numSeats}
+              className={`seat-icon ${numSeats <= selectedSeats ? 'selected' : ''}`}
+              onClick={() => handleSeatClick(numSeats)}
             >
               <div className="input-group">
                 <label htmlFor="seats" className="label">
