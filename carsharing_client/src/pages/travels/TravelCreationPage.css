@@ -1,27 +1,53 @@
 /* Estilos para el componente "crear-viaje" */
 
 .crear-viaje-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  z-index: 1000;
+  overflow-y: auto;
+  padding: 20px;
+  padding-top: 100px;
+}
   
-  .crear-viaje-modal {
-    width: 90%; /* Ancho modificado */
-    height: 70vh; /* Altura modificada */
-    max-width: 1200px; /* Ancho máximo */
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-    overflow-y: auto; /* Añadido scroll vertical */
-  }
+/* Estilos para el modal */
+.crear-viaje-modal {
+  background-color: #fff;
+  padding: 50px;
+  border-radius: 20px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  max-width: 750px;
+  width: 100%;
+  position: relative;
+  animation: zoomIn  1s; 
+  margin-bottom: 50px; /* Espacio extra al final del modal */
+}
+
+
+.crear-viaje-modal h3 {
+  color: #333; /* Texto más oscuro */
+}
+
+.crear-viaje-modal button {
+  background-color: #2ecc71; /* Color de fondo */
+  color: #fff; /* Color del texto */
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.crear-viaje-modal button:hover {
+  background-color: #27ae60;
+  transform: translateY(-2px);
+}
   
   .crear-viaje-header {
     display: flex;
@@ -33,21 +59,60 @@
   .crear-viaje-title {
     font-size: 24px;
     font-weight: bold;
-    color: #333333;
+    color: #333;
   }
   
   .close-modal {
     background: none;
     border: none;
     cursor: pointer;
+    position: relative; /* Añadir posición relativa para contener el icono */
   }
   
   .close-modal svg {
     width: 20px;
     height: 20px;
-    fill: #333333;
+    fill: #333;
   }
+
+  /* Estilos para el formulario */
+  .crear-viaje-form {
+    margin-top: 20px;
+  } 
   
+  /* Ajustes para dispositivos móviles */
+@media screen and (max-width: 768px) {
+  .crear-viaje-modal {
+    width: 95%; /* Reducir el ancho para adaptarse mejor a dispositivos móviles */
+    max-width: 100%; /* Hacer que el modal ocupe el ancho completo en dispositivos móviles */
+    border-radius: 0; /* Eliminar borde redondeado en dispositivos móviles */
+    margin: 0 auto; /* Centrar horizontalmente */
+    box-shadow: none; /* Eliminar sombra en dispositivos móviles */
+  }
+
+  .crear-viaje-title {
+    font-size: 20px; /* Reducir tamaño de fuente del título en dispositivos móviles */
+  }
+
+  .close-modal {
+    top: 10px; /* Alinear el botón de cerrar al borde superior */
+    right: 10px; /* Alinear el botón de cerrar al borde derecho */
+  }
+
+  .crear-viaje-form {
+    padding: 20px; /* Agregar espacio interno al formulario en dispositivos móviles */
+  }
+}
+
+/* Efecto de transición al abrir y cerrar el modal */
+.crear-viaje-overlay {
+  transition: opacity 0.3s ease;
+}
+
+.crear-viaje-overlay.active {
+  opacity: 1;
+}
+
   .label {
     margin-bottom: 5px;
     font-size: 16px;
@@ -177,8 +242,12 @@
     transition: opacity 0.3s;
   }
   
-  .seat-icon:hover svg,
+  .seat-icon:hover svg {
+    opacity: 1;
+    fill: #0056b3;
+  }
   .seat-icon.selected svg {
     opacity: 1; /* Color más claro */
+    fill: #007bff;
   }
   

@@ -272,18 +272,20 @@ const TravelDetails = () => {
   const isCurrentUserOwner = user.id === travel.host?.id;
 
   return (
+    <div>
+    <Navbar/>
     <div className="travel-details-container" style={{ padding: "20px 20px 50px" }}>
       <h1 className="travel-details-title">Detalles del viaje</h1>
       <p>Origen: {travel.origin}</p>
       <p>Destino: {travel.destination}</p>
       {isCurrentUserOwner ? (
         <div>
+          <div>{isMapLoading && <Loader />}</div>
           <button className="travel-details-request-btn" onClick={showMap}>
             {isActive ? "Cerrar mapa" : "Mostrar mapa en caja"}
           </button>
           {showMapContainer && isActive && (
             <div className={`map-container ${isActive ? "open" : ""}`} >
-              <div>{isMapLoading && <Loader />}</div>
               <div className="map" id="map"></div>
             </div>
           )}
@@ -376,17 +378,18 @@ const TravelDetails = () => {
               Chatear
             </button>
           </form>
+          <div>{isMapLoading && <Loader />}</div>
           <button className="travel-details-request-btn" onClick={showMap}>
             {isActive ? "Cerrar mapa" : "Mostrar mapa en caja"}
           </button>
           {showMapContainer && isActive && (
             <div className={`map-container ${isActive ? "open" : ""}`}>
-              <div>{isMapLoading && <Loader />}</div>
-              <div className="map" id="map"></div>
+              <div className="map2" id="map"></div>
             </div>
           )}
         </div>
       )}
+    </div>
     </div>
   );  
 };

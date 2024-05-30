@@ -42,7 +42,7 @@ export interface Travel {
 
 export interface User {
     id?: number;
-    avatar: File | null;
+    avatar: string | null;
     username: string,
     email: string;
     name: string;

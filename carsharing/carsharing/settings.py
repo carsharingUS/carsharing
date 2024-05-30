@@ -106,8 +106,11 @@ DATABASES = {
         'NAME': 'carsharing',
         'USER': 'carsharinguser',
         'PASSWORD': '2329',
-        'HOST': 'db',  # Puedes cambiar esto según la configuración de tu servidor MySQL
+        'HOST': 'localhost',  # Puedes cambiar esto según la configuración de tu servidor MySQL
         'PORT': '3306',  # El puerto predeterminado para MySQL
+        'TEST': {
+            'NAME': 'test_carsharing', # Nombre de la base de datos de pruebas
+        },
         'OPTIONS': {
             'init_command': "SET default_storage_engine=INNODB",
         },

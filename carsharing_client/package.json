@@ -20,6 +20,7 @@
     "@mui/x-date-pickers": "^6.19.0",
     "@react-google-maps/api": "^2.19.3",
     "@tanstack/react-query": "^5.17.9",
+    "animate.css": "^4.1.1",
     "axios": "^1.6.5",
     "bootstrap": "^5.3.3",
     "dayjs": "^1.11.10",

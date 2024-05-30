@@ -89,7 +89,7 @@
 }
 
 .map-container.open {
-  height: 600px; /* Altura fija del mapa cuando está abierto */
+  height: 650px; /* Altura fija del mapa cuando está abierto */
 }
 
 .map {
@@ -108,7 +108,7 @@
   height: 57%;
   border-radius: 5px;
   position: absolute;
-  top: 64%; /* Ajusta la posición vertical */
+  top: 65%; /* Ajusta la posición vertical */
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 0;

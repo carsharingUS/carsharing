@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createTravel } from "../../api/TravelService";
@@ -10,6 +10,7 @@ import "./TravelCreationPage.css";
 import { OpenStreetMapProvider } from "leaflet-geosearch";
 import Navbar from "../../components/home/Navbar";
 dayjs.locale("es");
+import 'animate.css';
 
 const TravelCreationPage = () => {
   const [origin, setOrigin] = useState<string>("");
@@ -26,7 +27,7 @@ const TravelCreationPage = () => {
   const [stops, setStops] = useState<string>("");
   const [typingTimeout, setTypingTimeout] = useState<number>(0); // Nuevo estado para rastrear el tiempo de espera
   const [selectedSeats, setSelectedSeats] = useState<number>(0); // Estado para almacenar la cantidad de plazas seleccionadas
-
+  const modalRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -130,11 +131,21 @@ const TravelCreationPage = () => {
     setDestinationSuggestions([]);
   };
 
+  useEffect(() => {
+    // Enfocar el modal cuando el componente se monta
+    if (modalRef.current) {
+      modalRef.current.focus();
+      modalRef.current.scrollIntoView({ behavior: "smooth", block: "center" }); // Centrar el modal en la pantalla
+    }
+  }, []);
+
+
+
   return (
     <div>
       <Navbar />
       <div className="crear-viaje-overlay">
-        <div className="crear-viaje-modal">
+        <div tabIndex={-1} ref={modalRef} className="crear-viaje-modal">
           <div className="crear-viaje-header">
             <h3 className="crear-viaje-title">Create Travel</h3>
             <Link
