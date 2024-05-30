@@ -31,7 +31,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', '0.0.0.0']
 
 
 # Application definition
@@ -119,7 +119,7 @@ DATABASES = {
 
 # Configuración de GDAL
 import os
-GDAL_LIBRARY_PATH = os.path.join(os.path.dirname(__file__), 'C:/Users/danie/miniconda3/Library/bin/gdal.dll')
+GDAL_LIBRARY_PATH = os.environ.get("GDAL_LIBRARY_PATH")
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -171,7 +171,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 #Cors authorization
-CORS_ALLOWED_ORIGINS = ["http://localhost:5173", "http://localhost:3000"]
+CORS_ALLOWED_ORIGINS = ["http://localhost:5173", "http://localhost:3000", "http://localhost:8080", "http://172.20.0.3:8080"]
 
 CORS_ALLOW_CREDENTIALS = True
 

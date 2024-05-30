@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: carsharing_database
+    restart: always
+    volumes:
+      - data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "carsharing"
+      MYSQL_USER: "carsharinguser"
+      MYSQL_PASSWORD: "2329"
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      timeout: 20s
+      retries: 10
+
+  backend:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: carsharing_backend
+    command: sh -c "cd carsharing && python manage.py migrate --noinput && python manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000"
+    restart: always
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+  frontend:
+    build: 
+      context: .
+      dockerfile: carsharing_client/Dockerfile
+    container_name: carsharing_frontend
+    command: sh -c "until nc -z backend 8000; do echo 'Esperando a que el backend esté listo...'; sleep 1; done && npm run dev"
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./carsharing_client:/frontend
+
+volumes:
+  data:

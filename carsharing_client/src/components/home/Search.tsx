@@ -21,7 +21,7 @@ const SearchComponent = () => {
     if (origin != null && destination != null){
 
       const closeTravels = await getDistanceSearchUser(origin, destination, start_date);
-
+      
       if (closeTravels) {
         localStorage.setItem('closeTrips', JSON.stringify(closeTravels));
       }
@@ -82,6 +82,7 @@ const SearchComponent = () => {
           Tu navegador no soporta el elemento de video.
         </video>
       </div>
+      <div className="search-section-container">
       <motion.div
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
@@ -185,6 +186,7 @@ const SearchComponent = () => {
           </motion.button>
         </motion.div>
       </motion.div>
+      </div>
     </div>
   );
 };

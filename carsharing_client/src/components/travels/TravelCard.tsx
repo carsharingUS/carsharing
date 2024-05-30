@@ -15,9 +15,8 @@ interface Props {
 }
 
 const TravelCard: FC<Props> = ({ travel }) => {
-  const avatarUrl = "travel.host?.avatar";
-  const occupancyPercentage = ((travel.total_seats) / 4) * 100;
-
+  const avatarUrl = `http://localhost:8000${travel.host?.avatar}`;
+  const occupancyPercentage =  ((travel.total_seats) / 4) * 100;
 
   return (
     <div className="travel-card">
@@ -35,7 +34,7 @@ const TravelCard: FC<Props> = ({ travel }) => {
               />
             </div>
             <div className="travel-host">
-              <div className="fas fa-chevron-right"></div>
+              <i className="fas fa-chevron-right"></i>
               {travel.host?.username}
             </div>
           </div>
@@ -57,31 +56,27 @@ const TravelCard: FC<Props> = ({ travel }) => {
             </div>
             <br />
             <div className="destination-info">
-            <h6>{travel.destination}</h6>
-            &nbsp;
-            {travel.clasificacion_destino && (
-              <div className={`classification-indicator ${travel.clasificacion_destino}`}>
-                {travel.clasificacion_destino}
-              </div>
-            )}
+              <h6>{travel.destination}</h6>
+              {travel.clasificacion_destino && (
+                <div className={`classification-indicator ${travel.clasificacion_destino}`}>
+                  {travel.clasificacion_destino}
+                </div>
+              )}
             </div>
             <div className="origin-info">
-            <h2>Salida: {travel.origin}</h2>
-            &nbsp;
-            {travel.clasificacion_origen && (
-              <div className={`classification-indicator ${travel.clasificacion_origen}`}>
-                {travel.clasificacion_origen}
-              </div>
-            )}
+              <h6>Salida: {travel.origin}</h6>
+              {travel.clasificacion_origen && (
+                <div className={`classification-indicator ${travel.clasificacion_origen}`}>
+                  {travel.clasificacion_origen}
+                </div>
+              )}
             </div>
-            <h2>Duración estimada: {travel.estimated_duration}</h2>
-            <h2>Precio: {travel.price} €</h2>
-            <h2>Fecha: {dayjs(travel.start_date).format("DD/MM/YYYY HH:mm")}</h2>
-            <div className="progress-text">
-              <Typography sx={{ textTransform: "capitalize" }}>
-                {travel.status}
-              </Typography>
-            </div>
+            <Typography variant="body2">Duración estimada: {travel.estimated_duration}</Typography>
+            <Typography variant="body2">Precio: {travel.price} €</Typography>
+            <Typography variant="body2">Fecha: {dayjs(travel.start_date).format("DD/MM/YYYY HH:mm")}</Typography>
+            <Typography variant="body2" className="progress-text" sx={{ textTransform: "capitalize" }}>
+              {travel.status}
+            </Typography>
           </div>
         </div>
       </CardActionArea>

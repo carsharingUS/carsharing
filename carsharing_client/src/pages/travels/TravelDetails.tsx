@@ -10,7 +10,6 @@ import "../travels/TravelMap.css";
 import "leaflet/dist/leaflet.css";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { get_solo_user } from "../../api/UserService";
 import { useAuthStore } from "../../store/auth";
 import * as jwt_decode from "jwt-decode";
 import "./TravelDetails.css"; // Importa el archivo CSS aquí
@@ -231,7 +230,6 @@ const TravelDetails = () => {
     };
   }, [isActive, origin, destination, intermedioCoordenadas]);
 
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
 
@@ -274,18 +272,20 @@ const TravelDetails = () => {
   const isCurrentUserOwner = user.id === travel.host?.id;
 
   return (
+    <div>
+    <Navbar/>
     <div className="travel-details-container" style={{ padding: "20px 20px 50px" }}>
       <h1 className="travel-details-title">Detalles del viaje</h1>
       <p>Origen: {travel.origin}</p>
       <p>Destino: {travel.destination}</p>
       {isCurrentUserOwner ? (
         <div>
+          <div>{isMapLoading && <Loader />}</div>
           <button className="travel-details-request-btn" onClick={showMap}>
             {isActive ? "Cerrar mapa" : "Mostrar mapa en caja"}
           </button>
           {showMapContainer && isActive && (
             <div className={`map-container ${isActive ? "open" : ""}`} >
-              <div>{isMapLoading && <Loader />}</div>
               <div className="map" id="map"></div>
             </div>
           )}
@@ -294,131 +294,104 @@ const TravelDetails = () => {
         <div>
           <br />
           <form className="travel-details-form" onSubmit={handleSubmit}>
-          <div className="input-group">
-      <label htmlFor="seats" className="label">
-        Número de plazas
-      </label>
-      &nbsp;
-      &nbsp;
-      &nbsp;
-      <div className="seat-input-container">
-        <div className="seat-icons-container">
-          {Array.from({length: travel.total_seats}, (_, i) => i + 1).map((numSeats) => (
-            <div
-              key={numSeats}
-              className={`seat-icon ${numSeats <= selectedSeats ? 'selected' : ''}`}
-              onClick={() => handleSeatClick(numSeats)}
-            >
-              <div className="input-group">
-                <label htmlFor="seats" className="label">
-                  Número de plazas
-                </label>
-                &nbsp; &nbsp; &nbsp;
-                <div className="seat-input-container">
-                  <div className="seat-icons-container">
-                    {Array.from(
-                      { length: travel.total_seats },
-                      (_, i) => i + 1
-                    ).map((numSeats) => (
-                      <div
-                        key={numSeats}
-                        className={`seat-icon ${
-                          numSeats <= selectedSeats ? "selected" : ""
-                        }`}
-                        onClick={() => handleSeatClick(numSeats)}
+            <div className="input-group">
+              <label htmlFor="seats" className="label">
+                Número de plazas
+              </label>
+              <div className="seat-input-container">
+                <div className="seat-icons-container">
+                  {Array.from({length: travel.total_seats}, (_, i) => i + 1).map((numSeats) => (
+                    <div
+                      key={numSeats}
+                      className={`seat-icon ${numSeats <= selectedSeats ? 'selected' : ''}`}
+                      onClick={() => handleSeatClick(numSeats)}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        width="24"
+                        height="24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="feather feather-user"
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          width="24"
-                          height="24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="feather feather-user"
-                        >
-                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                          <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                      </svg>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="input-group">
+              <label className="travel-details-label">
+                Estación intermedia (opcional):
+              </label>
+              <input
+                value={intermedio}
+                type="text"
+                onChange={handleIntermedioChange}
+                name="intermedio"
+                autoComplete="off"
+                id="intermedio"
+                className="input"
+                style={{ width: "80%" }}
+                placeholder="Calle Ejemplo, Ciudad Ejemplo, Provincia Ejemplo"
+              />
+              {isActive &&
+                showMapContainer &&
+                isIntermedioTyping && (
+                  <button
+                    className="update-map-button"
+                    onClick={handleUpdateMap}
+                  >
+                    Actualizar mapa
+                  </button>
+                )}
+              {intermedioSuggestions.length > 0 && (
+                <div className="suggestions-container">
+                  <div className="suggestions">
+                    {intermedioSuggestions.slice(0, 5).map((suggestion, index) => (
+                      <div
+                        key={index}
+                        className="suggestion"
+                        onClick={() => handleIntermedioSuggestionClick(suggestion)}
+                      >
+                        {suggestion?.label}
                       </div>
                     ))}
                   </div>
                 </div>
-              </div>
-              <div className="input-group">
-                <label className="travel-details-label">
-                  Estación intermedia (opcional):
-                </label>
-
-                <input
-                  value={intermedio}
-                  type="text"
-                  onChange={handleIntermedioChange}
-                  name="intermedio"
-                  autoComplete="off"
-                  id="intermedio"
-                  className="input"
-                  style={{ width: "80%" }} // Ajusta el valor del ancho aquí
-                  placeholder="Calle Ejemplo, Ciudad Ejemplo, Provincia Ejemplo"
-                />
-                {isActive &&
-                  showMapContainer &&
-                  isIntermedioTyping && ( // Mostrar el botón solo cuando el usuario está escribiendo y el mapa está abierto
-                    <button
-                      className="update-map-button"
-                      onClick={handleUpdateMap}
-                    >
-                      Actualizar mapa
-                    </button>
-                  )}
-                {intermedioSuggestions.length > 0 && (
-                  <div className="suggestions-container">
-                    <div className="suggestions">
-                      {intermedioSuggestions
-                        .slice(0, 5)
-                        .map((suggestion, index) => (
-                          <div
-                            key={index}
-                            className="suggestion"
-                            onClick={() =>
-                              handleIntermedioSuggestionClick(suggestion)
-                            }
-                          >
-                            {suggestion?.label}
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <button type="submit" className="travel-details-submit-btn">
-                Solicitar viaje
-              </button>
-              <button
-                type="button"
-                className="travel-details-chat-btn"
-                onClick={handleChatClick}
-              >
-                Chatear
-              </button>
-            </form>
-            <button className="travel-details-request-btn" onClick={showMap}>
-              {isActive ? "Cerrar mapa" : "Mostrar mapa en caja"}
+              )}
+            </div>
+            <button type="submit" className="travel-details-submit-btn">
+              Solicitar viaje
             </button>
-            {showMapContainer && isActive && (
-              <div className={`map-container ${isActive ? "open" : ""}`}>
-                <div>{isMapLoading && <Loader />}</div>
-                <div className="map2" id="map"></div>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+            <button
+              type="button"
+              className="travel-details-chat-btn"
+              onClick={handleChatClick}
+            >
+              Chatear
+            </button>
+          </form>
+          <div>{isMapLoading && <Loader />}</div>
+          <button className="travel-details-request-btn" onClick={showMap}>
+            {isActive ? "Cerrar mapa" : "Mostrar mapa en caja"}
+          </button>
+          {showMapContainer && isActive && (
+            <div className={`map-container ${isActive ? "open" : ""}`}>
+              <div className="map2" id="map"></div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
-  );
+    </div>
+  );  
 };
 
 export default TravelDetails;

@@ -5,6 +5,10 @@
     justify-content: center;
     align-items: center;
   }
+
+  .search-section-container{
+    animation: backInDown 1s;
+  }
   
   .background-video {
     position: absolute;

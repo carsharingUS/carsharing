@@ -44,7 +44,6 @@ function App() {
 
           {/* RUTA PARA CHAT */}
 
-          <Route path='chat' element={<MessagePage/>} />
 
           {/* RUTAS PARA NOTIFICACIONES */}
           <Route path='notificaciones' element={<NotificationPage />}></Route>
