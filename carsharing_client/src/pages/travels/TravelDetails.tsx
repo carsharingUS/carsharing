@@ -36,7 +36,7 @@ const TravelDetails = () => {
   } | null>(null);
   const [showMapContainer, setShowMapContainer] = useState(false); // Estado para controlar la visibilidad del contenedor del mapa
   const [selectedSeats, setSelectedSeats] = useState<number>(0); // Estado para almacenar la cantidad de plazas seleccionadas
-  const [typingTimeout, setTypingTimeout] = useState<number>(0); // Nuevo estado para rastrear el tiempo de espera+
+  const [typingTimeout, setTypingTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [intermedio, setIntermedio] = useState<string>("");
   const [intermedioCoordenadas, setIntermedioCoordenadas] = useState<{
     geocode: [number, number];
@@ -53,7 +53,9 @@ const TravelDetails = () => {
     setIntermedio(event.target.value);
     setIsIntermedioTyping(true);
     // Reiniciar el tiempo de espera
-    clearTimeout(typingTimeout);
+    if (typingTimeout !== null){
+      clearTimeout(typingTimeout);
+    }
     // Establecer un nuevo tiempo de espera antes de realizar la búsqueda
     setTypingTimeout(
       setTimeout(
@@ -237,11 +239,11 @@ const TravelDetails = () => {
       mutationFn: createTravelRequest,
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["travelRequests"] });
-        toast.success("Travel request created!");
+        toast.success("Peticion de viaje solicitada");
         navigate("/");
       },
       onError: () => {
-        toast.error("Error!");
+        toast.error("Error al solicitar el viaje");
         navigate("/");
       },
     }

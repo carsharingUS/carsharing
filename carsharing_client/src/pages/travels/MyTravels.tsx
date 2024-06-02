@@ -30,9 +30,16 @@ const MyTravels = () => {
       >
         <div className="chats-header mt-4">Lista de Viajes</div>
         <div className="container-card">
-          {data.map((travel: Travel) => (
-            <TravelCard key={travel.id} travel={travel} />
-          ))}
+        {data.length === 0 ? (
+                <div className="flex min-h-full items-center justify-center">
+                  <h2>No tienes nigún viaje publicado aún</h2>
+                </div>
+              ) : (
+                data.map((travel: Travel) => (
+                  <TravelCard key={travel.id} travel={travel} />
+                ))
+              )}
+          
         </div>
       </div>
     </div>

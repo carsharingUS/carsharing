@@ -5,6 +5,7 @@ import * as jwt_decode from "jwt-decode";
 import { useAuthStore } from '../../store/auth';
 import TravelRequestCard from './TravelRequestCard';
 import '../notifications/TravelRequest.css'
+import toast from 'react-hot-toast';
 
 const NotificationComponent = () => {
 
@@ -21,6 +22,7 @@ const NotificationComponent = () => {
             const notifications = await getRequestLikeHost(user_id.toString()); // Realizar la petición al backend
             setTravelRequests(notifications);
           } catch (error) {
+            toast.error("Error al recuperar las notificaciones")
             console.error('Error fetching notifications:', error);
           }
         };
@@ -31,14 +33,16 @@ const NotificationComponent = () => {
 
     return (
         <div className="travel-request-list">
-        <h2>Solicitudes de Viaje</h2>
+        <div className="chats-header mt-4">Solicitudes de Viaje</div>
         <br />
         {travelRequests.length > 0 ? (
           travelRequests.map(request => (
             <TravelRequestCard key={request.id} request={request} />
           ))
         ) : (
-          <p>No hay solicitudes pendientes para sus viajes publicados.</p>
+          <div className="flex min-h-full items-center justify-center">
+            <h2>No hay solicitudes pendientes para sus viajes publicados</h2>
+          </div>
         )}
       </div>
     )

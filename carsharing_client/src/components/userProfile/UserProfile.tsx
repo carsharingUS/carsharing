@@ -125,13 +125,11 @@ const UserProfileComponent = () => {
   if (user === undefined) return <p>No user here!</p>;
 
   if (isError) return toast.error("Error!");
-  if (isLoading) return <Loader />;
-
-
 
   return (
     <div className="flex justify-center pt-[50px]">
       <div className="bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+      {isLoading && <Loader />}
         {show ? (
           <>
             <div className="flex flex-col items-center pb-10">

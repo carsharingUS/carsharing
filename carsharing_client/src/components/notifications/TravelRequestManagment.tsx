@@ -160,14 +160,14 @@ const TravelRequestManagment = () => {
     const handleMessageUser = () => {
         // Lógica para enviar un mensaje al usuario que solicitó el viaje
     };
-    console.log(isRequestProcessed)
-    if (isLoading) return <Loader />;
-    if (!travelRequest && !isRequestProcessed) return <div>No se encontró el viaje o el usuario.</div>;
-    if (!travelRequest && isRequestProcessed) return <div>Esta solicitud ya ha sido procesada.</div>
+   
+    if (!travelRequest && !isRequestProcessed) return <div  className="flex min-h-full items-center justify-center py-14">No se encontró el viaje o el usuario.</div>;
+    if (!travelRequest && isRequestProcessed) return <div  className="flex min-h-full items-center justify-center py-14">Esta solicitud ya ha sido procesada.</div>
     
     // Aquí puedes renderizar el contenido del componente utilizando los datos de travelRequest
     return (
         <div className="travel-request-management-container">
+          {isLoading && <Loader />}
             <h2>Aceptar Solicitud de Viaje</h2>
 
             <div className="travel-request-details">

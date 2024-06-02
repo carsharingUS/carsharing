@@ -25,7 +25,7 @@ const TravelCreationPage = () => {
   const [estimated_duration, setEstimatedDuration] = useState<string>("");
   const [price, setPrice] = useState<number>(0);
   const [stops, setStops] = useState<string>("");
-  const [typingTimeout, setTypingTimeout] = useState<number>(0); // Nuevo estado para rastrear el tiempo de espera
+  const [typingTimeout, setTypingTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [selectedSeats, setSelectedSeats] = useState<number>(0); // Estado para almacenar la cantidad de plazas seleccionadas
   const modalRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ const TravelCreationPage = () => {
       navigate("/");
     },
     onError: () => {
-      toast.error("Error!");
+      toast.error("Error al crear el viaje");
       console.log(onerror);
       navigate("/");
     },
@@ -65,7 +65,9 @@ const TravelCreationPage = () => {
   const handleOriginChange = (event: ChangeEvent<HTMLInputElement>) => {
     setOrigin(event.target.value);
     // Reiniciar el tiempo de espera
-    clearTimeout(typingTimeout);
+    if (typingTimeout !== null){
+      clearTimeout(typingTimeout);
+    }
     // Establecer un nuevo tiempo de espera antes de realizar la búsqueda
     setTypingTimeout(
       setTimeout(
@@ -78,7 +80,9 @@ const TravelCreationPage = () => {
   const handleDestinationChange = (event: ChangeEvent<HTMLInputElement>) => {
     setDestination(event.target.value);
     // Reiniciar el tiempo de espera
-    clearTimeout(typingTimeout);
+    if (typingTimeout !== null){
+      clearTimeout(typingTimeout);
+    }
     // Establecer un nuevo tiempo de espera antes de realizar la búsqueda
     setTypingTimeout(
       setTimeout(
