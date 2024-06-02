@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createTravel, updateTravel, getTravel } from "../../api/TravelService";
 import { toast } from "react-hot-toast";
@@ -10,10 +10,10 @@ import "./TravelCreationPage.css";
 import { OpenStreetMapProvider } from "leaflet-geosearch";
 import Navbar from "../../components/home/Navbar";
 dayjs.locale("es");
-import 'animate.css';
+import "animate.css";
 import { Travel } from "../../Interfaces";
 
-const TravelCreationPage = ({ mode, travelId }) => {
+const TravelCreationPage = ({ mode }) => {
   const [origin, setOrigin] = useState<string>("");
   const [originSuggestions, setOriginSuggestions] = useState<
     Array<{ label: string }>
@@ -26,6 +26,7 @@ const TravelCreationPage = ({ mode, travelId }) => {
   const [estimated_duration, setEstimatedDuration] = useState<string>("");
   const [price, setPrice] = useState<number>(0);
   const [stops, setStops] = useState<string>("");
+  const { travelId } = useParams();
   const [typingTimeout, setTypingTimeout] = useState<number>(0);
   const [selectedSeats, setSelectedSeats] = useState<number>(0);
   const modalRef = useRef<HTMLDivElement | null>(null);
@@ -35,13 +36,17 @@ const TravelCreationPage = ({ mode, travelId }) => {
   const { data: user } = getCurrentUser();
 
   useEffect(() => {
-    if (mode === 'edit' && travelId) {
+    if (travelId) {
       const fetchTravelDetails = async () => {
         try {
           const travel = await getTravel(travelId);
           setOrigin(travel.origin);
           setDestination(travel.destination);
-          setStartDate(travel.start_date);
+          const formattedDate = dayjs(travel.start_date)
+            .utc()
+            .format("YYYY-MM-DDTHH:mm");
+          console.log(formattedDate);
+          setStartDate(formattedDate);
           setEstimatedDuration(travel.estimated_duration);
           setPrice(travel.price);
           setStops(travel.stops);
@@ -80,7 +85,7 @@ const TravelCreationPage = ({ mode, travelId }) => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-  
+
     const travelData: Partial<Travel> = {
       host: user,
       origin,
@@ -91,14 +96,14 @@ const TravelCreationPage = ({ mode, travelId }) => {
       stops,
       total_seats: selectedSeats,
     };
-  
-    if (mode === 'create') {
+
+    if (mode === "create") {
       createTravelMutation.mutate(travelData);
-    } else if (mode === 'edit' && travelId) {
-      updateTravelMutation.mutate({ id: travelId, ...travelData });
+    } else if (travelId) {
+      updateTravelMutation.mutate({ id: Number(travelId), ...travelData });
     }
   };
-  
+
   const handleOriginChange = (event: ChangeEvent<HTMLInputElement>) => {
     setOrigin(event.target.value);
     clearTimeout(typingTimeout);
@@ -128,6 +133,7 @@ const TravelCreationPage = ({ mode, travelId }) => {
 
   const handleDateChange = (event: ChangeEvent<HTMLInputElement>) => {
     setStartDate(event.target.value);
+    console.log(event.target.value);
   };
 
   const handleSeatClick = (numSeats: number) => {
