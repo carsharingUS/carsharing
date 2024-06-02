@@ -1,13 +1,12 @@
 /* styles.css */
 .filter-wheel {
-  position: fixed;
+  position: absolute;
   top: 150px;
   right: 25px;
   width: 60px;
   height: 60px;
   background-color: #ffffff;
   border-radius: 50%;
-  display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
@@ -18,7 +17,8 @@
   transition: width 0.5s ease-in-out, height 0.5s ease-in-out;
 }
 
-.filter-wheel:hover {
+.filter-wheel:hover,
+.filter-wheel.focused {
   width: 350px;
   height: auto;
   border-radius: 20px;
@@ -41,9 +41,11 @@
   transition: opacity 1.5s ease-in-out;
 }
 
-.filter-wheel:hover .filter-text {
+.filter-wheel:hover .filter-text,
+.filter-wheel.focused .filter-text {
   opacity: 0;
 }
+
 
 .filter-content {
   display: flex;
@@ -51,16 +53,20 @@
   align-items: center;
   width: 100%;
   opacity: 0;
-  transition: opacity 1.5s ease-in-out;
   padding: 10px;
   position: relative; /* Esto asegura que los elementos hijos se posicionen relativos a este contenedor */
   overflow: visible;
-  visibility: hidden;
 }
 
-.filter-wheel:hover .filter-content {
+.filter-wheel:hover .filter-content,
+.filter-wheel.focused .filter-content {
   opacity: 1;
-  visibility: visible;
+  position: relative; /* Esto asegura que los elementos hijos se posicionen relativos a este contenedor */
+  transition: opacity 1.5s ease-in-out;
+}
+
+.filter-content .form-group:hover input {
+  border-bottom-color: #007bff;
 }
 
 .filter-content form {
@@ -74,7 +80,6 @@
 .filter-content .form-group {
   margin: 10px 0;
   position: relative; /* Necesario para que las sugerencias se posicionen correctamente */
-  z-index: 1050;
 }
 
 .filter-content .form-group input {
@@ -86,6 +91,7 @@
   font-size: 14px;
   width: 200px;
   color: #000;
+  z-index: 1;
 }
 
 .filter-content .form-group input::placeholder {
@@ -114,13 +120,12 @@
 }
 
 .suggestions-home {
-  position: absolute;
-  width: 100%;
-  background-color: rgba(255, 255, 255, 0.8);
-  color: #333;
-  top: calc(100% + 10px); /* Position the suggestions container below the search-input */
+  position: absolute; /* Cambiado a absolute para alinearse con el campo de entrada */
+  top: 100%; /* Justo debajo del campo de entrada */
   left: 0;
   right: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  color: #333;
   z-index: 1100;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);

@@ -27,7 +27,7 @@ const Travels = () => {
   const [destinationSuggestions, setDestinationSuggestions] = useState<Array<{ label: string }>>([]);
   const [start_date, setStartDate] = useState("");
   const [typingTimeout, setTypingTimeout] = useState(0);
-  const [isSearching, setIsSearching] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   const handleSearch = async () => {
     setIsLoading(true);
@@ -77,6 +77,7 @@ const Travels = () => {
   };
 
   useEffect(() => {
+    {isLoading && <Loader />}
     if (origin === "") setOriginSuggestions([]);
     if (destination === "") setDestinationSuggestions([]);
   }, [origin, destination]);
@@ -123,19 +124,22 @@ const Travels = () => {
   return (
     <div>
       <Navbar />
-      <div className="container-fluid">
+      <div className="container">
         <div className="row">
           <div className="col-md-8">
-            <div className="filter-wheel"
+            <div className={`filter-wheel ${isFocused ? 'focused' : ''}`}
               onMouseEnter={() => setShowIcon(false)}
-              onMouseLeave={() => setShowIcon(true)}>
+              onMouseLeave={() => {
+                if (!isFocused) {
+                  setShowIcon(true);
+                }
+              }}>
               {showIcon && (
                 <div className="icon-container">
                   <FaCog />
                 </div>
               )}
-
-              <div className="filter-content">
+              <div className="filter-content" >
                 <form>
                   <div className="form-group">
                     <input
@@ -187,6 +191,14 @@ const Travels = () => {
                       id="start_date"
                       name="start_date"
                       value={start_date}
+                      onFocus={() => {
+                        setShowIcon(false);
+                        setIsFocused(true);
+                      }}
+                      onBlur={() => {
+                        setShowIcon(true);
+                        setIsFocused(false);
+                      }}
                       onChange={(event) => setStartDate(event.target.value)}
                     />
                   </div>
