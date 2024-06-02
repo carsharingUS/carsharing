@@ -35,7 +35,7 @@
 }
 
 .crear-viaje-modal button {
-  background-color: #2ecc71; /* Color de fondo */
+  background-color: #176B87; /* Color de fondo */
   color: #fff; /* Color del texto */
   border: none;
   border-radius: 8px;
@@ -45,7 +45,7 @@
 }
 
 .crear-viaje-modal button:hover {
-  background-color: #27ae60;
+  background-color: #13566c;
   transform: translateY(-2px);
 }
   

@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createTravel } from "../../api/TravelService";
+import { createTravel, updateTravel, getTravel } from "../../api/TravelService";
 import { toast } from "react-hot-toast";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
@@ -11,8 +11,9 @@ import { OpenStreetMapProvider } from "leaflet-geosearch";
 import Navbar from "../../components/home/Navbar";
 dayjs.locale("es");
 import 'animate.css';
+import { Travel } from "../../Interfaces";
 
-const TravelCreationPage = () => {
+const TravelCreationPage = ({ mode, travelId }) => {
   const [origin, setOrigin] = useState<string>("");
   const [originSuggestions, setOriginSuggestions] = useState<
     Array<{ label: string }>
@@ -25,13 +26,33 @@ const TravelCreationPage = () => {
   const [estimated_duration, setEstimatedDuration] = useState<string>("");
   const [price, setPrice] = useState<number>(0);
   const [stops, setStops] = useState<string>("");
-  const [typingTimeout, setTypingTimeout] = useState<number>(0); // Nuevo estado para rastrear el tiempo de espera
-  const [selectedSeats, setSelectedSeats] = useState<number>(0); // Estado para almacenar la cantidad de plazas seleccionadas
+  const [typingTimeout, setTypingTimeout] = useState<number>(0);
+  const [selectedSeats, setSelectedSeats] = useState<number>(0);
   const modalRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const { data: user } = getCurrentUser();
+
+  useEffect(() => {
+    if (mode === 'edit' && travelId) {
+      const fetchTravelDetails = async () => {
+        try {
+          const travel = await getTravel(travelId);
+          setOrigin(travel.origin);
+          setDestination(travel.destination);
+          setStartDate(travel.start_date);
+          setEstimatedDuration(travel.estimated_duration);
+          setPrice(travel.price);
+          setStops(travel.stops);
+          setSelectedSeats(travel.total_seats);
+        } catch (error) {
+          toast.error("Error fetching travel details!");
+        }
+      };
+      fetchTravelDetails();
+    }
+  }, [mode, travelId]);
 
   const createTravelMutation = useMutation({
     mutationFn: createTravel,
@@ -41,32 +62,46 @@ const TravelCreationPage = () => {
       navigate("/");
     },
     onError: () => {
-      toast.error("Error!");
-      console.log(onerror);
+      toast.error("Error creating travel!");
+    },
+  });
+
+  const updateTravelMutation = useMutation({
+    mutationFn: updateTravel,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["travels"] });
+      toast.success("Travel updated!");
       navigate("/");
+    },
+    onError: () => {
+      toast.error("Error updating travel!");
     },
   });
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    createTravelMutation.mutate({
+  
+    const travelData: Partial<Travel> = {
       host: user,
-      origin: origin,
-      destination: destination,
-      start_date: start_date,
-      estimated_duration: estimated_duration,
-      price: price,
-      stops: stops,
+      origin,
+      destination,
+      start_date,
+      estimated_duration,
+      price,
+      stops,
       total_seats: selectedSeats,
-    });
+    };
+  
+    if (mode === 'create') {
+      createTravelMutation.mutate(travelData);
+    } else if (mode === 'edit' && travelId) {
+      updateTravelMutation.mutate({ id: travelId, ...travelData });
+    }
   };
-
+  
   const handleOriginChange = (event: ChangeEvent<HTMLInputElement>) => {
     setOrigin(event.target.value);
-    // Reiniciar el tiempo de espera
     clearTimeout(typingTimeout);
-    // Establecer un nuevo tiempo de espera antes de realizar la búsqueda
     setTypingTimeout(
       setTimeout(
         () => searchAddresses(event.target.value, setOriginSuggestions),
@@ -77,9 +112,7 @@ const TravelCreationPage = () => {
 
   const handleDestinationChange = (event: ChangeEvent<HTMLInputElement>) => {
     setDestination(event.target.value);
-    // Reiniciar el tiempo de espera
     clearTimeout(typingTimeout);
-    // Establecer un nuevo tiempo de espera antes de realizar la búsqueda
     setTypingTimeout(
       setTimeout(
         () => searchAddresses(event.target.value, setDestinationSuggestions),
@@ -99,17 +132,14 @@ const TravelCreationPage = () => {
 
   const handleSeatClick = (numSeats: number) => {
     setSelectedSeats((prevSelectedSeats) => {
-      // Si el mismo asiento está seleccionado, deselecciona
       if (prevSelectedSeats === numSeats) {
         return 0;
       } else {
-        // De lo contrario, selecciona el asiento
         return numSeats;
       }
     });
   };
 
-  // Función para buscar sugerencias de direcciones
   const searchAddresses = async (query, setSuggestions) => {
     const provider = new OpenStreetMapProvider({
       params: {
@@ -132,14 +162,11 @@ const TravelCreationPage = () => {
   };
 
   useEffect(() => {
-    // Enfocar el modal cuando el componente se monta
     if (modalRef.current) {
       modalRef.current.focus();
-      modalRef.current.scrollIntoView({ behavior: "smooth", block: "center" }); // Centrar el modal en la pantalla
+      modalRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   }, []);
-
-
 
   return (
     <div>
@@ -147,7 +174,9 @@ const TravelCreationPage = () => {
       <div className="crear-viaje-overlay">
         <div tabIndex={-1} ref={modalRef} className="crear-viaje-modal">
           <div className="crear-viaje-header">
-            <h3 className="crear-viaje-title">Create Travel</h3>
+            <h3 className="crear-viaje-title">
+              {mode === "create" ? "Create Travel" : "Edit Travel"}
+            </h3>
             <Link
               to="/"
               className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
@@ -308,7 +337,7 @@ const TravelCreationPage = () => {
                   clipRule="evenodd"
                 ></path>
               </svg>
-              Crear viaje
+              {mode === "create" ? "Crear viaje" : "Guardar cambios"}
             </button>
           </form>
         </div>
