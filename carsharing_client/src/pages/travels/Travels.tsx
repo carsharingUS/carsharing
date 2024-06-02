@@ -9,7 +9,7 @@ import Loader from "../../components/Loader";
 import toast from "react-hot-toast";
 import NoTravelFound from "../../components/travels/NoTravelFound";
 import { useNavigate } from "react-router-dom";
-import { FaCog } from 'react-icons/fa';
+import { FaCog } from "react-icons/fa";
 import { OpenStreetMapProvider } from "leaflet-geosearch";
 import "./Travels.css";
 
@@ -23,9 +23,13 @@ const Travels = () => {
   const [showIcon, setShowIcon] = useState(true);
 
   const [origin, setOrigin] = useState("");
-  const [originSuggestions, setOriginSuggestions] = useState<Array<{ label: string }>>([]);
+  const [originSuggestions, setOriginSuggestions] = useState<
+    Array<{ label: string }>
+  >([]);
   const [destination, setDestination] = useState("");
-  const [destinationSuggestions, setDestinationSuggestions] = useState<Array<{ label: string }>>([]);
+  const [destinationSuggestions, setDestinationSuggestions] = useState<
+    Array<{ label: string }>
+  >([]);
   const [start_date, setStartDate] = useState("");
   const [typingTimeout, setTypingTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [isFocused, setIsFocused] = useState(false);
@@ -76,7 +80,7 @@ const Travels = () => {
 
   const searchAddresses = async (query, setSuggestions) => {
     const provider = new OpenStreetMapProvider({
-      params: { 'accept-language': 'es', countrycodes: 'es' },
+      params: { "accept-language": "es", countrycodes: "es" },
     });
     const results = await provider.search({ query });
     setSuggestions(results);
@@ -98,7 +102,7 @@ const Travels = () => {
   };
 
   useEffect(() => {
-    setLoadingSearch(false)
+    {isLoading && <Loader />}
     if (origin === "") setOriginSuggestions([]);
     if (destination === "") setDestinationSuggestions([]);
   }, [origin, destination]);
@@ -125,13 +129,12 @@ const Travels = () => {
       setCloseTripsLoaded(true);
     }
   }, [storedCloseTrips, searchParams, error]);
-  
 
   const handleSort = (sortKey) => {
     const sortedTravels = [...travels].sort((a, b) => {
-      if (sortKey === 'price' || sortKey === 'total_seats') {
+      if (sortKey === "price" || sortKey === "total_seats") {
         return a[sortKey] - b[sortKey];
-      } else if (sortKey === 'start_date') {
+      } else if (sortKey === "start_date") {
         return new Date(a[sortKey]).getTime() - new Date(b[sortKey]).getTime();
       }
       return 0;
@@ -148,19 +151,21 @@ const Travels = () => {
       {(isLoadingSearch || isLoading) && <Loader />}
         <div className="row">
           <div className="col-md-8">
-            <div className={`filter-wheel ${isFocused ? 'focused' : ''}`}
+            <div
+              className={`filter-wheel ${isFocused ? "focused" : ""}`}
               onMouseEnter={() => setShowIcon(false)}
               onMouseLeave={() => {
                 if (!isFocused) {
                   setShowIcon(true);
                 }
-              }}>
+              }}
+            >
               {showIcon && (
                 <div className="icon-container">
                   <FaCog />
                 </div>
               )}
-              <div className="filter-content" >
+              <div className="filter-content">
                 <form>
                   <div className="form-group">
                     <input
@@ -168,19 +173,33 @@ const Travels = () => {
                       placeholder="Origen"
                       autoComplete="off"
                       value={origin}
-                      onChange={(e) => handleInputChange(e.target.value, setOrigin, setOriginSuggestions)}
+                      onChange={(e) =>
+                        handleInputChange(
+                          e.target.value,
+                          setOrigin,
+                          setOriginSuggestions
+                        )
+                      }
                     />
                     {originSuggestions.length > 0 && (
                       <div className={`suggestions-home`}>
-                        {originSuggestions.slice(0, 5).map((suggestion, index) => (
-                          <div
-                            key={index}
-                            className="suggestion-home"
-                            onClick={() => handleSuggestionClick(suggestion, setOrigin, setOriginSuggestions)}
-                          >
-                            {suggestion?.label}
-                          </div>
-                        ))}
+                        {originSuggestions
+                          .slice(0, 5)
+                          .map((suggestion, index) => (
+                            <div
+                              key={index}
+                              className="suggestion-home"
+                              onClick={() =>
+                                handleSuggestionClick(
+                                  suggestion,
+                                  setOrigin,
+                                  setOriginSuggestions
+                                )
+                              }
+                            >
+                              {suggestion?.label}
+                            </div>
+                          ))}
                       </div>
                     )}
                   </div>
@@ -190,19 +209,33 @@ const Travels = () => {
                       placeholder="Destino"
                       autoComplete="off"
                       value={destination}
-                      onChange={(e) => handleInputChange(e.target.value, setDestination, setDestinationSuggestions)}
+                      onChange={(e) =>
+                        handleInputChange(
+                          e.target.value,
+                          setDestination,
+                          setDestinationSuggestions
+                        )
+                      }
                     />
                     {destinationSuggestions.length > 0 && (
                       <div className={`suggestions-home`}>
-                        {destinationSuggestions.slice(0, 5).map((suggestion, index) => (
-                          <div
-                            key={index}
-                            className="suggestion-home"
-                            onClick={() => handleSuggestionClick(suggestion, setDestination, setDestinationSuggestions)}
-                          >
-                            {suggestion?.label}
-                          </div>
-                        ))}
+                        {destinationSuggestions
+                          .slice(0, 5)
+                          .map((suggestion, index) => (
+                            <div
+                              key={index}
+                              className="suggestion-home"
+                              onClick={() =>
+                                handleSuggestionClick(
+                                  suggestion,
+                                  setDestination,
+                                  setDestinationSuggestions
+                                )
+                              }
+                            >
+                              {suggestion?.label}
+                            </div>
+                          ))}
                       </div>
                     )}
                   </div>
@@ -223,20 +256,30 @@ const Travels = () => {
                       onChange={(event) => setStartDate(event.target.value)}
                     />
                   </div>
-                  <button type="button" onClick={handleSearch}>Buscar</button>
-                  <button type="button" onClick={handleClearFilters}>Limpiar</button>
+                  <button type="button" onClick={handleSearch}>
+                    Buscar
+                  </button>
+                  <button type="button" onClick={handleClearFilters}>
+                    Limpiar
+                  </button>
                 </form>
                 <div className="sort-options">
-                  <button onClick={() => handleSort('price')}>Ordenar por precio</button>
-                  <button onClick={() => handleSort('start_date')}>Ordenar por fecha</button>
-                  <button onClick={() => handleSort('total_seats')}>Ordenar por asientos</button>
+                  <button onClick={() => handleSort("price")}>
+                    Ordenar por precio
+                  </button>
+                  <button onClick={() => handleSort("start_date")}>
+                    Ordenar por fecha
+                  </button>
+                  <button onClick={() => handleSort("total_seats")}>
+                    Ordenar por asientos
+                  </button>
                 </div>
               </div>
             </div>
           </div>
           <div className="col-md-9">
             <div className="chats-header mt-4">Lista de Viajes</div>
-            <div style={{ marginLeft: '2rem' }}>
+            <div style={{ marginLeft: "2rem" }}>
               {travels.length === 0 ? (
                 <NoTravelFound />
               ) : (

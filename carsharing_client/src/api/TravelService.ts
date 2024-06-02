@@ -49,7 +49,20 @@ export const createTravel = async (data: Partial<Travel>) => {
     await authAPI.post('travels/create/', formData)
 };
 
-export const deleteTravel = async (id: number) => {
+export const updateTravel = async (data: Partial<Travel>) => {
+  const formData = new FormData();
+  formData.append("origin", data.origin || "")
+  formData.append("destination", data.destination || "")
+  formData.append("start_date", data.start_date || "")
+  formData.append("estimated_duration", data.estimated_duration || "")
+  formData.append("price", data.price?.toString() || "")
+  formData.append("stops", data.stops || "")
+  formData.append("total_seats", data.total_seats?.toString() || "")
+  
+  await authAPI.put(`travels/edit/${data.id}/`, formData);
+};
+
+export const deleteTravel = async (id: string) => {
     return authAPI.delete(`travels/delete/${id}`)
 }
 

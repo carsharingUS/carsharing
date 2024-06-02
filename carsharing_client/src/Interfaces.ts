@@ -90,3 +90,19 @@ export interface ChatMessage {
     name: string;
     users: User[];
   }
+  
+  export interface UpdateTravelArgs {
+    travelId: number;
+    data: TravelData;
+  }
+  
+  export interface TravelData {
+    host: any;
+    origin: string;
+    destination: string;
+    start_date: string;
+    estimated_duration: string;
+    price: number;
+    stops: string;
+    total_seats: number;
+  }

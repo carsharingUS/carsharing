@@ -31,6 +31,7 @@ function App() {
           <Route path='chat' element={<ChatsPage />} />
           <Route path='chat/:roomName' element={<Chat />} />
           <Route path='travels/:travelId/chat/room/:roomName' element={<Chat />} />
+          <Route path='travels/:travelId/edit' element={<TravelCreationPage />} />
           
           {/* RUTAS PARA VIAJES */}
           <Route path='login' element={<LoginComponent />}/>
@@ -42,7 +43,7 @@ function App() {
 
           {/* RUTAS PARA USUARIO */}
           <Route path='updateUser' element={<UserProfile />} />
-          <Route path='createTravel' element={<TravelCreationPage />} />
+          <Route path='createTravel' element={<TravelCreationPage mode={"create"} />} />
 
 
           {/* RUTA PARA CHAT */}
