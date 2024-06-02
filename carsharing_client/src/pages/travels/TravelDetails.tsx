@@ -1,7 +1,7 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Loader from "../../components/Loader";
-import { getCoordinates, getTravel, createTravelRequest } from "../../api/TravelService";
+import { getCoordinates, getTravel, createTravelRequest, deleteTravel } from "../../api/TravelService";
 import { Token, Travel, TravelRequest } from "../../Interfaces";
 import L from "leaflet";
 import "leaflet-routing-machine";
@@ -21,11 +21,12 @@ import Navbar from "../../components/home/Navbar";
 
 
 const TravelDetails = () => {
-  const { travelId } = useParams();
+  const { travelId = '' } = useParams<{ travelId?: string }>();
   const [travel, setTravel] = useState<Travel>();
   const [isLoading, setIsLoading] = useState(true);
   const [isMapLoading, setIsMapLoading] = useState(false);
   const [isActive, setIsActive] = useState<boolean>(false);
+  const [modalIsActive, setModalIsActive] = useState<boolean>(false);
   const [origin, setOrigin] = useState<{
     geocode: [number, number];
     popUp: string;
@@ -232,7 +233,6 @@ const TravelDetails = () => {
 
   const queryClient = useQueryClient();
 
-
   const createTravelRequestMutation = useMutation({
       mutationFn: createTravelRequest,
       onSuccess: () => {
@@ -266,6 +266,25 @@ const TravelDetails = () => {
     }
   };
 
+  const handleEditClick = () => {
+    navigate(`./edit`);
+  };
+
+  const handleDeleteClick = async () => {
+    await deleteTravel(travelId);
+    navigate("/");
+    toast.success("Viaje eliminado correctamente");
+  };
+
+  const showModal = async () => {
+    console.log(modalIsActive)
+      if (modalIsActive) {
+        setModalIsActive(false);
+      } else {
+        setModalIsActive(true);
+      }
+  };
+
   if (isLoading || userIsLoading) return <Loader />;
   if (!travel || !user) return <div>No se encontró el viaje o el usuario.</div>;
 
@@ -280,6 +299,20 @@ const TravelDetails = () => {
       <p>Destino: {travel.destination}</p>
       {isCurrentUserOwner ? (
         <div>
+          <button className="travel-details-request-btn" onClick={handleEditClick}>
+            Editar
+          </button>
+          <button className="travel-details-request-btn" onClick={showModal}>Eliminar</button>
+          {modalIsActive && (
+            <div id="modal" className="modal">
+              <div className="modal-content">
+                <p>¿Estás seguro de querer eliminarlo?</p>
+                <button className="travel-details-request-btn" id="confirmarBtn" onClick={handleDeleteClick}>Confirmar</button>
+                <button className="travel-details-request-btn" id="cancelarBtn" onClick={showModal}>Cancelar</button>
+              </div>
+            </div>
+          )}
+
           <div>{isMapLoading && <Loader />}</div>
           <button className="travel-details-request-btn" onClick={showMap}>
             {isActive ? "Cerrar mapa" : "Mostrar mapa en caja"}
