@@ -42,9 +42,9 @@ const TravelCreationPage = ({ mode }) => {
           const travel = await getTravel(travelId);
           setOrigin(travel.origin);
           setDestination(travel.destination);
-          const formattedDate = dayjs(travel.start_date)
-            .utc()
-            .format("YYYY-MM-DDTHH:mm");
+          const formattedDate = dayjs(travel.start_date).format(
+            "YYYY-MM-DDTHH:mm"
+          );
           console.log(formattedDate);
           setStartDate(formattedDate);
           setEstimatedDuration(travel.estimated_duration);

@@ -7,6 +7,8 @@ import {
   createTravelRequest,
   deleteTravel,
 } from "../../api/TravelService";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { Token, Travel, TravelRequest } from "../../Interfaces";
 import L from "leaflet";
 import "leaflet-routing-machine";
@@ -23,6 +25,8 @@ import { getCurrentUser } from "../../utils";
 import toast from "react-hot-toast";
 import { getWebsocketToken, get_solo_user } from "../../api/UserService";
 import Navbar from "../../components/home/Navbar";
+import { IconButton } from "@mui/material";
+import dayjs from "dayjs";
 
 const TravelDetails = () => {
   const { travelId = "" } = useParams<{ travelId?: string }>();
@@ -297,46 +301,99 @@ const TravelDetails = () => {
       <Navbar />
       <div
         className="travel-details-container"
-        style={{ padding: "20px 20px 50px" }}
+        style={{ padding: "20px 20px 50px", position: "relative" }}
       >
         <h1 className="travel-details-title">Detalles del viaje</h1>
-        <p>Origen: {travel.origin}</p>
-        <p>Destino: {travel.destination}</p>
+        {isCurrentUserOwner ? (
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <IconButton onClick={handleEditClick}>
+              <EditIcon />
+            </IconButton>
+            <IconButton onClick={showModal}>
+              <DeleteIcon />
+            </IconButton>
+          </div>
+        ) : (
+          <p>{""}</p>
+        )}
+        <div className="path-container">
+          <div className="origin-container">
+            <span className="origin">{travel.origin}</span>
+          </div>
+          <div className="dots-arrow-container">
+            <div className="dots-arrow"></div>
+          </div>
+          <div className="destination-container">
+            <span className="destination">{travel.destination}</span>
+          </div>
+        </div>
+        <div
+          style={{
+            marginTop: "10px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+          }}
+        >
+          <div
+            style={{ display: "flex", flexWrap: "wrap", marginLeft: "3rem" }}
+          >
+            <div className="info-column">
+              <div className="info-item">
+                <p style={{ marginBottom: "5px" }}>
+                  Anfitrión: {travel.host?.name}
+                </p>
+                <p>Duración estimada: {travel.estimated_duration}</p>
+              </div>
+              <div className="info-item">
+                <p>Precio por plaza: {travel.price}</p>
+                <p>
+                  Fecha de salida:{" "}
+                  {dayjs(travel.start_date).format("DD/MM/YYYY HH:mm")}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div
+            style={{
+              justifyContent: "flex-end",
+              margin: "5rem 0 1rem",
+            }}
+          >
+            <div className={`status-cylinder status-${travel.status}`}>
+              <p className="status-text">{travel.status}</p>
+            </div>
+          </div>
+        </div>
+
         {isCurrentUserOwner ? (
           <div>
-            <button
-              className="travel-details-request-btn"
-              onClick={handleEditClick}
-            >
-              Editar
-            </button>
-            <button className="travel-details-request-btn" onClick={showModal}>
-              Eliminar
-            </button>
-            {modalIsActive && (
-              <div className="modal">
-                <div className="modal-content">
-                  <p>¿Estás seguro de querer eliminarlo?</p>
-                  <button
-                    className="travel-details-request-btn"
-                    onClick={handleDeleteClick}
-                  >
-                    Confirmar
-                  </button>
-                  <button
-                    className="travel-details-request-btn"
-                    onClick={showModal}
-                  >
-                    Cancelar
-                  </button>
+            <div className="buttons-container">
+              {modalIsActive && (
+                <div className="modal">
+                  <div className="modal-content">
+                    <p>¿Estás seguro de querer eliminarlo?</p>
+                    <button
+                      className="travel-details-request-btn"
+                      onClick={handleDeleteClick}
+                    >
+                      Confirmar
+                    </button>
+                    <button
+                      className="travel-details-request-btn"
+                      onClick={showModal}
+                    >
+                      Cancelar
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
+              <button className="travel-details-request-btn" onClick={showMap}>
+                {isActive ? "Cerrar mapa" : "Mostrar mapa"}
+              </button>
+            </div>
             <div>{isMapLoading && <Loader />}</div>
-            <button className="travel-details-request-btn" onClick={showMap}>
-              {isActive ? "Cerrar mapa" : "Mostrar mapa en caja"}
-            </button>
             {showMapContainer && isActive && (
               <div className={`map-container ${isActive ? "open" : ""}`}>
                 <div className="map" id="map"></div>
@@ -427,21 +484,26 @@ const TravelDetails = () => {
                   </div>
                 )}
               </div>
-              <button type="submit" className="travel-details-submit-btn">
-                Solicitar viaje
-              </button>
-              <button
-                type="button"
-                className="travel-details-chat-btn"
-                onClick={handleChatClick}
-              >
-                Chatear
-              </button>
+              <div className="buttons-container">
+                <button type="submit" className="travel-details-submit-btn">
+                  Solicitar viaje
+                </button>
+                <button
+                  type="button"
+                  className="travel-details-chat-btn"
+                  onClick={handleChatClick}
+                >
+                  Chatear
+                </button>
+                <button
+                  className="travel-details-request-btn"
+                  onClick={showMap}
+                >
+                  {isActive ? "Cerrar mapa" : "Mostrar mapa"}
+                </button>
+              </div>
             </form>
             <div>{isMapLoading && <Loader />}</div>
-            <button className="travel-details-request-btn" onClick={showMap}>
-              {isActive ? "Cerrar mapa" : "Mostrar mapa en caja"}
-            </button>
             {showMapContainer && isActive && (
               <div className={`map-container ${isActive ? "open" : ""}`}>
                 <div className="map2" id="map"></div>
