@@ -495,14 +495,15 @@ const TravelDetails = () => {
                 >
                   Chatear
                 </button>
-                <button
+                
+              </div>
+            </form>
+            <button
                   className="travel-details-request-btn"
                   onClick={showMap}
                 >
                   {isActive ? "Cerrar mapa" : "Mostrar mapa"}
-                </button>
-              </div>
-            </form>
+            </button>
             <div>{isMapLoading && <Loader />}</div>
             {showMapContainer && isActive && (
               <div className={`map-container ${isActive ? "open" : ""}`}>
