@@ -11,7 +11,7 @@
   justify-content: center;
   cursor: pointer;
   transition: all ease-in-out;
-  z-index: 1000;
+  z-index: 5;
   overflow: visible;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
   transition: width 0.5s ease-in-out, height 0.5s ease-in-out;
@@ -126,7 +126,7 @@
   right: 0;
   background-color: rgba(255, 255, 255, 0.8);
   color: #333;
-  z-index: 1100;
+  z-index: 6;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   max-height: 200px; /* Ajusta según sea necesario */

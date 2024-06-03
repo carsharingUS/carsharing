@@ -93,7 +93,7 @@ const Navbar = () => {
               )}
             </div>
             {isDropdownOpen && (
-              <div className="absolute top-full right-0 mt-1 bg-white border rounded-md shadow-lg">
+              <div className="absolute top-full right-0 mt-1 bg-white border rounded-md shadow-lg z-2200">
                 <Link
                   to={`/updateUser/`}
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"

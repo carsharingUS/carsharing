@@ -55,7 +55,7 @@
 .travel-details-request-btn,
 .travel-details-edit-btn,
 .travel-details-delete-btn {
-  display: block;
+  display: inline-block;
   width: 10rem;
   padding: 10px;
   background-color: #176b87;
@@ -64,8 +64,34 @@
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  position: relative;
-  z-index: 0;
+  margin-right: 10px; /* Añadir margen derecho entre botones */
+  margin-bottom: 5px; /* Añadir margen inferior para la separación vertical */
+}
+
+.travel-details-request-btn{
+  width: 35rem;
+}
+
+.travel-buttons-container {
+  display: flex;
+  justify-content: center; /* Centra horizontalmente los botones */
+  align-items: center; /* Centra verticalmente los botones */
+  margin-top: 20px; /* Añade margen superior entre los botones y el contenido */
+}
+
+.travel-buttons-container-map {
+  display: flex;
+  justify-content: center; /* Centra horizontalmente los botones */
+  align-items: center; /* Centra verticalmente los botones */
+  margin-top: 10px; /* Añade margen superior entre los botones y el contenido */
+}
+
+.travel-details-chat-btn[type="button"]:last-child,
+.travel-details-submit-btn[type="submit"]:last-child,
+.travel-details-request-btn:last-child,
+.travel-details-edit-btn:last-child,
+.travel-details-delete-btn:last-child {
+  margin-right: 0; /* Eliminar margen derecho del último botón */
 }
 
 .travel-details-submit-btn[type="submit"]:hover,
@@ -95,23 +121,23 @@
 }
 
 .map {
-  width: calc(100% - 30px); /* Resta 30px para el margen izquierdo y derecho */
-  height: 70%;
+  width: calc(100% - 40px); /* Resta 30px para el margen izquierdo y derecho */
+  height: 57%;
   border-radius: 5px;
   position: absolute;
-  top: 55%; /* Ajusta la posición vertical */
+  top: 60%; /* Ajusta la posición vertical */
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 0;
 }
 
 .map2 {
-  width: calc(100% - 30px); /* Resta 30px para el margen izquierdo y derecho */
+  width: calc(100% - 40px); /* Resta 30px para el margen izquierdo y derecho */
   height: 57%;
   border-radius: 5px;
   position: absolute;
   margin-top: 10rem;
-  top: 65%; /* Ajusta la posición vertical */
+  top: 60%; /* Ajusta la posición vertical */
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 0;

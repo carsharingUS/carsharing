@@ -12,16 +12,30 @@ dayjs.extend(utc);
 
 interface Props {
   travel: Travel;
+  status?: string; // Prop opcional para el estado del viaje
 }
 
-const TravelCard: FC<Props> = ({ travel }) => {
+
+const TravelCard: FC<Props> = ({ travel, status  }) => {
   const avatarUrl = `http://localhost:8000${travel.host?.avatar}`;
   const occupancyPercentage =  ((travel.total_seats) / 4) * 100;
+
+  // Determinar el color de fondo según el estado del viaje
+  const getStatusBackgroundColor = () => {
+    switch (status) {
+      case "en_curso":
+        return "#f6f4a0"; // Amarillo para viajes en curso
+      case "completado":
+        return "#c6f8c6"; // Verde claro para viajes completados
+      default:
+        return "#ffffff"; // Blanco por defecto
+    }
+  };
 
   return (
     <div className="travel-card">
       <CardActionArea href={`/travels/${travel.id}`}>
-        <div className="travel">
+        <div className="travel" style={{ backgroundColor: getStatusBackgroundColor() }}>
           {travel.mejor_opcion && (
             <div className="best-option-indicator">★</div>
           )}

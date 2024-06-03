@@ -388,11 +388,18 @@ const TravelDetails = () => {
                   </div>
                 </div>
               )}
-
-              <button className="travel-details-request-btn" onClick={showMap}>
-                {isActive ? "Cerrar mapa" : "Mostrar mapa"}
-              </button>
-            </div>
+             </div>
+             
+        <div className="travel-buttons-container-map">
+        <button
+          className="travel-details-request-btn"
+          onClick={showMap}
+        >
+          {isActive ? "Cerrar mapa" : "Mostrar mapa"}
+        </button>
+      
+      </div>
+            
             <div>{isMapLoading && <Loader />}</div>
             {showMapContainer && isActive && (
               <div className={`map-container ${isActive ? "open" : ""}`}>
@@ -484,7 +491,8 @@ const TravelDetails = () => {
                   </div>
                 )}
               </div>
-              <div className="buttons-container">
+                
+                <div className="travel-buttons-container">
                 <button type="submit" className="travel-details-submit-btn">
                   Solicitar viaje
                 </button>
@@ -495,15 +503,20 @@ const TravelDetails = () => {
                 >
                   Chatear
                 </button>
-                
-              </div>
+                </div>
             </form>
-            <button
-                  className="travel-details-request-btn"
-                  onClick={showMap}
-                >
-                  {isActive ? "Cerrar mapa" : "Mostrar mapa"}
-            </button>
+            
+            <div className="travel-details-buttons">
+        <div className="travel-buttons-container-map">
+        <button
+          className="travel-details-request-btn"
+          onClick={showMap}
+        >
+          {isActive ? "Cerrar mapa" : "Mostrar mapa"}
+        </button>
+        </div>
+      </div>
+          
             <div>{isMapLoading && <Loader />}</div>
             {showMapContainer && isActive && (
               <div className={`map-container ${isActive ? "open" : ""}`}>

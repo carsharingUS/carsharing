@@ -15,7 +15,7 @@ class Travel(models.Model):
     host = models.ForeignKey(User, on_delete=models.CASCADE, related_name='hosts_travel', null=True)
     passengers = models.ManyToManyField(User, related_name='travels_as_passenger', blank=True)
     origin = models.CharField(max_length=250)
-    intermediateTravel = models.JSONField(default=list, null=True)
+    intermediateTravel = models.JSONField(default=list, null=True, blank=True)
     destination = models.CharField(max_length=250)
 
     origin_coords = models.PointField(geography=True, blank=True)
