@@ -78,13 +78,13 @@ const ChatsPage = () => {
     });
   };
 
-  if (isLoading) return <Loader />;
   if (isError) return toast.error("Error!");
 
   return (
     <div>
       <Navbar />
       <div className="container-fluid mt-4">
+      {isLoading && <Loader />}
         {rooms.length > 0 ? (
           <div className="row">
             <div className="col-4">

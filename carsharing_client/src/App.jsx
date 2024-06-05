@@ -14,12 +14,16 @@ import TravelRequestManagment from './components/notifications/TravelRequestMana
 import Chat from './components/chat/Chat';
 import ChatsPage from './pages/chats/ChatsPage';
 import VerifyEmail from './pages/login/VerifyEmail';
+import ErrorBoundary from './components/error/ErrorBoundary'
+import ErrorComponent from './components/error/ErrorComponent';
+
 
 function App() {
   return (
 
     <BrowserRouter >
     <Toaster />
+    <ErrorBoundary>
       <Routes>
         <Route path='/'>
           <Route path='home' element={<HomePage />} />
@@ -51,8 +55,12 @@ function App() {
           <Route path='notificaciones' element={<NotificationPage />}></Route>
           <Route path='notificaciones/:travelRequestId' element={<TravelRequestManagment/>}></Route>
 
+          {/* RUTA PARA PAGINA QUE NO EXISTE */}
+          <Route path='*' element={<ErrorComponent />} />
+
         </Route>
       </Routes>
+      </ErrorBoundary>
     </BrowserRouter>
   );
 }
