@@ -19,10 +19,9 @@ import "leaflet/dist/leaflet.css";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "../../store/auth";
 import * as jwt_decode from "jwt-decode";
-import "./TravelDetails.css"; // Importa el archivo CSS aquí
-import { OpenStreetMapProvider } from "leaflet-geosearch";
-import { getCurrentUser } from "../../utils";
+import "./TravelDetails.css";
 import toast from "react-hot-toast";
+import { OpenStreetMapProvider } from "leaflet-geosearch";
 import { getWebsocketToken, get_solo_user } from "../../api/UserService";
 import Navbar from "../../components/home/Navbar";
 import { IconButton } from "@mui/material";
@@ -45,7 +44,9 @@ const TravelDetails = () => {
   } | null>(null);
   const [showMapContainer, setShowMapContainer] = useState(false); // Estado para controlar la visibilidad del contenedor del mapa
   const [selectedSeats, setSelectedSeats] = useState<number>(0); // Estado para almacenar la cantidad de plazas seleccionadas
-  const [typingTimeout, setTypingTimeout] = useState<number>(0); // Nuevo estado para rastrear el tiempo de espera+
+  const [typingTimeout, setTypingTimeout] = useState<ReturnType<
+    typeof setTimeout
+  > | null>(null); // Nuevo estado para rastrear el tiempo de espera+
   const [intermedio, setIntermedio] = useState<string>("");
   const [intermedioCoordenadas, setIntermedioCoordenadas] = useState<{
     geocode: [number, number];
@@ -61,7 +62,9 @@ const TravelDetails = () => {
     setIntermedio(event.target.value);
     setIsIntermedioTyping(true);
     // Reiniciar el tiempo de espera
-    clearTimeout(typingTimeout);
+    if (typingTimeout !== null) {
+      clearTimeout(typingTimeout);
+    }
     // Establecer un nuevo tiempo de espera antes de realizar la búsqueda
     setTypingTimeout(
       setTimeout(
@@ -244,14 +247,15 @@ const TravelDetails = () => {
     mutationFn: createTravelRequest,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["travelRequests"] });
-      toast.success("Travel request created!");
+      toast.success("Peticion de viaje solicitada");
       navigate("/");
     },
     onError: () => {
-      toast.error("Error!");
+      toast.error("Error al solicitar el viaje");
       navigate("/");
     },
   });
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -368,7 +372,7 @@ const TravelDetails = () => {
 
         {isCurrentUserOwner ? (
           <div>
-            <div className="buttons-container">
+            <div className="travel-buttons-container">
               {modalIsActive && (
                 <div className="modal">
                   <div className="modal-content">
@@ -388,18 +392,18 @@ const TravelDetails = () => {
                   </div>
                 </div>
               )}
-             </div>
-             
-        <div className="travel-buttons-container-map">
-        <button
-          className="travel-details-request-btn"
-          onClick={showMap}
-        >
-          {isActive ? "Cerrar mapa" : "Mostrar mapa"}
-        </button>
-      
-      </div>
-            
+
+              <div className="travel-details-buttons">
+                <div className="travel-buttons-container-map">
+                  <button
+                    className="travel-details-request-btn"
+                    onClick={showMap}
+                  >
+                    {isActive ? "Cerrar mapa" : "Mostrar mapa"}
+                  </button>
+                </div>
+              </div>
+            </div>
             <div>{isMapLoading && <Loader />}</div>
             {showMapContainer && isActive && (
               <div className={`map-container ${isActive ? "open" : ""}`}>
@@ -491,8 +495,7 @@ const TravelDetails = () => {
                   </div>
                 )}
               </div>
-                
-                <div className="travel-buttons-container">
+              <div className="travel-buttons-container">
                 <button type="submit" className="travel-details-submit-btn">
                   Solicitar viaje
                 </button>
@@ -503,20 +506,20 @@ const TravelDetails = () => {
                 >
                   Chatear
                 </button>
-                </div>
+              </div>
             </form>
-            
+
             <div className="travel-details-buttons">
-        <div className="travel-buttons-container-map">
-        <button
-          className="travel-details-request-btn"
-          onClick={showMap}
-        >
-          {isActive ? "Cerrar mapa" : "Mostrar mapa"}
-        </button>
-        </div>
-      </div>
-          
+              <div className="travel-buttons-container-map">
+                <button
+                  className="travel-details-request-btn"
+                  onClick={showMap}
+                >
+                  {isActive ? "Cerrar mapa" : "Mostrar mapa"}
+                </button>
+              </div>
+            </div>
+
             <div>{isMapLoading && <Loader />}</div>
             {showMapContainer && isActive && (
               <div className={`map-container ${isActive ? "open" : ""}`}>

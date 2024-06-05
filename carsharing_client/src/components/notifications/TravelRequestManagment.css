@@ -1,74 +1,104 @@
 .travel-request-management-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
 }
 
 .travel-request-details {
-    background-color: #f0f0f0;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
+  width: 60%;
+  background-color: #f0f0f0;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.travel-request-title {
+  text-align: center; /* Centrar el texto */
+  font-size: 1.5rem; /* Tamaño de fuente más grande */
+  font-weight: bold; /* Texto en negrita */
+  margin-bottom: 2rem;
+}
+
+.travel-request-text {
+  margin-bottom: 10px; /* Margen inferior para cada texto */
+  position: relative;
+  padding-left: 2rem; /* Espacio para el punto */
+}
+
+.travel-request-text::before {
+  content: "•"; /* Punto */
+  position: absolute;
+  left: 0;
+  color: #176b87; /* Color del punto */
+  font-size: 1.2rem; /* Tamaño del punto */
+  line-height: 1.1; /* Alineación vertical */
+  top: 0;
+  padding-left: 0.7rem;
+}
+
+.travel-request-text.large {
+  font-size: 1.2rem; /* Tamaño de fuente mayor para los textos de origen, destino y solicitante */
+  font-weight: bold;
+}
+
+.travel-request-text.spaced {
+  margin-top: 20px; /* Espacio adicional entre Solicitante y Fecha de Inicio */
 }
 
 .show-route-button {
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px;
-    width: 100%;
+  background-color: #176b87;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  width: 100%;
 }
 
 .action-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+  gap: 10px;
 }
 
-.accept-button, .reject-button, .message-button {
-    background-color: #28a745;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
+.accept-button,
+.reject-button,
+.message-button {
+  background-color: #176b87;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .message-button {
-    background-color: #007bff;
+  background-color: #176b87;
 }
 
 .reject-button {
-    background-color: #dc3545;
+  background-color: #176b87;
 }
 
 /* Estilos específicos para el mapa */
 .map-container-travel-request {
-    order: 2;
-    margin-top: 20px;
-    width: 100%;
-    height: 0;
-    overflow: hidden;
-    transition: height 0.3s ease;
+  width: 100%; /* Ancho completo de la tarjeta */
+  height: 0;
+  overflow: hidden;
+  transition: height 0.3s ease;
 }
 
 .map-container-travel-request.open {
-    height: 600px; /* Altura fija del mapa cuando está abierto */
+  height: 600px; /* Ajusta la altura según sea necesario */
 }
 
 .map-travel-request {
-    width: calc(100% - 400px); /* Resta 30px para el margen izquierdo y derecho */
-    height: 75%;
-    border-radius: 5px;
-    position: absolute;
-    top: 67%; /* Ajusta la posición vertical */
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 0;
+  width: 100%; /* Ancho completo del contenedor del mapa */
+  height: 100%;
+  border-radius: 5px;
+  position: relative;
 }
