@@ -12,6 +12,7 @@ import { authAPI } from "../../api/AuthenticationService";
 import { useAuthStore } from "../../store/auth";
 import * as jwt_decode from "jwt-decode";
 import Navbar from "../home/Navbar";
+import toast from "react-hot-toast";
 
 const Chat = ({ room, updateLastMessage }) => {
   const chatContainerClass = room ? true : false;
@@ -56,9 +57,11 @@ const Chat = ({ room, updateLastMessage }) => {
           if (otherUser) {
             connectToWebSocket(userr, otherUser);
           } else {
+            toast.error("No se encontró el otro usuario en la sala")
             console.error("No se encontró el otro usuario en la sala");
           }
         } else {
+          toast.error("La sala no existe o no tiene exactamente 2 usuarios")
           console.error("La sala no existe o no tiene exactamente 2 usuarios");
         }
       }
@@ -104,11 +107,13 @@ const Chat = ({ room, updateLastMessage }) => {
                 }
               })
               .catch((error) => {
+                toast.error("Error al recuperar los mensajes")
                 console.error("Error fetching messages:", error);
               });
           }
         }
       } catch (error) {
+        toast.error("Error en la conexión")
         console.error("Error connecting to WebSocket:", error);
       }
     };
@@ -141,6 +146,7 @@ const Chat = ({ room, updateLastMessage }) => {
       const roomId = roomIdRef.current ?? 0;
 
       if (!user) {
+        toast.error("No se ha encontrado el usuario")
         console.error("No se ha encontrado el usuario.");
         return;
       }
@@ -176,6 +182,7 @@ const Chat = ({ room, updateLastMessage }) => {
           });
         })
         .catch((error) => {
+          toast.error("Error al crear el mensaje")
           console.error("Error creating message:", error);
         });
     }

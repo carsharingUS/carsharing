@@ -4,6 +4,8 @@ import "./SearchComponent.css";
 import { useNavigate } from "react-router-dom";
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import { getCoordinates, getDistanceSearchUser, getRoute } from "../../api/TravelService";
+import toast from "react-hot-toast";
+import Loader from "../Loader";
 
 const SearchComponent = () => {
   const [origin, setOrigin] = useState("");
@@ -11,31 +13,47 @@ const SearchComponent = () => {
   const [destination, setDestination] = useState("");
   const [destinationSuggestions, setDestinationSuggestions] = useState<Array<{ label: string }>>([]);
   const [start_date, setStartDate] = useState("");
-  const [typingTimeout, setTypingTimeout] = useState(0); // Nuevo estado para rastrear el tiempo de espera
+  const [typingTimeout, setTypingTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
   const navigate = useNavigate();
+  const [isLoadingSearch, setLoadingSearch] = useState(false);
 
 
-  const handleSearch = async () => {
-    
-
-    if (origin != null && destination != null){
-
-      const closeTravels = await getDistanceSearchUser(origin, destination, start_date);
-      
-      if (closeTravels) {
-        localStorage.setItem('closeTrips', JSON.stringify(closeTravels));
-      }
-
-    //una vez que tengo la distancia de la ruta que ha introducido el usuario le paso a la nueva pagina la distancia y que procese los viajes mas cercanos primero
-    const queryParams = new URLSearchParams({
-      origin,
-      destination,
-      start_date,
-    });
-
-    navigate(`/travels?${queryParams.toString()}`);
-    
+  const handleSearch = () => {
+    if (!origin || !destination) {
+      toast.error("Por favor, ingrese el origen y destino");
+      return;
     }
+    
+    if (!Date.parse(start_date)) {
+      toast.error("Por favor, ingrese una fecha válida");
+      return;
+    }
+
+    setLoadingSearch(true);
+    const searchTimeout = setTimeout(() => {
+      toast.error("La búsqueda está tardando demasiado, por favor intente nuevamente");
+      setLoadingSearch(false);
+    }, 10000); // 10 segundos de timeout
+
+    getDistanceSearchUser(origin, destination, start_date)
+      .then((closeTravels) => {
+        clearTimeout(searchTimeout); // Limpiar el timeout si la respuesta llega a tiempo
+        if (closeTravels) {
+          localStorage.setItem('closeTrips', JSON.stringify(closeTravels));
+          const queryParams = new URLSearchParams({ origin, destination, start_date });
+          navigate(`/travels?${queryParams.toString()}`);
+          toast.success("Busqueda realizada")
+        } else {
+          toast.error("Error al buscar el viaje");
+        }
+      })
+      .catch((error) => {
+        clearTimeout(searchTimeout); // Limpiar el timeout si hay un error
+        toast.error("Error al buscar el viaje")
+      })
+      .finally(() => {
+        setLoadingSearch(false);
+      });
   };
 
   // Función para buscar sugerencias de direcciones
@@ -60,7 +78,9 @@ const SearchComponent = () => {
   const handleInputChange = (value, setField, setSuggestions) => {
     setField(value);
     // Reiniciar el tiempo de espera
-    clearTimeout(typingTimeout);
+    if (typingTimeout !== null){
+      clearTimeout(typingTimeout);
+    }
     // Establecer un nuevo tiempo de espera antes de realizar la búsqueda
     setTypingTimeout(setTimeout(() => searchAddresses(value, setSuggestions), 200));
   };
@@ -71,8 +91,10 @@ const SearchComponent = () => {
     if (origin === "") setOriginSuggestions([]);
     if (destination === "") setDestinationSuggestions([]);
   }, [origin, destination]);
+
   return (
     <div className="search-section">
+      {isLoadingSearch && <Loader />}
       <div className="background-video">
         <video autoPlay loop muted className="background-video-content">
           <source

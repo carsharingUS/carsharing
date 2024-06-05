@@ -16,6 +16,7 @@ import "./Travels.css";
 const Travels = () => {
   const [travels, setTravels] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingSearch, setLoadingSearch] = useState(false);
   const navigate = useNavigate();
   const [error, setError] = useState(null);
   const searchParams = new URLSearchParams(window.location.search);
@@ -30,37 +31,45 @@ const Travels = () => {
     Array<{ label: string }>
   >([]);
   const [start_date, setStartDate] = useState("");
-  const [typingTimeout, setTypingTimeout] = useState(0);
+  const [typingTimeout, setTypingTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [isFocused, setIsFocused] = useState(false);
 
-  const handleSearch = async () => {
-    setIsLoading(true);
-
-    try {
-      if (origin !== "" && destination !== "") {
-        const closeTravels = await getDistanceSearchUser(
-          origin,
-          destination,
-          start_date
-        );
-        if (closeTravels) {
-          localStorage.setItem("closeTrips", JSON.stringify(closeTravels));
-        }
-
-        const queryParams = new URLSearchParams({
-          origin,
-          destination,
-          start_date,
-        });
-        navigate(`/travels?${queryParams.toString()}`);
-        window.location.reload();
-      }
-    } catch (error) {
-      toast.error("Error al buscar el viaje");
-      setError(error);
-    } finally {
-      setIsLoading(false);
+  const handleSearch = () => {
+    if (!origin || !destination) {
+      toast.error("Por favor, ingrese el origen y destino");
+      return;
     }
+    
+    if (!Date.parse(start_date)) {
+      toast.error("Por favor, ingrese una fecha válida");
+      return;
+    }
+
+    setLoadingSearch(true);
+    const searchTimeout = setTimeout(() => {
+      toast.error("La búsqueda está tardando demasiado, por favor intente nuevamente");
+      setLoadingSearch(false);
+    }, 10000); // 10 segundos de timeout
+
+    getDistanceSearchUser(origin, destination, start_date)
+      .then((closeTravels) => {
+        clearTimeout(searchTimeout); // Limpiar el timeout si la respuesta llega a tiempo
+        if (closeTravels) {
+          localStorage.setItem('closeTrips', JSON.stringify(closeTravels));
+          const queryParams = new URLSearchParams({ origin, destination, start_date });
+          navigate(`/travels?${queryParams.toString()}`);
+          window.location.reload();
+        } else {
+          toast.error("Error al buscar el viaje");
+        }
+      })
+      .catch((error) => {
+        clearTimeout(searchTimeout); // Limpiar el timeout si hay un error
+        setError(error);
+      })
+      .finally(() => {
+        setLoadingSearch(false);
+      });
   };
 
   const handleClearFilters = () => {
@@ -84,16 +93,16 @@ const Travels = () => {
 
   const handleInputChange = (value, setField, setSuggestions) => {
     setField(value);
-    clearTimeout(typingTimeout);
-    setTypingTimeout(
-      setTimeout(() => searchAddresses(value, setSuggestions), 200)
-    );
+    // Reiniciar el tiempo de espera
+    if (typingTimeout !== null){
+      clearTimeout(typingTimeout);
+    }
+    // Establecer un nuevo tiempo de espera antes de realizar la búsqueda
+    setTypingTimeout(setTimeout(() => searchAddresses(value, setSuggestions), 200));
   };
 
   useEffect(() => {
-    {
-      isLoading && <Loader />;
-    }
+    {isLoading && <Loader />}
     if (origin === "") setOriginSuggestions([]);
     if (destination === "") setDestinationSuggestions([]);
   }, [origin, destination]);
@@ -133,13 +142,13 @@ const Travels = () => {
     setTravels(sortedTravels);
   };
 
-  if (isLoading) return <Loader />;
   if (error) return toast.error("Error!");
 
   return (
     <div>
       <Navbar />
       <div className="container">
+      {(isLoadingSearch || isLoading) && <Loader />}
         <div className="row">
           <div className="col-md-8">
             <div
