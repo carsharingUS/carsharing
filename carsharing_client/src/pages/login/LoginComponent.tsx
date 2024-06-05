@@ -3,11 +3,17 @@ import { registerRequest, loginRequest } from '../../api/UserService'
 import { toast  } from 'react-hot-toast';
 import { useAuthStore } from '../../store/auth';
 import { useMutation } from '@tanstack/react-query';
-import { Link, useNavigate, Navigate } from "react-router-dom";
+import { Link, useNavigate, Navigate, useLocation } from "react-router-dom";
 import '../login/Login.css';
 
 
 const Login = () => {
+
+    interface CustomError extends Error {
+        response?: {
+            data?: any;
+        };
+    }
 
     const navigate = useNavigate();
     const { isAuth } = useAuthStore();
@@ -67,60 +73,60 @@ const Login = () => {
     const registerMutation = useMutation({
         mutationFn: () => registerRequest(username, email, name, last_name, password),
         onSuccess: () => {
-            toast.success("Registro exitoso! Hace login!")
-            navigate("/login")
+            toast.success("Por favor, compruebe su correo y verifique su cuenta.");
+            setActiveForm('login');
         },
-        onError: (error) => {
-            toast.error("Hubo un error, intentalo otra vez")
-            /*window.location.reload()*/
-            console.log(error.message)
-            
-            
-            
+        onError: (error: CustomError) => {
+            if (error.response && error.response.data && error.response.data.error) {
+                const errorMessage = error.response.data.error;
+                console.log(errorMessage)
+                if (errorMessage.includes("Duplicate entry")) {
+                    // Si el mensaje de error contiene "Duplicate entry", es un error de usuario duplicado
+                    toast.error("El usuario ya existe.");
+                } else {
+                    // Si no, es un error en el servidor al crear
+                    toast.error("¡Error en el registro! Por favor, compruebe los campos del formulario.");
+                }
+            } else {
+                // Si no hay un mensaje de error específico del servidor, es un error por campos incorrectos
+                toast.error("¡Error en el registro! Por favor, inténtelo de nuevo.");
+            }
         }
-    })
+    });
+    
+    
+    
 
-    const handleMatch = () => {
-        if (password !== re_password) {
-            return false
-        } else {
-            return true
-        }
-    }
+    const handleMatch = () => password === re_password;
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
-        if (password !== re_password) {
-            toast.error("Las passwords deben coincidir")
+        event.preventDefault();
+        if (!handleMatch()) {
+            toast.error("Las contraseñas deben coincidir.");
         } else {
-            registerMutation.mutate()
-            
+            registerMutation.mutate();
         }
-    }
+    };
 
-    //Para el logueo
+    // Handle login mutation
     const loginMutation = useMutation({
         mutationFn: () => loginRequest(email, password),
         onSuccess: (response) => {
-            setToken(response.data.access, response.data.refresh)
-            toast.success("Login exitoso!")
-            navigate("/home")
+            setToken(response.data.access, response.data.refresh);
+            toast.success("¡Login exitoso!");
+            navigate("/home");
         },
         onError: (error) => {
-            toast.error("Hubo un error, intentalo otra vez")
-            /*window.location.reload()*/
-            console.log(error.message)
-            
-            
-            
+            toast.error("Ha habido un error, porfavor intentelo de nuevo.");
+            console.error(error.message);
         }
-    })
+    });
 
     const handleSubmitLogin = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
-        loginMutation.mutate()
-    }
-
+        event.preventDefault();
+        loginMutation.mutate();
+    };
+    
     /* if (registerMutation.isPending) return <p>Pending...</p> */
     /* if (loginMutation.isPending) return <p>Pending...</p> */
     if (isAuth) return (<Navigate to="/home" />)

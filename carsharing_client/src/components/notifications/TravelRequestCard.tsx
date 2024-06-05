@@ -41,7 +41,7 @@ const TravelRequestCard = ({ request }) => {
       <div style={{ display: "flex", flexDirection: "column" }}>
         {/* Aquí modificamos el orden de los botones y agregamos margen al botón "Ver Viaje" */}
         <button onClick={handleViewTravel} style={{ marginRight: "10px" }}>
-          Ver Viaje
+          Ver viaje
         </button>
         {request.status !== "aceptado" && request.status !== "rechazado" && (
           <button
@@ -51,7 +51,7 @@ const TravelRequestCard = ({ request }) => {
               request.status === "aceptado" || request.status === "rechazado"
             }
           >
-            Abrir Solicitud
+            Abrir solicitud
           </button>
         )}
       </div>

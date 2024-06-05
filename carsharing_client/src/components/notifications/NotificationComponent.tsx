@@ -5,6 +5,7 @@ import * as jwt_decode from "jwt-decode";
 import { useAuthStore } from "../../store/auth";
 import TravelRequestCard from "./TravelRequestCard";
 import "../notifications/TravelRequest.css";
+import toast from "react-hot-toast";
 
 const NotificationComponent = () => {
   const [travelRequests, setTravelRequests] = useState<TravelRequest[]>([]);
@@ -41,6 +42,7 @@ const NotificationComponent = () => {
           )
         );
       } catch (error) {
+        toast.error("Error al recuperar las notificaciones");
         console.error("Error fetching notifications:", error);
       }
     };

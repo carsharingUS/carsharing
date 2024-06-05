@@ -42,9 +42,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     phone = models.CharField(max_length=15, null=True, blank=True)
     sex = models.CharField(max_length=10, choices=[('M', 'Man'), ('W', 'Women'), ('O', 'Other')], null=True, blank=True)
     description = models.TextField(null=True, blank=True)
+    is_verified = models.BooleanField(default=False)  # Añadido este campo
     objects = CustomUserManager()
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["username", "is_staff", "is_superuser"] #Solo habria que dejar el campo de email, ya que si es staff o superuser deberia ponerme manualmente
+    REQUIRED_FIELDS = ["username", "is_staff", "is_superuser"]
 
     class Meta:
         ordering = ["-date_joined"]

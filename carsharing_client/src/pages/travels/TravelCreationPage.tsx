@@ -27,7 +27,7 @@ const TravelCreationPage = ({ mode }) => {
   const [price, setPrice] = useState<number>(0);
   const [stops, setStops] = useState<string>("");
   const { travelId } = useParams();
-  const [typingTimeout, setTypingTimeout] = useState<number>(0);
+  const [typingTimeout, setTypingTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [selectedSeats, setSelectedSeats] = useState<number>(0);
   const modalRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
@@ -62,13 +62,16 @@ const TravelCreationPage = ({ mode }) => {
     mutationFn: createTravel,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["travels"] });
-      toast.success("Travel created!");
+      toast.success("Viaje creado");
       navigate("/");
     },
     onError: () => {
-      toast.error("Error creating travel!");
+      toast.error("Error al crear el viaje");
+      console.log(onerror);
+      navigate("/");
     },
   });
+
 
   const updateTravelMutation = useMutation({
     mutationFn: updateTravel,
@@ -105,7 +108,11 @@ const TravelCreationPage = ({ mode }) => {
 
   const handleOriginChange = (event: ChangeEvent<HTMLInputElement>) => {
     setOrigin(event.target.value);
-    clearTimeout(typingTimeout);
+    // Reiniciar el tiempo de espera
+    if (typingTimeout !== null){
+      clearTimeout(typingTimeout);
+    }
+    // Establecer un nuevo tiempo de espera antes de realizar la búsqueda
     setTypingTimeout(
       setTimeout(
         () => searchAddresses(event.target.value, setOriginSuggestions),
@@ -116,7 +123,11 @@ const TravelCreationPage = ({ mode }) => {
 
   const handleDestinationChange = (event: ChangeEvent<HTMLInputElement>) => {
     setDestination(event.target.value);
-    clearTimeout(typingTimeout);
+    // Reiniciar el tiempo de espera
+    if (typingTimeout !== null){
+      clearTimeout(typingTimeout);
+    }
+    // Establecer un nuevo tiempo de espera antes de realizar la búsqueda
     setTypingTimeout(
       setTimeout(
         () => searchAddresses(event.target.value, setDestinationSuggestions),

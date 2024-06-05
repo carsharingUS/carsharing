@@ -167,10 +167,10 @@ const UserProfileComponent = () => {
   if (user === undefined) return <p>No user here!</p>;
 
   if (isError) return toast.error("Error!");
-  if (isLoading) return <Loader />;
 
   return (
     <div className="flex justify-center pt-[50px]">
+      {isLoading && <Loader />}
       <Card className="profile-card blue-background">
         <CardContent className="card-content">
           <form onSubmit={handleSubmit} className="form">

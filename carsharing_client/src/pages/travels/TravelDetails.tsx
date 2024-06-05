@@ -46,7 +46,7 @@ const TravelDetails = () => {
   const [selectedSeats, setSelectedSeats] = useState<number>(0); // Estado para almacenar la cantidad de plazas seleccionadas
   const [typingTimeout, setTypingTimeout] = useState<ReturnType<
     typeof setTimeout
-  > | null>(null); // Nuevo estado para rastrear el tiempo de espera+
+  > | null>(null);
   const [intermedio, setIntermedio] = useState<string>("");
   const [intermedioCoordenadas, setIntermedioCoordenadas] = useState<{
     geocode: [number, number];
@@ -255,7 +255,6 @@ const TravelDetails = () => {
       navigate("/");
     },
   });
-
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 

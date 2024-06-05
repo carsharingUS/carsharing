@@ -78,13 +78,13 @@ const ChatsPage = () => {
     });
   };
 
-  if (isLoading) return <Loader />;
   if (isError) return toast.error("Error!");
 
   return (
     <div>
       <Navbar />
       <div className="container-fluid mt-4">
+        {isLoading && <Loader />}
         {rooms.length > 0 ? (
           <div className="row">
             <div className="col-4">
@@ -130,10 +130,7 @@ const ChatsPage = () => {
               {selectedRooms.length > 0 ? (
                 selectedRooms.map((selectedRoom) => (
                   <div key={selectedRoom.id} className="chat-container">
-                    <Chat
-                      room={selectedRoom}
-                      updateLastMessage={updateLastMessage}
-                    />
+                    <Chat room={selectedRoom} />
                   </div>
                 ))
               ) : (
