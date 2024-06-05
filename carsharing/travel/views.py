@@ -2,18 +2,17 @@ from rest_framework.response import Response
 from rest_framework import status, generics
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from .models import Travel, TravelRequest, User
+from .models import Travel, TravelRequest
 from .filters import TravelFilter
 from .serializers import TravelSerializer, NearTravelSerializer, TravelRequestSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from geopy.geocoders import Nominatim
-from geopy.distance import geodesic
 from django.http import JsonResponse
 from django.contrib.gis.geos import Point
 from django.contrib.gis.db.models.functions import Distance
 from django.shortcuts import get_object_or_404
-from django.contrib.gis.geos import MultiPoint
-from django.contrib.gis.geos import GEOSGeometry, GeometryCollection
+from django.db.models.functions import Cast
+from django.db.models import DateField
 
 import requests
 import polyline
@@ -21,13 +20,15 @@ import folium
 from django.shortcuts import render
 from datetime import datetime, timedelta
 import json
+from pytz import timezone
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def buscar_viajes_cercanos(request, origen, destino, fecha):
-  
-    # Convertir la fecha pasada como parámetro a un objeto datetime
+    # Convertir la fecha pasada como parámetro a un objeto datetime en la zona horaria de España
     fecha_obj = datetime.strptime(fecha, '%Y-%m-%d')
+    spain_tz = timezone('Europe/Madrid')
+    fecha_obj = spain_tz.localize(fecha_obj)
 
     origin_latitude, origin_longitude = obtener_latitud_longitud2(origen)
     destination_latitude, destination_longitude = obtener_latitud_longitud2(destino)
@@ -41,17 +42,19 @@ def buscar_viajes_cercanos(request, origen, destino, fecha):
 
     viajes_cercanos = []
     max_distance = 0
-    
+
     if distancia <= 50000:
         max_distance = 0.05
     else:
         max_distance = 0.5
 
-    # Obtener los viajes más cercanos al origen y destino
-    viajes_cercanos = Travel.objects.filter(
+    # Obtener los viajes más cercanos al origen y destino, comparando solo la fecha
+    viajes_cercanos = Travel.objects.annotate(
+        start_date_date=Cast('start_date', DateField())
+    ).filter(
         origin_coords__distance_lte=(punto_origen, max_distance),
         destination_coords__distance_lte=(punto_destino, max_distance),
-        start_date__date=fecha_obj
+        start_date_date=fecha_obj.date()
     ).annotate(
         distancia_origen=Distance('origin_coords', punto_origen),
         distancia_destino=Distance('destination_coords', punto_destino)
@@ -72,14 +75,10 @@ def buscar_viajes_cercanos(request, origen, destino, fecha):
             else:
                 viaje.mejor_opcion = False
 
-    
-    # Pasar la distancia como un parámetro adicional al serializador en el contexto de la solicitu
-    serializer = NearTravelSerializer(viajes_cercanos, many=True, context={'distancia':distancia})
-    
+    # Pasar la distancia como un parámetro adicional al serializador en el contexto de la solicitud
+    serializer = NearTravelSerializer(viajes_cercanos, many=True, context={'distancia': distancia})
 
     return Response(serializer.data, status=status.HTTP_200_OK)
-   
-
 
 def get_route(request, origen, destino):
     # Convertir las direcciones de origen y destino a coordenadas

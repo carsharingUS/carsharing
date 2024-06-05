@@ -145,7 +145,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Europe/Madrid"
 
 USE_I18N = True
 
@@ -217,3 +217,16 @@ SIMPLE_JWT = {
 }
 
 
+import base64
+
+email_app = 'dpztiyusfullzztl'
+encoded = base64.b64encode(email_app.encode()).decode()
+
+# Configuración correo electronico
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'carsharingsoporteus@gmail.com'
+EMAIL_HOST_PASSWORD = base64.b64decode(encoded).decode()
+EMAIL_USE_TLS = True

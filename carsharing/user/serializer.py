@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from user.models import User
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.contrib.auth import authenticate
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -32,4 +33,15 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['is_staff'] = user.is_staff
 
         return token
+    
+    def validate(self, attrs):
+        authenticate_kwargs = {
+            self.username_field: attrs[self.username_field],
+            'password': attrs['password'],
+        }
+        user = authenticate(**authenticate_kwargs)
 
+        if user is not None and not user.is_verified:
+            raise serializers.ValidationError('Cuenta no verificada.')
+
+        return super().validate(attrs)

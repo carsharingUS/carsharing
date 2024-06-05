@@ -9,6 +9,22 @@ from rest_framework import status
 import hashlib
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.hashers import make_password
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from rest_framework import status
+from .serializer import RegisterUserSerializer
+from django.core.mail import send_mail
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.contrib.auth.tokens import default_token_generator
+from django.template.loader import render_to_string
+from django.conf import settings
+from django.urls import reverse
+from django.core.mail import EmailMultiAlternatives
+from django.utils.html import strip_tags
+from threading import Thread
+from django.db import IntegrityError
 
 # Create your views here.
 
@@ -49,18 +65,76 @@ def get_solo_user(request, pk):
     serializer = UserSerializer(user)
     return Response(serializer.data)
 
+def send_verification_email(user, verification_link):
+    # Enviar correo de verificación
+    subject = 'Verifica tu cuenta'
+    html_content = render_to_string('verification_email.html', {
+        'user': user,
+        'verification_link': verification_link,
+    })
+    # Obtener el contenido en texto plano a partir del HTML
+    text_content = strip_tags(html_content)
+
+    # Crear el mensaje de correo
+    email = EmailMultiAlternatives(
+        subject=subject,
+        body=text_content,
+        from_email=settings.EMAIL_HOST_USER,
+        to=[user.email]
+    )
+    # Adjuntar el contenido HTML
+    email.attach_alternative(html_content, "text/html")
+    # Enviar el correo
+    email.send()
+
 @api_view(['POST'])
 def register(request):
-    data = request.data
-    user = User.objects.create(
-        username = data['username'],
-        email = data['email'],
-        name = data['name'],
-        last_name = data['last_name'],
-        password = make_password(data['password'])
-    )
-    serializer = RegisterUserSerializer(user, many=False)
-    return Response(serializer.data)
+    try:
+        data = request.data
+
+        # Verificar si hay campos vacíos o nulos
+        if not all(data.values()):
+            raise IntegrityError('Por favor, rellene todos los campos')
+
+        user = User.objects.create(
+            username = data['username'],
+            email = data['email'],
+            name = data['name'],
+            last_name = data['last_name'],
+            password = make_password(data['password'])
+        )
+
+        serializer = RegisterUserSerializer(user, many=False)
+
+        # Genera el token de verificación
+        token = default_token_generator.make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        verification_link = f"{settings.CORS_ALLOWED_ORIGINS[2]}/verify-email/{uid}/{token}/"
+
+        # Envía el correo de verificación en segundo plano
+        email_thread = Thread(target=send_verification_email, args=(user, verification_link))
+        email_thread.start()
+
+        return Response(serializer.data)
+    except IntegrityError as e:
+        # Si hay una violación de integridad (por ejemplo, duplicación de clave), extrae el mensaje de error de la base de datos y devuélvelo al frontend
+        error_message = str(e)
+        return Response({'error': error_message}, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET'])
+def verify_email(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))  # Cambiado a force_str
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_verified = True
+        user.save()
+        return Response({'message': 'Email verified successfully'}, status=status.HTTP_200_OK)
+    else:
+        return Response({'error': 'Invalid verification link'}, status=status.HTTP_400_BAD_REQUEST)
 
 def generate_websocket_token(user1_id, user2_id):
     sorted_ids = sorted([user1_id, user2_id])

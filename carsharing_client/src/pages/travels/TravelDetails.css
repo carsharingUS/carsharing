@@ -13,8 +13,9 @@
 }
 
 .travel-details-title {
-  font-size: 24px;
-  color: #333;
+  font-size: 32px;
+  font-weight: bold;
+  color: #000000;
   margin-bottom: 20px;
   text-align: center;
 }
@@ -46,33 +47,60 @@
 
 .travel-details-form input[type="number"]:focus,
 .travel-details-form input[type="text"]:focus {
-  border-color: #176B87;
+  border-color: #176b87;
 }
 
 .travel-details-chat-btn[type="button"],
 .travel-details-submit-btn[type="submit"],
-.travel-details-request-btn {
-  display: block;
-  width: 100%;
+.travel-details-request-btn,
+.travel-details-edit-btn,
+.travel-details-delete-btn {
+  display: inline-block;
+  width: 10rem;
   padding: 10px;
-  margin-top: 20px;
-  background-color: #176B87;
+  background-color: #176b87;
   color: #fff;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  position: relative;
-  z-index: 0;
+  margin-right: 10px; /* Añadir margen derecho entre botones */
+  margin-bottom: 5px; /* Añadir margen inferior para la separación vertical */
+}
+
+.travel-details-request-btn{
+  width: 35rem;
+}
+
+.travel-buttons-container {
+  display: flex;
+  justify-content: center; /* Centra horizontalmente los botones */
+  align-items: center; /* Centra verticalmente los botones */
+  margin-top: 20px; /* Añade margen superior entre los botones y el contenido */
+}
+
+.travel-buttons-container-map {
+  display: flex;
+  justify-content: center; /* Centra horizontalmente los botones */
+  align-items: center; /* Centra verticalmente los botones */
+  margin-top: 10px; /* Añade margen superior entre los botones y el contenido */
+}
+
+.travel-details-chat-btn[type="button"]:last-child,
+.travel-details-submit-btn[type="submit"]:last-child,
+.travel-details-request-btn:last-child,
+.travel-details-edit-btn:last-child,
+.travel-details-delete-btn:last-child {
+  margin-right: 0; /* Eliminar margen derecho del último botón */
 }
 
 .travel-details-submit-btn[type="submit"]:hover,
 .travel-details-chat-btn[type="button"]:hover,
-.travel-details-request-btn:hover {
+.travel-details-request-btn:hover,
+.travel-details-edit-btn:hover,
+.travel-details-delete-btn:hover {
   background-color: #13586f;
 }
-
-
 
 .loader-container {
   text-align: center;
@@ -81,11 +109,11 @@
 
 .map-container {
   order: 2; /* Agrega esta propiedad */
-  margin-top: 25rem;
   width: 100%;
   height: 0;
   overflow: hidden;
   transition: height 0.3s ease;
+  margin-top: 15rem;
 }
 
 .map-container.open {
@@ -93,22 +121,23 @@
 }
 
 .map {
-  width: calc(100% - 30px); /* Resta 30px para el margen izquierdo y derecho */
-  height: 70%;
+  width: calc(100% - 40px); /* Resta 30px para el margen izquierdo y derecho */
+  height: 57%;
   border-radius: 5px;
   position: absolute;
-  top: 55%; /* Ajusta la posición vertical */
+  top: 60%; /* Ajusta la posición vertical */
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 0;
 }
 
 .map2 {
-  width: calc(100% - 30px); /* Resta 30px para el margen izquierdo y derecho */
+  width: calc(100% - 40px); /* Resta 30px para el margen izquierdo y derecho */
   height: 57%;
   border-radius: 5px;
   position: absolute;
-  top: 65%; /* Ajusta la posición vertical */
+  margin-top: 10rem;
+  top: 60%; /* Ajusta la posición vertical */
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 0;
@@ -174,10 +203,10 @@
   margin-top: -5px;
   right: -10px;
   padding: 5px 10px; /* Ajusta según sea necesario */
-  background-color: #176B87;
+  background-color: #176b87;
   color: #fff;
   border: none;
-  border-radius: 0px; 
+  border-radius: 0px;
   cursor: pointer;
   font-size: 14px; /* Ajusta según sea necesario */
   transition: background-color 0.3s ease;
@@ -206,5 +235,132 @@
   width: 100%;
   position: absolute;
   animation: zoomIn 1s;
+  align-items: center;
 }
 
+.modal-content button {
+  margin-top: 10px; /* Ajustar el espacio entre los botones */
+}
+
+.path-container {
+  display: flex;
+  align-items: center;
+}
+
+.origin-container,
+.destination-container {
+  flex: 2;
+  margin: 20px;
+}
+
+.dots-arrow-container {
+  flex: auto;
+}
+
+.origin {
+  font-size: 20px;
+}
+.destination {
+  font-size: 20px;
+}
+
+.path {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  position: relative;
+}
+
+.dots-arrow {
+  display: flex;
+  align-items: center;
+  position: relative;
+  flex-grow: 1;
+  height: 20px; /* Ajusta la altura según el tamaño de los puntos */
+}
+
+.dots-arrow::before {
+  content: "";
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(circle, #176b87 30%, transparent 0%);
+  background-size: 30px 30px; /* Reducir el tamaño de los puntos */
+  background-repeat: repeat-x;
+  background-position: center; /* Centra los puntos verticalmente */
+}
+
+.dots-arrow::after {
+  content: "";
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent; /* Reducir el tamaño de la flecha */
+  border-bottom: 8px solid transparent; /* Reducir el tamaño de la flecha */
+  border-left: 12px solid #176b87; /* Reducir el tamaño de la flecha */
+  margin-left: 20px; /* Ajusta la separación de la flecha */
+  margin-right: 20px;
+  border-radius: 10px; /* Hacer la flecha un poco redondeada */
+}
+
+.buttons-container {
+  display: flex;
+  justify-content: flex-end; /* Coloca los elementos al final del contenedor */
+  align-items: center; /* Centra verticalmente los elementos */
+  position: relative;
+  z-index: 999; /* Coloca el contenedor por encima del mapa */
+}
+
+.buttons-container > button {
+  margin-left: 0.5rem; /* Añade un margen entre los botones */
+}
+
+.info-column {
+  flex: 1; /* Las columnas se expanden para llenar el espacio disponible */
+  display: flex;
+  flex-direction: column; /* Asegura que los elementos se apilen verticalmente */
+}
+
+.info-column:first-child {
+  margin-left: 20px; /* Ajusta el valor del margen según sea necesario */
+}
+
+.info-item {
+  margin-bottom: 10px; /* Espacio entre los elementos */
+}
+
+.info-item p::before {
+  content: "•"; /* Punto */
+  margin-right: 5px; /* Espacio entre el punto y el texto */
+}
+
+@media (max-width: 768px) {
+  .info-item {
+    width: 100%; /* En dispositivos más pequeños, cada elemento ocupa el 100% del contenedor */
+  }
+}
+
+.status-cylinder {
+  border-radius: 50px; /* Para hacer un cilindro */
+  position: relative; /* Para permitir el posicionamiento del texto */
+  display: flex; /* Para centrar verticalmente el texto */
+  justify-content: center; /* Para centrar horizontalmente el texto */
+  align-items: center; /* Para centrar verticalmente el texto */
+  padding: 10px 20px; /* Agrega espacio alrededor del texto */
+  margin: 5px; /* Agrega un poco de margen externo */
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.status-programado {
+  background-color: rgb(255, 255, 156); /* Color amarillo */
+}
+
+.status-en_curso {
+  background-color: rgb(144, 238, 144); /* Color verde */
+}
+
+.status-completado {
+  background-color: rgb(255, 99, 71); /* Color rojo */
+}
