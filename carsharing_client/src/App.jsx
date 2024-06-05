@@ -13,7 +13,7 @@ import NotificationPage from './pages/NotificationPage';
 import TravelRequestManagment from './components/notifications/TravelRequestManagment';
 import Chat from './components/chat/Chat';
 import ChatsPage from './pages/chats/ChatsPage';
-
+import VerifyEmail from './pages/login/VerifyEmail';
 
 function App() {
   return (
@@ -32,6 +32,7 @@ function App() {
           
           {/* RUTAS PARA VIAJES */}
           <Route path='login' element={<LoginComponent />}/>
+          <Route path='verify-email/:uidb64/:token' element={<VerifyEmail />} />
 
           {/* RUTAS PARA VIAJES */}
           <Route path='travels' element={<Travels />} />

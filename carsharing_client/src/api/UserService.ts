@@ -2,11 +2,16 @@ import { User } from '../Interfaces';
 import { API, authAPI } from './AuthenticationService';
 
 export const registerRequest = async (username: string, email: string, name: string, last_name: string, password: string) => {
-    await API.post("/user/register/", { username, email, name, last_name, password })
+    await API.post("/user/register/", { username, email, name, last_name, password });
+};
+
+export const verifyEmailRequest = async (uidb64: string, token: string) => {
+    const response = await API.get(`/user/verify-email/${uidb64}/${token}/`);
+    return response;
 };
 
 export const loginRequest = async (email: string, password: string) => {
-    const response = await API.post("/user/login/", { email: email, password: password })
+    const response = await API.post("/user/login/", { email, password });
     return response;
 };
 
