@@ -113,7 +113,6 @@ const TravelDetails = () => {
       if (!travelId) return;
       const travelData = await getTravel(travelId);
       setTravel(travelData);
-      console.log(travelData);
       setIsLoading(false);
       return travelData;
     } catch (error) {
@@ -286,7 +285,6 @@ const TravelDetails = () => {
   };
 
   const showModal = async () => {
-    console.log(modalIsActive);
     if (modalIsActive) {
       setModalIsActive(false);
     } else {
