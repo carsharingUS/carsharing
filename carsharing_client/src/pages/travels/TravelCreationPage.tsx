@@ -45,7 +45,6 @@ const TravelCreationPage = ({ mode }) => {
           const formattedDate = dayjs(travel.start_date).format(
             "YYYY-MM-DDTHH:mm"
           );
-          console.log(formattedDate);
           setStartDate(formattedDate);
           setEstimatedDuration(travel.estimated_duration);
           setPrice(travel.price);

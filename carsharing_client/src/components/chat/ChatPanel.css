@@ -35,7 +35,7 @@
 /* CSS para los mensajes */
 .sent-message {
   position: relative; /* Necesario para que la fecha esté posicionada correctamente */
-  background-color: #EEF5FF;
+  background-color: #eef5ff;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   border-bottom-left-radius: 20px;
@@ -57,7 +57,7 @@
 
 .received-message {
   position: relative; /* Necesario para que la fecha esté posicionada correctamente */
-  background-color: #86B6F6;
+  background-color: #86b6f6;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   border-bottom-right-radius: 20px;
@@ -97,7 +97,7 @@
 }
 
 .received {
-  background-color: #B4D4FF;
+  background-color: #b4d4ff;
   align-self: flex-start;
 }
 
@@ -125,10 +125,9 @@
   outline: none;
 }
 
-
 .message-input button.room-true {
   padding: 10px 20px;
-  background-color: #176B87;
+  background-color: #176b87;
   color: #fff;
   border: none;
   border-radius: 0 8px 8px 0; /* Radio en las esquinas derechas */
@@ -139,7 +138,7 @@
 
 .message-input button.room-false {
   padding: 10px 20px;
-  background-color: #176B87;
+  background-color: #176b87;
   color: #fff;
   border: none;
   border-radius: 0 8px 8px 0; /* Radio en las esquinas derechas */
@@ -148,7 +147,6 @@
   outline: none;
 }
 
-
 .message-input button:hover {
-  background-color: #1ac68d;
+  background-color: #145e76;
 }

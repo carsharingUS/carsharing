@@ -3,22 +3,19 @@ import { Travel } from "../../Interfaces";
 import Typography from "@mui/material/Typography";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
-import utc from "dayjs/plugin/utc";
 import { CardActionArea } from "@mui/material";
 import LinearProgress from "@mui/material/LinearProgress";
 import "./TravelCard.css"; // Estilos CSS personalizados
 dayjs.locale("es");
-dayjs.extend(utc);
 
 interface Props {
   travel: Travel;
   status?: string; // Prop opcional para el estado del viaje
 }
 
-
-const TravelCard: FC<Props> = ({ travel, status  }) => {
+const TravelCard: FC<Props> = ({ travel, status }) => {
   const avatarUrl = `http://localhost:8000${travel.host?.avatar}`;
-  const occupancyPercentage =  ((travel.total_seats) / 4) * 100;
+  const occupancyPercentage = (travel.total_seats / 4) * 100;
 
   // Determinar el color de fondo según el estado del viaje
   const getStatusBackgroundColor = () => {
@@ -35,7 +32,10 @@ const TravelCard: FC<Props> = ({ travel, status  }) => {
   return (
     <div className="travel-card">
       <CardActionArea href={`/travels/${travel.id}`}>
-        <div className="travel" style={{ backgroundColor: getStatusBackgroundColor() }}>
+        <div
+          className="travel"
+          style={{ backgroundColor: getStatusBackgroundColor() }}
+        >
           {travel.mejor_opcion && (
             <div className="best-option-indicator">★</div>
           )}
@@ -66,13 +66,17 @@ const TravelCard: FC<Props> = ({ travel, status  }) => {
                   },
                 }}
               />
-              <span className="progress-text">{travel.total_seats} Plazas libres</span>
+              <span className="progress-text">
+                {travel.total_seats} Plazas libres
+              </span>
             </div>
             <br />
             <div className="destination-info">
               <h6>{travel.destination}</h6>
               {travel.clasificacion_destino && (
-                <div className={`classification-indicator ${travel.clasificacion_destino}`}>
+                <div
+                  className={`classification-indicator ${travel.clasificacion_destino}`}
+                >
                   {travel.clasificacion_destino}
                 </div>
               )}
@@ -80,15 +84,25 @@ const TravelCard: FC<Props> = ({ travel, status  }) => {
             <div className="origin-info">
               <h6>Salida: {travel.origin}</h6>
               {travel.clasificacion_origen && (
-                <div className={`classification-indicator ${travel.clasificacion_origen}`}>
+                <div
+                  className={`classification-indicator ${travel.clasificacion_origen}`}
+                >
                   {travel.clasificacion_origen}
                 </div>
               )}
             </div>
-            <Typography variant="body2">Duración estimada: {travel.estimated_duration}</Typography>
+            <Typography variant="body2">
+              Duración estimada: {travel.estimated_duration}
+            </Typography>
             <Typography variant="body2">Precio: {travel.price} €</Typography>
-            <Typography variant="body2">Fecha: {dayjs(travel.start_date).format("DD/MM/YYYY HH:mm")}</Typography>
-            <Typography variant="body2" className="progress-text" sx={{ textTransform: "capitalize" }}>
+            <Typography variant="body2">
+              Fecha: {dayjs(travel.start_date).format("DD/MM/YYYY HH:mm")}
+            </Typography>
+            <Typography
+              variant="body2"
+              className="progress-text"
+              sx={{ textTransform: "capitalize" }}
+            >
               {travel.status}
             </Typography>
           </div>
