@@ -35,7 +35,7 @@ const UserProfileComponent = () => {
   const [image, setImage] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState<string>("");
   const [isHovered, setIsHovered] = useState(false);
-  const [type, setType] = useState("Host");
+  const [type, setType] = useState("Anfitrión");
   const [userTravels, setUserTravels] = useState<Travel[]>([]);
 
   const token: string = useAuthStore.getState().access;
@@ -49,14 +49,6 @@ const UserProfileComponent = () => {
   });
 
   const [selector, setSelector] = useState<string>("");
-
-  useEffect(() => {
-    if (selector === "Anfitrión") {
-      const userTravels = getUserTravels();
-    } else if (selector === "Pasajero") {
-      const userTravelsAsPassenger = getUserTravelsAsPassenger();
-    }
-  }, [selector]);
 
   useEffect(() => {
     if (user) {
@@ -108,6 +100,7 @@ const UserProfileComponent = () => {
         sex: stateSex,
         username: user.username,
         email: user.email,
+        birthDate: user.birth_date,
       });
     } else {
       editProfileMut.mutate({
@@ -119,6 +112,7 @@ const UserProfileComponent = () => {
         sex: stateSex,
         username: user.username,
         email: user.email,
+        birthDate: user.birth_date,
       });
     }
   };
@@ -214,7 +208,7 @@ const UserProfileComponent = () => {
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  label="Name"
+                  label="Nombre"
                   variant="outlined"
                   value={stateName}
                   onChange={(e) => setStateName(e.target.value)}
@@ -223,7 +217,7 @@ const UserProfileComponent = () => {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  label="Last Name"
+                  label="Apellidos"
                   variant="outlined"
                   value={stateLast}
                   onChange={(e) => setStateLast(e.target.value)}
@@ -233,20 +227,20 @@ const UserProfileComponent = () => {
               <Grid item xs={12} sm={6}>
                 <TextField
                   select
-                  label="Sex"
+                  label="Sexo"
                   variant="outlined"
                   value={stateSex}
                   onChange={(e) => setStateSex(e.target.value)}
                   fullWidth
                 >
-                  <MenuItem value="M">Male</MenuItem>
-                  <MenuItem value="W">Female</MenuItem>
-                  <MenuItem value="O">Other</MenuItem>
+                  <MenuItem value="M">Hombre</MenuItem>
+                  <MenuItem value="W">Mujer</MenuItem>
+                  <MenuItem value="O">Otro</MenuItem>
                 </TextField>
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  label="Phone"
+                  label="Teléfono"
                   variant="outlined"
                   value={statePhone}
                   onChange={(e) => setStatePhone(e.target.value)}
@@ -255,7 +249,7 @@ const UserProfileComponent = () => {
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  label="Description"
+                  label="Descripción"
                   variant="outlined"
                   multiline
                   rows={4}
@@ -270,7 +264,7 @@ const UserProfileComponent = () => {
                 style={{ display: "flex", justifyContent: "flex-end" }}
               >
                 <Button className="button" type="submit" variant="contained">
-                  Save changes
+                  Guardar
                 </Button>
               </Grid>
             </Grid>

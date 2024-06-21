@@ -2,7 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager
 from carsharing.settings import MEDIA_URL, STATIC_URL
 from django.utils import timezone
-
+from datetime import date
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 
@@ -54,6 +55,14 @@ class User(AbstractBaseUser, PermissionsMixin):
         if self.avatar:
             return '{}{}'.format(MEDIA_URL, self.avatar)
         return '{}{}'.format(STATIC_URL, 'img/empty.png')
+    
+    def clean(self):
+        super().clean()
+        if self.birthDate:
+            today = date.today()
+            age = today.year - self.birthDate.year - ((today.month, today.day) < (self.birthDate.month, self.birthDate.day))
+            if age < 16:
+                raise ValidationError('La edad mínima para registrarse es de 16 años.')
     
 class WebsocketToken(models.Model):
     token = models.CharField(max_length=64, unique=True)

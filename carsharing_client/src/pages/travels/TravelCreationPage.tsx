@@ -13,6 +13,33 @@ dayjs.locale("es");
 import "animate.css";
 import { Travel } from "../../Interfaces";
 
+const calculateAge = (birthDate: string) => {
+  console.log(birthDate);
+  if (!birthDate) {
+    console.error("Invalid birth date");
+    return NaN;
+  }
+  const today = new Date();
+  const birthDateObj = new Date(birthDate);
+
+  if (isNaN(birthDateObj.getTime())) {
+    console.error("Invalid birth date format");
+    return NaN;
+  }
+
+  let age = today.getFullYear() - birthDateObj.getFullYear();
+  const monthDiff = today.getMonth() - birthDateObj.getMonth();
+  if (
+    monthDiff < 0 ||
+    (monthDiff === 0 && today.getDate() < birthDateObj.getDate())
+  ) {
+    age--;
+  }
+
+  console.log(age);
+  return age;
+};
+
 const TravelCreationPage = ({ mode }) => {
   const [origin, setOrigin] = useState<string>("");
   const [originSuggestions, setOriginSuggestions] = useState<
@@ -27,7 +54,9 @@ const TravelCreationPage = ({ mode }) => {
   const [price, setPrice] = useState<number>(0);
   const [stops, setStops] = useState<string>("");
   const { travelId } = useParams();
-  const [typingTimeout, setTypingTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
+  const [typingTimeout, setTypingTimeout] = useState<ReturnType<
+    typeof setTimeout
+  > | null>(null);
   const [selectedSeats, setSelectedSeats] = useState<number>(0);
   const modalRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
@@ -72,7 +101,6 @@ const TravelCreationPage = ({ mode }) => {
     },
   });
 
-
   const updateTravelMutation = useMutation({
     mutationFn: updateTravel,
     onSuccess: () => {
@@ -87,6 +115,23 @@ const TravelCreationPage = ({ mode }) => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    console.log(user);
+    if (user) {
+      const age = calculateAge(user.birthDate);
+      if (age < 18 || isNaN(age)) {
+        toast.error("Debes tener al menos 18 años para crear un viaje.");
+        return;
+      }
+    }
+
+    const today = new Date();
+    const selectedStartDate = new Date(start_date);
+    if (selectedStartDate.getTime() < today.getTime()) {
+      toast.error(
+        "La fecha de inicio del viaje no puede ser anterior a la fecha actual."
+      );
+      return;
+    }
 
     const travelData: Partial<Travel> = {
       host: user,
@@ -109,7 +154,7 @@ const TravelCreationPage = ({ mode }) => {
   const handleOriginChange = (event: ChangeEvent<HTMLInputElement>) => {
     setOrigin(event.target.value);
     // Reiniciar el tiempo de espera
-    if (typingTimeout !== null){
+    if (typingTimeout !== null) {
       clearTimeout(typingTimeout);
     }
     // Establecer un nuevo tiempo de espera antes de realizar la búsqueda
@@ -124,7 +169,7 @@ const TravelCreationPage = ({ mode }) => {
   const handleDestinationChange = (event: ChangeEvent<HTMLInputElement>) => {
     setDestination(event.target.value);
     // Reiniciar el tiempo de espera
-    if (typingTimeout !== null){
+    if (typingTimeout !== null) {
       clearTimeout(typingTimeout);
     }
     // Establecer un nuevo tiempo de espera antes de realizar la búsqueda
