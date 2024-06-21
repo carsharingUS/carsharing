@@ -100,7 +100,7 @@ const UserProfileComponent = () => {
         sex: stateSex,
         username: user.username,
         email: user.email,
-        birthdate: user.birth_date,
+        birthDate: user.birth_date,
       });
     } else {
       editProfileMut.mutate({
@@ -112,7 +112,7 @@ const UserProfileComponent = () => {
         sex: stateSex,
         username: user.username,
         email: user.email,
-        birthdate: user.birth_date,
+        birthDate: user.birth_date,
       });
     }
   };
