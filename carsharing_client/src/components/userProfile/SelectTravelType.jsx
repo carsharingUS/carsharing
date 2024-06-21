@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
 
 const SelectTravelType = ({ onSelect }) => {
   const [selectedType, setSelectedType] = useState("host");
@@ -22,8 +22,12 @@ const SelectTravelType = ({ onSelect }) => {
         onChange={handleSelection}
         style={{ display: "flex", justifyContent: "center", gap: "20px" }}
       >
-        <FormControlLabel value="host" control={<Radio />} label="Host" />
-        <FormControlLabel value="passenger" control={<Radio />} label="Passenger" />
+        <FormControlLabel value="host" control={<Radio />} label="Anfitrión" />
+        <FormControlLabel
+          value="passenger"
+          control={<Radio />}
+          label="Pasajero"
+        />
       </RadioGroup>
     </FormControl>
   );

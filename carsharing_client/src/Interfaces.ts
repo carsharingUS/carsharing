@@ -26,7 +26,7 @@ export interface Travel {
 
 export interface User {
   id?: number;
-  avatar: string | null;
+  avatar: File | null;
   username: string;
   email: string;
   name: string;
