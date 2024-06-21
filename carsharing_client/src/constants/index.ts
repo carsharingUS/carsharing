@@ -18,9 +18,7 @@ export const NAV_HOME_LINKS = [
   { href: "/my_travels", key: "my_travels", label: "Mis viajes" },
 ];
 
-export const NAV_HOME_LINKS_NO_LOGIN = [
-  { href: "/initial", key: "initial", label: "Info" },
-];
+export const NAV_HOME_LINKS_NO_LOGIN = [];
 
 // CAMP SECTION
 export const PEOPLE_URL = [

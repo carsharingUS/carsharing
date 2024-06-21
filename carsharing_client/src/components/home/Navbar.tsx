@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { NAV_HOME_LINKS, NAV_HOME_LINKS_NO_LOGIN } from "../../constants";
+import { NAV_HOME_LINKS } from "../../constants";
 import "../initialPage/InitialPage.css";
 import React, { useState } from "react";
 import { useAuthStore } from "../../store/auth";
@@ -10,6 +10,7 @@ import { Token } from "../../Interfaces";
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // Estado para controlar la visibilidad del menú
 
   const token: string = useAuthStore.getState().access;
   const { isAuth } = useAuthStore();
@@ -41,11 +42,20 @@ const Navbar = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
+  const openMenu = () => {
+    setIsMenuOpen(true);
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
+
   return (
     <nav className="flexBetween padding-container-sm relative z-30 py-3">
-      <Link to="/">
+      <Link to="/" style={{ marginLeft: "1rem" }}>
         <img src="/carsharing.svg" alt="logo" width={100}></img>
       </Link>
+
       <div className="navbar-container">
         {isAuth ? (
           <ul className="hidden h-full lg:flex">
@@ -62,19 +72,7 @@ const Navbar = () => {
             ))}
           </ul>
         ) : (
-          <ul className="hidden h-full lg:flex">
-            {NAV_HOME_LINKS_NO_LOGIN.map((link) => (
-              <Link
-                to={link.href}
-                key={link.key}
-                className={`navbar-link flexCenter cursor-pointer pb-1.5 transition-all hover:font-bold ${
-                  window.location.pathname === link.href ? "active" : ""
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </ul>
+          <ul className="hidden h-full lg:flex"></ul>
         )}
       </div>
 
@@ -114,6 +112,7 @@ const Navbar = () => {
             <button
               type="button"
               className="flexCenter gap-2 rounded-full border bg-black text-white px-6 py-3 hover:bg-gray-900 focus:outline-none focus:ring focus:border-blue-100"
+              style={{ marginRight: "2rem" }}
             >
               <img src="/user.svg" alt="Login" width={20} height={20} />
               Login
@@ -122,13 +121,33 @@ const Navbar = () => {
         )}
       </div>
 
-      <img
-        src="menu.svg"
-        alt="menu"
-        width={28}
-        height={28}
-        className="inline-block cursor-pointer lg:hidden"
-      />
+      {isAuth && (
+        <img
+          src="menu.svg"
+          alt="menu"
+          width={28}
+          height={28}
+          className="inline-block cursor-pointer lg:hidden"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        />
+      )}
+
+      {isAuth && (
+        <ul className={`lg:hidden ${isMenuOpen ? "block" : "hidden"}`}>
+          {NAV_HOME_LINKS.map((link) => (
+            <Link
+              to={link.href}
+              key={link.key}
+              className={`navbar-link flexCenter cursor-pointer pb-1.5 transition-all hover:font-bold ${
+                window.location.pathname === link.href ? "active" : ""
+              }`}
+              onClick={closeMenu}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </ul>
+      )}
     </nav>
   );
 };

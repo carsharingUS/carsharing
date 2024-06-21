@@ -347,7 +347,7 @@ const TravelDetails = () => {
                 <p>Duración estimada: {travel.estimated_duration}</p>
               </div>
               <div className="info-item">
-                <p>Precio por plaza: {travel.price}</p>
+                <p>Precio por plaza: {travel.price} €</p>
                 <p>
                   Fecha de salida:{" "}
                   {dayjs(travel.start_date).format("DD/MM/YYYY HH:mm")}

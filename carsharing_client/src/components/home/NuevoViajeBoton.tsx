@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import "./NuevoViajeBoton.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../store/auth"; // Importar el hook de autenticación
 
 const AwesomeComponent = () => {
   const [scaleValue, setScaleValue] = useState(1);
+  const isAuthenticated = useAuthStore((state) => state.isAuth); // Obtener el estado de autenticación desde el store
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,6 +31,13 @@ const AwesomeComponent = () => {
     };
   }, []);
 
+  const handleCreateTravelClick = () => {
+    if (!isAuthenticated) {
+      navigate("/login");
+    }
+    navigate("/createTravel");
+  };
+
   return (
     <div
       className={`awesome-component`}
@@ -37,9 +47,9 @@ const AwesomeComponent = () => {
       <div className="content">
         <h2>¡Descubre la Aventura con Nosotros!</h2>
         <p>Explora nuevas rutas y conecta con personas increíbles.</p>
-        <Link to="/createTravel">
-          <button className="awesome-button">Crear Viaje</button>
-        </Link>
+        <button className="awesome-button" onClick={handleCreateTravelClick}>
+          Crear Viaje
+        </button>
       </div>
     </div>
   );
