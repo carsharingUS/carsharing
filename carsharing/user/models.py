@@ -58,9 +58,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     
     def clean(self):
         super().clean()
-        if self.birth_date:
+        if self.birthDate:
             today = date.today()
-            age = today.year - self.birth_date.year - ((today.month, today.day) < (self.birth_date.month, self.birth_date.day))
+            age = today.year - self.birthDate.year - ((today.month, today.day) < (self.birthDate.month, self.birthDate.day))
             if age < 16:
                 raise ValidationError('La edad mínima para registrarse es de 16 años.')
     

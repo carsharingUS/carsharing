@@ -117,11 +117,20 @@ const TravelCreationPage = ({ mode }) => {
     event.preventDefault();
     console.log(user);
     if (user) {
-      const age = calculateAge(user.birth_date);
+      const age = calculateAge(user.birthDate);
       if (age < 18 || isNaN(age)) {
         toast.error("Debes tener al menos 18 años para crear un viaje.");
         return;
       }
+    }
+
+    const today = new Date();
+    const selectedStartDate = new Date(start_date);
+    if (selectedStartDate.getTime() < today.getTime()) {
+      toast.error(
+        "La fecha de inicio del viaje no puede ser anterior a la fecha actual."
+      );
+      return;
     }
 
     const travelData: Partial<Travel> = {

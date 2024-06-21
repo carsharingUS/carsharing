@@ -34,7 +34,7 @@ export interface User {
   phone: string;
   sex: string;
   description: string;
-  birthdate: string;
+  birthDate: string;
 }
 
 export interface Token {
