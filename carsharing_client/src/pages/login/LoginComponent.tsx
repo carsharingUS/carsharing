@@ -23,6 +23,7 @@ const Login = () => {
   const [last_name, setLastName] = useState("");
   const [password, setPassword] = useState("");
   const [re_password, setRePassword] = useState("");
+  const [birth_date, setBirthDate] = useState(""); // Añadir estado para birth_date
   const [activeForm, setActiveForm] = useState(
     localStorage.getItem("activeForm") || "login"
   );
@@ -66,7 +67,7 @@ const Login = () => {
 
   const registerMutation = useMutation({
     mutationFn: () =>
-      registerRequest(username, email, name, last_name, password),
+      registerRequest(username, email, name, last_name, password, birth_date), // Añadir birth_date a la solicitud
     onSuccess: () => {
       toast.success("Por favor, compruebe su correo y verifique su cuenta.");
       setActiveForm("login");
@@ -93,10 +94,26 @@ const Login = () => {
 
   const handleMatch = () => password === re_password;
 
+  const calculateAge = (birthDate) => {
+    const today = new Date();
+    const birthDateObj = new Date(birthDate);
+    let age = today.getFullYear() - birthDateObj.getFullYear();
+    const monthDiff = today.getMonth() - birthDateObj.getMonth();
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDateObj.getDate())
+    ) {
+      age--;
+    }
+    return age;
+  };
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!handleMatch()) {
       toast.error("Las contraseñas deben coincidir.");
+    } else if (calculateAge(birth_date) < 16) {
+      toast.error("Debes tener al menos 16 años para registrarte.");
     } else {
       registerMutation.mutate();
     }
@@ -136,9 +153,6 @@ const Login = () => {
         <div className="form-containerLogin sign-upLogin">
           <form onSubmit={handleSubmit}>
             <h1>Crear cuenta</h1>
-            {/* <div className='social-iconsLogin'>
-                            <a href="#" className="iconLogin"><i className="fa-brands fa-google-plus-g"></i><img src="/googleIcon.svg" alt="GoogleLogo" /></a>
-                        </div> */}
 
             <input
               type="username"
@@ -173,6 +187,14 @@ const Login = () => {
               onChange={(e) => setLastName(e.target.value)}
             />
             <input
+              type="date"
+              id="birth_date"
+              name="birth_date"
+              placeholder="Fecha de Nacimiento"
+              value={birth_date}
+              onChange={(e) => setBirthDate(e.target.value)}
+            />
+            <input
               type="password"
               id="password"
               name="password"
@@ -204,9 +226,7 @@ const Login = () => {
         <div className="form-containerLogin sign-inLogin">
           <form onSubmit={handleSubmitLogin}>
             <h1>Iniciar sesión</h1>
-            {/* <div className='social-iconsLogin'>
-                            <a href="#" className="iconLogin"><i className="fa-brands fa-google-plus-g"></i><img src="/googleIcon.svg" alt="GoogleLogo" /></a>
-                        </div> */}
+
             <input
               type="email"
               placeholder="nombre@correo.com"
