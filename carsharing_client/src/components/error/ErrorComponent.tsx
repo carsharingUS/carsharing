@@ -6,7 +6,8 @@ const ErrorComponent: React.FC<{ error: string }> = ({ error }) => {
   const navigate = useNavigate();
 
   const handleBackToHome = () => {
-    navigate('/home');
+    navigate('/');
+    window.location.reload();
   };
 
   return (
@@ -16,7 +17,7 @@ const ErrorComponent: React.FC<{ error: string }> = ({ error }) => {
         <br />
         <p>Estamos trabajando en solucionar el problema. Intentelo de nuevo mas tarde.</p>
         <button type="submit" className="back-home-button" onClick={handleBackToHome}>
-          Back to Home
+          Volver al inicio
         </button>
       </div>
     </div>
