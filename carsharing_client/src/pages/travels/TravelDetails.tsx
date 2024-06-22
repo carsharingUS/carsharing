@@ -424,7 +424,7 @@ const TravelDetails = () => {
                     ).map((numSeats) => (
                       <div
                         key={numSeats}
-                        className={`seat-icon ${
+                        className={`seat-icon ${numSeats} ${
                           numSeats <= selectedSeats ? "selected" : ""
                         }`}
                         onClick={() => handleSeatClick(numSeats)}

@@ -67,7 +67,7 @@ const UserProfileComponent = () => {
     mutationFn: edit_user,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user"] });
-      toast.success("Profile updated!");
+      toast.success("Perfil actualizado!");
       setShow(true);
     },
     onError: () => {

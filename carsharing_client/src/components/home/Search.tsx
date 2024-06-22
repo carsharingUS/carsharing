@@ -155,6 +155,7 @@ const SearchComponent = () => {
             </motion.label>
             <div className="search-input-container">
               <input
+                id = "Origen"
                 type="text"
                 placeholder="Origen"
                 autoComplete="off"
@@ -198,6 +199,7 @@ const SearchComponent = () => {
             </motion.label>
             <div className="search-input-container">
               <input
+                id = "Destino"
                 type="text"
                 placeholder="Destino"
                 autoComplete="off"
@@ -242,6 +244,7 @@ const SearchComponent = () => {
               Fecha del Viaje:
             </motion.label>
             <input
+              id = "dateSearch"
               type="date"
               value={start_date}
               onChange={(e) => setStartDate(e.target.value)}

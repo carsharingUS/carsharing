@@ -344,6 +344,7 @@ const TravelCreationPage = ({ mode }) => {
                 Fecha
               </label>
               <input
+                id="dateTime"
                 type="datetime-local"
                 value={start_date}
                 onChange={handleDateChange}
@@ -360,7 +361,7 @@ const TravelCreationPage = ({ mode }) => {
                   {[1, 2, 3, 4].map((numSeats) => (
                     <div
                       key={numSeats}
-                      className={`seat-icon ${
+                      className={`seat-icon ${numSeats} ${
                         numSeats <= selectedSeats ? "selected" : ""
                       }`}
                       onClick={() => handleSeatClick(numSeats)}
