@@ -24,6 +24,7 @@ class UserTestCase(TestCase):
             'name': 'New User',
             'last_name': 'New Last Name',
             'password': 'new_password',
+            'birth_date': '2002-12-01'
         }
         response = self.client.post(reverse('register'), json.dumps(data), content_type='application/json')
         self.assertEqual(response.status_code, 200)
