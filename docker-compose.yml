@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   db:
-    image: mysql:8.0
+    image: dancorfon/carsharing_us:carsharing_database-v1.0
     container_name: carsharing_database
     restart: always
     volumes:
@@ -23,6 +23,7 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
+    image: dancorfon/carsharing_us:carsharing_backend-v1.0
     container_name: carsharing_backend
     command: sh -c "cd carsharing && python manage.py migrate --noinput && python manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000"
     restart: always
@@ -39,6 +40,7 @@ services:
     build: 
       context: .
       dockerfile: carsharing_client/Dockerfile
+    image: dancorfon/carsharing_us:carsharing_frontend-v1.0
     container_name: carsharing_frontend
     command: sh -c "until nc -z backend 8000; do echo 'Esperando a que el backend esté listo...'; sleep 1; done && npm run dev"
     restart: always
