@@ -20,7 +20,9 @@ docker pull dancorfon/carsharing_us:carsharing_frontend-v1.0
 
 Descripción: Las imágenes de la base de datos, backend y frontend están
 disponibles en el repositorio remoto. Estas deben ser descargadas usando docker
-pull antes de proceder con el despliegue.
+pull antes de proceder con el despliegue. (En caso de que una vez que se despliegue el contenedor 
+salte un error de que los puertos no esten disponibles finalizar la tarea de MySQL en el administrador de tareas).
+
 #### Ejecución del proyecto con Docker Compose
 - Descargar el proyecto localmente.
 - Navegar al directorio del proyecto y ejecutar:
