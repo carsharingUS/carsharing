@@ -1,0 +1,37 @@
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f8f8f8;
+}
+
+.error-content {
+  text-align: center;
+}
+
+.error-content h1 {
+  font-size: 3rem;
+  color: #ff6b6b;
+}
+
+.error-content p {
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.back-home-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.back-home-button:hover {
+  background-color: #0056b3;
+}

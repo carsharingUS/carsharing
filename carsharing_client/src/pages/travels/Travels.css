@@ -1,0 +1,159 @@
+/* styles.css */
+.filter-wheel {
+  position: absolute;
+  top: 150px;
+  right: 25px;
+  width: 60px;
+  height: 60px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all ease-in-out;
+  z-index: 5;
+  overflow: visible;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+  transition: width 0.5s ease-in-out, height 0.5s ease-in-out;
+}
+
+.filter-wheel:hover,
+.filter-wheel.focused {
+  width: 350px;
+  height: auto;
+  border-radius: 20px;
+}
+
+.filter-wheel .icon-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.filter-wheel .filter-text {
+  position: absolute;
+  bottom: -25px;
+  color: #000; /* Negro */
+  font-size: 12px;
+  text-align: center;
+  width: 100%;
+  transition: opacity 1.5s ease-in-out;
+}
+
+.filter-wheel:hover .filter-text,
+.filter-wheel.focused .filter-text {
+  opacity: 0;
+}
+
+
+.filter-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  opacity: 0;
+  padding: 10px;
+  position: relative; /* Esto asegura que los elementos hijos se posicionen relativos a este contenedor */
+  overflow: visible;
+}
+
+.filter-wheel:hover .filter-content,
+.filter-wheel.focused .filter-content {
+  opacity: 1;
+  position: relative; /* Esto asegura que los elementos hijos se posicionen relativos a este contenedor */
+  transition: opacity 1.5s ease-in-out;
+}
+
+.filter-content .form-group:hover input {
+  border-bottom-color: #007bff;
+}
+
+.filter-content form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.filter-content .form-group {
+  margin: 10px 0;
+  position: relative; /* Necesario para que las sugerencias se posicionen correctamente */
+}
+
+.filter-content .form-group input {
+  margin-top: 5px;
+  padding: 10px;
+  border: none;
+  border-bottom: 2px solid #000;
+  background-color: transparent;
+  font-size: 14px;
+  width: 200px;
+  color: #000;
+  z-index: 1;
+}
+
+.filter-content .form-group input::placeholder {
+  color: #000; /* Negro */
+}
+
+.filter-content .form-group input:focus {
+  outline: none;
+  border-bottom-color: #007bff; /* Azul para el enfoque */
+}
+
+.filter-content button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  border: 1px solid #ffffff; /* Negro */
+  border-radius: 5px;
+  background-color: #fff; /* Blanco */
+  color: #000; /* Negro */
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.filter-content button:hover {
+  background-color: #000; /* Negro */
+  color: #fff; /* Blanco */
+}
+
+.suggestions-home {
+  position: absolute; /* Cambiado a absolute para alinearse con el campo de entrada */
+  top: 100%; /* Justo debajo del campo de entrada */
+  left: 0;
+  right: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  color: #333;
+  z-index: 6;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-height: 200px; /* Ajusta según sea necesario */
+  overflow-y: auto; /* Agrega una barra de desplazamiento para el eje Y */
+  scrollbar-width: thin; /* Ajusta el ancho de la barra de desplazamiento */
+  scrollbar-color: #c4c4c4 transparent; /* Ajusta el color de la barra de desplazamiento */
+}
+
+.suggestion-home {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.suggestion-home:hover {
+  background-color: #f5f5f5;
+}
+
+.suggestion-home:first-child {
+  border-top: 1px solid #ddd;
+}
+
+.sort-options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  margin-top: 20px;
+}

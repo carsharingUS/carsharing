@@ -1,0 +1,152 @@
+.chat-panel {
+  display: flex;
+  flex-direction: column;
+  height: 77vh;
+}
+
+.chat-panel-room-true {
+  padding: 20px;
+}
+
+.chat-panel-room-false {
+  padding: 10px;
+}
+
+.message-container {
+  display: flex;
+  flex-direction: column; /* Cambiar el flujo a columnas */
+  margin-bottom: 10px;
+}
+
+.message-sender {
+  margin-bottom: 5px; /* Espacio entre el nombre del emisor y el mensaje */
+  margin-right: 100px;
+}
+
+/* CSS para la fecha del mensaje */
+.message-timestamp {
+  font-size: 10px; /* Tamaño de letra más pequeño */
+  color: #888; /* Color gris para la fecha */
+  position: absolute; /* Posición absoluta para poder ubicarla en la esquina */
+  bottom: 5px; /* Distancia desde la parte inferior */
+  right: 5px; /* Distancia desde la parte derecha */
+}
+
+/* CSS para los mensajes */
+.sent-message {
+  position: relative; /* Necesario para que la fecha esté posicionada correctamente */
+  background-color: #eef5ff;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+  padding: 10px 15px;
+  margin-left: auto;
+  margin-right: 20rem;
+  width: fit-content; /* Ancho se ajusta al contenido */
+  max-width: 45%; /* Ancho máximo del 80% de la pantalla */
+  min-width: 18%;
+  overflow-wrap: break-word; /* Romper palabras largas cuando exceden el contenedor */
+}
+
+.sent-message-room-true {
+  margin-right: 1rem;
+}
+.sent-message-room-false {
+  margin-right: 20rem;
+}
+
+.received-message {
+  position: relative; /* Necesario para que la fecha esté posicionada correctamente */
+  background-color: #86b6f6;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  padding: 10px 15px;
+  margin-right: auto;
+  margin-left: 20rem;
+  width: fit-content; /* Ancho se ajusta al contenido */
+  max-width: 45%; /* Ancho máximo del 80% de la pantalla */
+  min-width: 18%;
+  overflow-wrap: break-word; /* Romper palabras largas cuando exceden el contenedor */
+}
+
+.received-message-room-true {
+  margin-left: 1rem;
+}
+
+.received-message-room-false {
+  margin-left: 20rem;
+}
+
+.conversation {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.message {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 10px;
+  max-width: 80%;
+}
+
+.sent {
+  background-color: #f8fbfe;
+  align-self: flex-end;
+}
+
+.received {
+  background-color: #b4d4ff;
+  align-self: flex-start;
+}
+
+.message-input {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+}
+
+.message-input input.room-true {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px 0 0 8px; /* Radio en las esquinas izquierdas */
+  margin-left: 5rem;
+  outline: none;
+}
+
+.message-input input.room-false {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px 0 0 8px; /* Radio en las esquinas izquierdas */
+  margin-left: 20rem;
+  outline: none;
+}
+
+.message-input button.room-true {
+  padding: 10px 20px;
+  background-color: #176b87;
+  color: #fff;
+  border: none;
+  border-radius: 0 8px 8px 0; /* Radio en las esquinas derechas */
+  margin-right: 5rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.message-input button.room-false {
+  padding: 10px 20px;
+  background-color: #176b87;
+  color: #fff;
+  border: none;
+  border-radius: 0 8px 8px 0; /* Radio en las esquinas derechas */
+  margin-right: 20rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.message-input button:hover {
+  background-color: #145e76;
+}

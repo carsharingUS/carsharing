@@ -31,12 +31,14 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', '0.0.0.0']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    "channels",
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -51,6 +53,8 @@ INSTALLED_APPS = [
     "travel",
     "chat",
     "rating",
+    "django_filters",
+    "django.contrib.gis",
 ]
 
 MIDDLEWARE = [
@@ -84,21 +88,38 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "carsharing.wsgi.application"
 
+ASGI_APPLICATION = "carsharing.asgi.application"
+
+# Esto es en pre-produccion con channels, cuando se lance cambiar a produccion, mirar guia
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
     "default": {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.contrib.gis.db.backends.mysql',
         'NAME': 'carsharing',
         'USER': 'carsharinguser',
         'PASSWORD': '2329',
-        'HOST': 'localhost',  # Puedes cambiar esto según la configuración de tu servidor MySQL
+        'HOST': 'db',  # Puedes cambiar esto según la configuración de tu servidor MySQL
         'PORT': '3306',  # El puerto predeterminado para MySQL
+        'TEST': {
+            'NAME': 'test_carsharing', # Nombre de la base de datos de pruebas
+        },
+        'OPTIONS': {
+            'init_command': "SET default_storage_engine=INNODB",
+        },
     }
 }
 
+# Configuración de GDAL
+import os
+GDAL_LIBRARY_PATH = os.environ.get("GDAL_LIBRARY_PATH")
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -124,7 +145,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Europe/Madrid"
 
 USE_I18N = True
 
@@ -135,9 +156,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = "static/"
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'dist/static')
+    BASE_DIR / 'static',
 ]
 
 MEDIA_URL = "media/"
@@ -150,7 +171,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 #Cors authorization
-CORS_ALLOWED_ORIGINS = ["http://localhost:5173", "http://localhost:3000"]
+CORS_ALLOWED_ORIGINS = ["http://localhost:5173", "http://localhost:3000", "http://localhost:8080", "http://172.20.0.3:8080"]
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -194,3 +215,18 @@ SIMPLE_JWT = {
 
     'JTI_CLAIM': 'jti',
 }
+
+
+import base64
+
+email_app = 'dpztiyusfullzztl'
+encoded = base64.b64encode(email_app.encode()).decode()
+
+# Configuración correo electronico
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'carsharingsoporteus@gmail.com'
+EMAIL_HOST_PASSWORD = base64.b64decode(encoded).decode()
+EMAIL_USE_TLS = True

@@ -1,0 +1,20 @@
+/* sizing of map container */
+
+.leaflet-container {
+    width: 1000px; /* Ancho del contenedor del mapa */
+    height: 600px; /* Alto del contenedor del mapa */
+    position: fixed;
+    margin-top: 60px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #f0f0f0; /* Color de fondo del contenedor */
+    border-radius: 10px; /* Bordes redondeados */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* Sombra más pronunciada */
+    
+}
+
+.map-loaded {
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+  }

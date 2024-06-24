@@ -1,0 +1,134 @@
+.travel-request-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ebebeb;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  margin: 0 10px;
+  margin-bottom: 15px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.travel-request-card.accepted {
+  background-color: #e0f5e0; /* Verde claro */
+}
+
+.travel-request-card.rejected {
+  background-color: #f5e0e0; /* Rojo claro */
+}
+
+.travel-request-card p {
+  margin: 0;
+  font-size: 16px;
+}
+
+.travel-request-card .status-indicator {
+  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.travel-request-card .status-indicator.accepted {
+  color: #4caf50; /* Verde */
+}
+
+.travel-request-card .status-indicator.rejected {
+  color: #f44336; /* Rojo */
+}
+
+.travel-request-card button {
+  width: 10rem;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding: 10px 30px; /* Increased horizontal padding */
+  border: none;
+  border-radius: 5px;
+  background-color: #176b87;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  white-space: nowrap; /* Prevent word wrapping */
+  overflow: hidden; /* Hide overflowed text */
+  text-overflow: ellipsis; /* Add ellipsis if text overflows */
+}
+
+.travel-request-card button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.travel-request-card button:hover {
+  background-color: #145e76;
+}
+
+/* Estilo para el contenedor principal */
+.travel-request-list-container {
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin: 20px auto;
+  max-width: 50%; /* Ajusta el ancho según necesites */
+}
+
+/* Estilo para el contenedor de las pestañas */
+.travel-request-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Estilo para los botones de las pestañas */
+.travel-request-button {
+  cursor: pointer;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+.travel-request-button:hover {
+  color: #176b87;
+}
+
+.travel-request-button.active {
+  color: #176b87;
+}
+
+/* Estilo para la línea vertical separadora */
+.travel-request-separator {
+  border-left: 1px solid #000;
+  height: 20px;
+  margin: 0 10px;
+}
+
+/* Estilo para el contenedor del contenido */
+.travel-request-content-container {
+  margin-top: 20px;
+}
+
+/* Estilo para el contenedor de las tarjetas de viaje */
+.travel-request-cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start; /* Alinea las cartas al principio */
+}
+
+/* Establece un ancho fijo para todas las tarjetas dentro del contenedor */
+.travel-request-cards-container .travel-request-card {
+  width: 100%; /* Ancho fijo para todas las tarjetas */
+}
+
+/* Estilos específicos para los viajes en curso */
+.travel-request-card.ongoing {
+  background-color: #ffff00; /* Amarillo flojito */
+}
+
+/* Estilos específicos para los viajes completados */
+.travel-request-card.completed {
+  background-color: #00ff00; /* Verde flojito */
+}

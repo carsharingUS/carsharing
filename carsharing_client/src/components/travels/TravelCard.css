@@ -1,0 +1,280 @@
+@import url('https://fonts.googleapis.com/css?family=Muli&display=swap');
+
+* {
+	box-sizing: border-box;
+}
+
+
+.text-title h6 {
+	opacity: 0.6;
+	margin: 0;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+}
+
+.container-card {
+    width: 60%;
+}
+
+.travels-container {
+    align-items: center;
+    display: flex;
+    width: 100%;
+  }
+
+.rounded-image {
+    width: 100%;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    justify-content: center;
+    align-items: flex-end;
+  }
+
+.travel {
+  
+  border-radius: 10px;
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  overflow: hidden;
+  }
+
+  .avatar-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+  }
+.travel h6 {
+	margin: 0;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+}
+
+.travel h2 {
+	letter-spacing: 1px;
+	margin: 10px 0;
+	opacity: 0.9;
+}
+
+.travel-preview {
+  background-color: #2a265f;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+  min-width: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  }
+
+  .travel-preview .rounded-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+
+  .travel-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+.travel-host {
+  font-size: 14px;
+  opacity: 0.8;
+  margin-top: 10px;
+  }
+
+  .travel-info {
+    padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  }
+
+  .progress-container {
+    text-align: right;
+    margin-bottom: 10px;
+  }
+  
+  .progress {
+    background-color: #6f42c1; /* Color morado */
+    border-radius: 10px; /* Ajustar redondez */
+    height: 10px; /* Ajustar grosor */
+    width: 100%;
+  }
+  
+  .progress::after {
+    border-radius: 10px; /* Ajustar redondez */
+    background-color: #2a265f; /* Color de progreso */
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 66%; /* Ajustar progreso */
+  }
+  
+  .progress-text {
+    font-size: 0.8em;
+    opacity: 0.6;
+    letter-spacing: 1px;
+    margin-top: 5px;
+  }
+
+.btn {
+    background-color: #2A265F;
+    border: 0;
+    border-radius: 50px;
+    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.2);
+    color: #fff;
+    font-size: 0.8em;
+    padding: 1em 2em;
+    position: absolute;
+    bottom: 1.5vw;
+    right: 1.5vw;
+    letter-spacing: 1px;
+}
+
+
+
+
+
+
+
+
+@media screen and (max-width: 800px) {
+  .travel {
+    flex-direction: column;
+  }
+
+  .travel-info {
+    padding: 10px;
+  }
+
+  .travel-preview {
+    padding: 10px;
+    min-width: 100%;
+  }
+
+  .progress-container {
+    text-align: left;
+  }
+}
+
+/* Añade estilos para las clasificaciones */
+.classification-indicator {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 20px;
+  margin-left: 10px;
+  font-weight: bold;
+  transition: transform 0.3s ease;
+}
+
+.Muy-cerca {
+  background: linear-gradient(135deg, #6bd19d, #4caf50); /* Verde */
+  color: white;
+}
+
+.Cerca {
+  background: linear-gradient(135deg, #6ec3ff, #2196f3); /* Azul */
+  color: white;
+}
+
+.Medio {
+  background: linear-gradient(135deg, #ffe082, #ffc107); /* Amarillo */
+  color: #333;
+}
+
+.Lejos {
+  background: linear-gradient(135deg, #ff8a80, #f44336); /* Rojo */
+  color: white;
+}
+
+/* Estilos para los iconos de clasificación */
+.classification-indicator i {
+  font-size: 16px;
+  margin-right: 5px;
+}
+
+/* Estilos de animación para las clasificaciones */
+.classification-indicator:hover {
+  transform: scale(1.1);
+}
+
+.Muy-cerca:hover {
+  background-color: #388e3c; /* Verde más oscuro */
+}
+
+.Cerca:hover {
+  background-color: #1976d2; /* Azul más oscuro */
+}
+
+.Medio:hover {
+  background-color: #ffa000; /* Amarillo más oscuro */
+}
+
+.Lejos:hover {
+  background-color: #c62828; /* Rojo más oscuro */
+}
+/* Alineación de los indicadores de clasificación */
+.destination-info,
+.origin-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.destination-info .classification-indicator,
+.origin-info .classification-indicator {
+  margin-left: auto;
+}
+
+
+
+/* Alineación del contenido restante a la izquierda */
+.travel-info {
+  text-align: left;
+}
+
+.travel-card {
+  position: relative;
+  max-width: 100%;
+  margin: 20px auto;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.travel-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 20px 20px rgba(0, 0, 0, 0.2);
+}
+
+.best-option-indicator {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: gold; /* Color dorado */
+  color: #fff;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5em;
+  font-weight: bold;
+  z-index: 1;
+  transition: transform 0.3s ease;
+}
+
+.best-option-indicator:hover {
+  transform: scale(1.2);
+}

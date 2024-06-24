@@ -1,0 +1,65 @@
+/* Card.css */
+.containerCartaHome {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+@media screen and (max-width: 768px) {
+  .containerCartaHome {
+    flex-direction: column;
+    /* Cambia la dirección del flex container a column en dispositivos más pequeños */
+    align-items: center;
+    /* Otra alineación si es necesario */
+  }
+}
+
+.cardHome {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 300px;
+  /* Ajusta la anchura según tus preferencias */
+  background-color: rgb(255, 255, 255);
+  margin-right: 20px;
+  /* Ajusta el margen derecho */
+  margin-bottom: 20px;
+  /* Añade margen inferior para separar las cartas */
+}
+
+.cardHome.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.cardHome img {
+  width: 50%;
+  /* Ajusta el ancho de la imagen al 100% del contenedor */
+  height: auto;
+  border-radius: 10px 10px 0 0;
+}
+
+.cardHome-content {
+  padding: 20px;
+  text-align: center;
+}
+
+.cardHome-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.cardHome:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
