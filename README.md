@@ -1,4 +1,7 @@
 # CarSharing
+
+![Diagrama de CarSharing](carsharing_client/public/Untitled.png)
+
 ## Manual de Despliegue
 ### Despliegue en Google Cloud
 Acceder a la aplicación desplegada en Google Cloud:
