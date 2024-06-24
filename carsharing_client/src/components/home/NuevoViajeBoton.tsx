@@ -34,6 +34,7 @@ const AwesomeComponent = () => {
   const handleCreateTravelClick = () => {
     if (!isAuthenticated) {
       navigate("/login");
+      return;
     }
     navigate("/createTravel");
   };
