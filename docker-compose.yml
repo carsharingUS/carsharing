@@ -48,6 +48,7 @@ services:
       - "8080:8080"
     volumes:
       - ./carsharing_client:/frontend
-
+      - node_modules:/frontend/node_modules
 volumes:
   data:
+  node_modules:

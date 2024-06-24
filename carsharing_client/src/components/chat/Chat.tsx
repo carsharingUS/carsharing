@@ -79,38 +79,41 @@ const Chat = ({ room }) => {
         }
         roomIdRef.current = roomId;
 
+        const wsUrl = `ws://127.0.0.1:8000/ws/room/${existingRoomData.websocket_token}/`;
+
         if (
           !socketRef.current ||
-          socketRef.current.readyState !== WebSocket.OPEN
+          socketRef.current.readyState !== WebSocket.OPEN ||
+          socketRef.current.url !== wsUrl
         ) {
-          socketRef.current = new WebSocket(
-            `ws://127.0.0.1:8000/ws/room/${existingRoomData.websocket_token}/`
-          );
+          if (socketRef.current) {
+            socketRef.current.onmessage = null;
+            socketRef.current.close();
+          }
+          socketRef.current = new WebSocket(wsUrl);
 
           socketRef.current.onmessage = (event) => {
             const newMessage = JSON.parse(event.data);
             setChatHistory((prevHistory) => [...prevHistory, newMessage]);
           };
 
-          if (chatHistory.length === 0) {
-            getMessages(roomId)
-              .then((response) => {
-                if (response && response.length > 0) {
-                  setChatHistory(
-                    response.map((message) => ({
-                      id: message.id,
-                      text: message.text,
-                      sender: message.sender,
-                      timestamp: message.timestamp,
-                    }))
-                  );
-                }
-              })
-              .catch((error) => {
-                toast.error("Error al recuperar los mensajes");
-                console.error("Error fetching messages:", error);
-              });
-          }
+          getMessages(roomId)
+            .then((response) => {
+              if (response && response.length > 0) {
+                setChatHistory(
+                  response.map((message) => ({
+                    id: message.id,
+                    text: message.text,
+                    sender: message.sender,
+                    timestamp: message.timestamp,
+                  }))
+                );
+              }
+            })
+            .catch((error) => {
+              toast.error("Error al recuperar los mensajes");
+              console.error("Error fetching messages:", error);
+            });
         }
       } catch (error) {
         toast.error("Error en la conexión");
